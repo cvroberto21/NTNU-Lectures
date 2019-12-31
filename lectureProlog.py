@@ -87,11 +87,6 @@ import jblecture
 jblecture = reload(jblecture)
 node = platform.node()
 
-if node == 'NTNU-ERC':
-    GIT_CMD = 'D:/PortableApps/GitPortable/bin/git.exe'
-else:
-    GIT_CMD = 'git'
-
 # %reload_ext jblecture
 import jblecture
 jblecture.load_ipython_extension( get_ipython() )
