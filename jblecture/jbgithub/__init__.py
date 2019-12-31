@@ -153,7 +153,7 @@ def createGitHub( title, root = None):
         
     with JBcd(p):
         shutil.copyfile( cfg['REVEAL_DIR'] / 'index.html', 'index.html' )
-        for d in ["css", "js", "assets", "plugin" ]:
+        for d in ["css", "js", "assets", "plugin", "lib" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
             distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
         runCommand( cfg['GIT_CMD'] + " add .", True )
