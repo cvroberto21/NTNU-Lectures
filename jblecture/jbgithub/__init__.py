@@ -64,7 +64,8 @@ def findBranchByName( repo, bName ):
     return branch
 
 def runCommand( cmd, secure = False ):
-    print( "Running command " + cmd )
+    if not secure:
+        print( "Running command " + cmd )
     o = None
 <<<<<<< HEAD
     if not secure:
