@@ -95,15 +95,8 @@ class JBMagics(Magics):
         if line:
             # print("Adding style", line)
             it = it + "<div {0}>\n".format(line)
-        # it = it + "<div class=\"reveal\">"
-        # it = it + "    <div class=\"slides\">"
-        # it = it + "        <section>"
 
         it = it + html + "\n"
-
-        # it = it + "        </section>"
-        # it = it + "    </div>"
-        # it = it + "</div>"
 
         it = it + '</div>\n'
 
@@ -309,7 +302,7 @@ class JBMagics(Magics):
             if args.id[0] == '"' or args.id[0] == "'":
                 args.id = args.id[1:]
             if args.id[-1] == '"' or args.id[-1] == "'":
-                args.id = args.id[1:]
+                args.id = args.id[0:-1]
             
         if (args.style):
             if args.style[0] == '"' or args.style[0] == "'":
@@ -372,7 +365,17 @@ class JBMagics(Magics):
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
 
         # print(t)
-        display(HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' + '\n' + slide.html))
+        display(HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' + '\n'))
+        display(HTML("""
+            <div class="reveal">
+                <div class="slides">
+        """))
+        display(HTML(slide.html))
+        display(HTML("""
+                </div>
+            </div>
+        """))
+        
         # display( Image(slide.image ) )
 
     @magic_arguments.magic_arguments()
