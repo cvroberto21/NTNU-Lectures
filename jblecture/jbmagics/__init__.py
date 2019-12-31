@@ -175,7 +175,7 @@ class JBMagics(Magics):
         })();
         </script>
         """))
-
+        it = ""
         it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
 
       #display(HTML("<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=default'></script>"))
@@ -214,7 +214,7 @@ class JBMagics(Magics):
         """))
 
         md = self.html_body(input_string=cell)
-
+        it = ""
         it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
 
         display(HTML(self.instTemplate(it, {})))
