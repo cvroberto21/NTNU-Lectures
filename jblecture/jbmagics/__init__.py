@@ -89,7 +89,7 @@ class JBMagics(Magics):
         if css:
             it = it + "<style>\n" + css + "\n" + "</style>" + "\n"
 
-        it = it + '<div class="section">'
+        # it = it + '<div class="section">'
         it = it + '<div class="{cls} jb-render">\n'.format(cls=cls)
 
         if line:
@@ -100,7 +100,6 @@ class JBMagics(Magics):
 
         it = it + '</div>\n'
 
-        it = it + '</div>'
 
         # it = it + """
         #          <script src="reveal.js/js/reveal.js"></script>
@@ -110,6 +109,9 @@ class JBMagics(Magics):
         # """
         if line:
             it = it + "</div>\n"
+
+        #it = it + '</div>'
+
         # print(self.shell.user_ns['test'])
         # print(s
         return it
