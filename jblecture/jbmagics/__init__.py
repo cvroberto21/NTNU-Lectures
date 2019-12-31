@@ -147,16 +147,6 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_html(self, line, cell):
-        it = """
-        <div class="reveal">
-          <div class="slides">
-        """
-        it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
-
-        it = it + """
-            </div>
-        </div>
-        """
 
         display(HTML("""
         <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
@@ -185,6 +175,9 @@ class JBMagics(Magics):
         })();
         </script>
         """))
+
+        it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
+
       #display(HTML("<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=default'></script>"))
 
         display(HTML(self.instTemplate(it, {})))
@@ -192,19 +185,6 @@ class JBMagics(Magics):
     @cell_magic
     def reveal_rst(self, line, cell):
 
-        md = self.html_body(input_string=cell)
-
-        it = """
-        <div class="reveal">
-          <div class="slides">
-        """
-        it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
-
-        it = it + """
-            </div>
-        </div>
-        """
-
         display(HTML("""
         <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
         <script>
@@ -232,6 +212,11 @@ class JBMagics(Magics):
         })();
         </script>
         """))
+
+        md = self.html_body(input_string=cell)
+
+        it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
+
         display(HTML(self.instTemplate(it, {})))
 
     @cell_magic
