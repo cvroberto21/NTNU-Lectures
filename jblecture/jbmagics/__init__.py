@@ -177,6 +177,11 @@ class JBMagics(Magics):
         })();
         </script>
         """))
+        display(HTML("""
+            <div class="reveal">
+                <div class="slides">
+        """))
+
         it = ""
         it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
 
@@ -218,6 +223,10 @@ class JBMagics(Magics):
         md = self.html_body(input_string=cell)
         it = ""
         it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
+        display(HTML("""
+            <div class="reveal">
+                <div class="slides">
+        """))
 
         display(HTML(self.instTemplate(it, {})))
 
