@@ -73,7 +73,7 @@ class MGDocParser():
         if not node:
             node = self.root
         #print("type", type(node))
-        print("   " * level, node.id )
+        print("   " * level, node.id ) 
         #print("   " * level, node.html )
         print("   " * level, node.dialog )
         for c in node.children:
@@ -166,7 +166,7 @@ def updateGit( url, dirname, branch,  root ):
                 if ( o ):
                     print( 'git pull:' + o.decode('utf-8') )
 
-def npmInstallCanopy( dirname ):
+def installNPMCanopy( dirname ):
     with cd( dirname ):
         print("Executing npm install")
         o = None
@@ -177,7 +177,7 @@ def npmInstallCanopy( dirname ):
         if ( o ):
             print( 'npm install canopy:' + o.decode('utf-8') )
 
-def npmInstall( dirname ):
+def installNPM( dirname ):
     with cd( dirname ):
         print("Executing npm install")
         o = None
@@ -202,7 +202,7 @@ def compileGrammar( dirname, grammar, lang ):
 def main( args = None ):
     if args is None:
         args = sys.argv[1:]
-    fetchMGData( pathlib.Path("..") / "Monogatarai", args[1] )    
+    fetchMGData( pathlib.Path("..") / "Monogatari", args[1] )    
     parser = MGDocParser()
     parser.parseFile( args[0] )
     parser.printTree( )
