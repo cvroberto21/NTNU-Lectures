@@ -1,7 +1,6 @@
 """
 A module that converts a reveal slideshow to a monogatari visual novel.
 """
-import bs4
 from bs4 import BeautifulSoup
 import sys
 import re
@@ -10,8 +9,6 @@ import argparse
 from distutils.dir_util import copy_tree
 import os
 import subprocess 
-
-GIT_CMD = "D://PortableApps/GitPortable/bin/git.exe"
 
 try:
     GIT_CMD
@@ -205,13 +202,12 @@ def compileGrammar( dirname, grammar, lang ):
 def main( args = None ):
     if args is None:
         args = sys.argv[1:]
-    home = pathlib.Path.home().resolve()
-    fetchMGData( home / "Desktop", args[1] )    
+    fetchMGData( pathlib.Path("..") / "Monogatarai", args[1] )    
     parser = MGDocParser()
     parser.parseFile( args[0] )
     parser.printTree( )
     parser.writeMGDirectory( args[1] )
     
 if __name__ == "__main__":
-    home = pathlib.Path.home().resolve()
-    main( [ home / "Desktop" / "reveal.js" / "index.html", home / "Desktop" / "mg" ] )
+    cwd = pathlib.Path(".").resolve()
+    main( [ cwd / "reveal.js" / "index.html", cwd / "mg-test" ] )
