@@ -17,13 +17,16 @@ def runningContainer( container ):
     ]
 
     running = None
-    o = subprocess.check_output( cmd )
-    print("check", o)
+    o = subprocess.check_output( cmd ).decode('utf-8')
+    print("check", o, "container", container )
     for cl in o.splitlines():
         print("running", cl)
         img,id = cl.split()
+        print("img", img, "id", id )
         if img == container:
+            print("Found container")
             running = id
+            break
     return running
 
 def main( argv = None ):
@@ -43,7 +46,7 @@ def main( argv = None ):
     client_dir = str( args.client_dir )
 
     print( "Command", args.command )
-    
+
     if args.command == "lab":
         cmdExec = [ "/bin/bash", "--login", "-c",
             '' + f"/opt/conda/bin/conda install jupyterlab -y --quiet && /opt/conda/bin/jupyter lab --notebook-dir={args.client_dir} --ip='*' --port={args.client_port} --no-browser --NotebookApp.token='' --NotebookApp.password='' --allow-root" + ''
@@ -54,7 +57,7 @@ def main( argv = None ):
         cmdExec = args.command
 
     id = runningContainer( args.container )
-
+    print("id", id)
     if not id:
         cmd = [
             "docker",
@@ -73,7 +76,7 @@ def main( argv = None ):
             "exec",
             "-i",
             "-t",
-            '' + str( args.container ) +'',       
+            '' + str( id ) +'',       
         ]   
 
     cmd.extend( cmdExec )
