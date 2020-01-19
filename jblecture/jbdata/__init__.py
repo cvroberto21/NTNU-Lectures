@@ -114,15 +114,59 @@ class JBData:
     def createStyleString( self, typ, st ):
         return JBData.sCreateStyleString( typ, st )
 
-    def __repr_html__(self, cls=None, style = None):
+    def __repr_html_localhost__(self, cls = None, style=None):
         id = self.generateId()
         if id not in self.ids:
             self.ids.append( id )
-        s = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
-        return '<a id="{0}" {2} href="{1}"></a>'.format(self.name, self.url, s )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        rpath = str( pathlib.Path(self.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+        return '<span id="{id}" {style}><object id="dat-{id}" src="http://localhost:{port}/{src}"/></span>\n'.format( id=id, style=cs, port=cfg['HTTP_PORT'], src=rpath + "." + self.suffix )
 
-    def __call__(self, cls=None, style = None ):
-        return self.__repr_html__(cls, style)
+    def __repr_html_path__(self, cls = None, style=None):
+        id = self.generateId()
+        if id not in self.ids:
+            self.ids.append( id )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        rpath = str( pathlib.Path(self.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+        return '<span id="{id}" {style}><object id="dat-{id}" src="{src}"/></span>\n'.format( id=id, style=cs, src=rpath + "." + self.suffix )
+
+    def __repr_html_file__(self, cls = None, style=None):
+        id = self.generateId()
+        if id not in self.ids:
+            self.ids.append( id )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        rpath = str( pathlib.Path(self.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+        return '<span id="{id}" {style}><object id="dat-{id}" src="file://{src}"/></span>\n'.format( id=id, style=cs, src=rpath + "." + self.suffix )
+
+    def __repr_html_url__(self, cls=None, style=None):
+        id = self.generateId()
+        if id not in self.ids:
+            self.ids.append( id )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        return '<span id="{id}" {style}><img id="dat-{id}" src="{url}"/></span>\n'.format(id=id, url=self.url, style=cs )        
+
+    def __repr_html__(self, cls = None, style=None, mode = None ):
+        s = ""
+        if mode is None or mode == "auto":
+            if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFile ):
+                mode = "localhost"
+            elif self.url:
+                mode = "url"
+            else:
+                mode = "path"
+
+        if mode == "url":
+            s = self.__repr_html_url__( cls, style )
+        elif mode == "localhost":
+            s = self.__repr_html_localhost__( cls, style )
+        elif mode == "path":
+            s = self.__repr_html_path__( cls, style )
+        elif mode == "file":
+            s = self.__repr_html_file__( cls, style )
+        return s
+
+    def __call__(self, cls=None, style = None, mode = None ):
+        return self.__repr_html__(cls, style, mode )
 
     @staticmethod
     def sGenerateId():
@@ -130,6 +174,15 @@ class JBData:
 
     def generateId( self ):
         return JBData.sGenerateId()
+
+    def getLocalName( self ):
+        return self.localFile + "." + self.suffix
+    
+    def encodeMIME( self, tag ):
+        s = ""
+        s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFile) + "." + self.suffix )
+        return s
+
 
 class JBImage(JBData): 
     def __init__(self, name, width, height, url=None, data=None, localFile=None, suffix=None):
@@ -169,7 +222,7 @@ class JBImage(JBData):
         self.width = width
         self.height = height
 
-    def __repr_html_file__(self, cls = None, style=None):
+    def __repr_html_localhost__(self, cls = None, style=None):
         id = self.generateId()
         w = self.createWidthString()
         h = self.createHeightString()
@@ -178,6 +231,26 @@ class JBImage(JBData):
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFile).relative_to(cfg['REVEAL_DIR'] ) )
         return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="http://localhost:{port}/{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, port=cfg['HTTP_PORT'], src=rpath + "." + self.suffix )
+
+    def __repr_html_path__(self, cls = None, style=None):
+        id = self.generateId()
+        w = self.createWidthString()
+        h = self.createHeightString()
+        if id not in self.ids:
+            self.ids.append( id )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        rpath = str( pathlib.Path(self.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+
+    def __repr_html_file__(self, cls = None, style=None):
+        id = self.generateId()
+        w = self.createWidthString()
+        h = self.createHeightString()
+        if id not in self.ids:
+            self.ids.append( id )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        rpath = str( pathlib.Path(self.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="file://{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
 
     def __repr_html_url__(self, cls=None, style=None):
         id = self.generateId()
@@ -194,8 +267,19 @@ class JBImage(JBData):
         h = self.createHeightString()
         if id not in self.ids:
             self.ids.append( id )
+        mime = self.encodeMIME()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
-        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="data:image/png;base64,{src}"/></span>\n'.format(id=id, width=w, height=h, style=cs, src=JBData.getBase64Data( str(self.localFile) + "." + self.suffix ) )
+        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{mime}"/></span>\n'.format(id=id, width=w, height=h, style=cs, mime=mime )
+
+    def encodeMIME( self ):
+        if self.suffix == "png":
+            tag = "data:image/png;"
+        elif self.suffix == "jpeg" or self.suffix == "jpg":
+            tag = "data:image/jpeg;"
+
+        s = ""
+        s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFile) + "." + self.suffix )
+        return s
 
     def __repr_html_svg__(self, cls=None, style=None):
         id = self.generateId()
@@ -206,6 +290,14 @@ class JBImage(JBData):
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         data = JBData.sReadData( str(self.localFile) + "." + self.suffix ).decode('utf-8')
         return '<span id="{id}" {style}>{data}</span>\n'.format(id=id, width=w, height=h, style=cs, data=data )
+
+    def __repr_html_inline__( self, cls = None, style = None ):
+        s = ""
+        if ( self.type == JBData.JBIMAGE_SVG ):
+            s = self.__repr_html_svg__( cls, style )
+        else:
+            s = self.__repr_html_base64__( cls, style )
+        return s
 
     def getDefaultFileName(self):
         p = cfg['REVEAL_IMAGES_DIR'] /  "{name}.{suffix}".format(name=self.name, suffix=self.suffix)        
@@ -233,17 +325,43 @@ class JBImage(JBData):
     def createHeightString( self ):
         return JBImage.sCreateHeightString( self.height )
 
-    def __repr_html__(self, cls = None, style=None):
+    # Modes are None/"auto", "url", "localhost", "path", "inline", "file"
+    def __repr_html__(self, cls = None, style=None, mode = None ):
+        if mode is None or mode == "auto":
+            if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFile ):
+                mode = "localhost"
+            elif self.url:
+                mode = "url"
+            elif self.localFile:
+                mode = "path"
+            else:
+                mode = "inline"
+        mode = "inline"
         s = ""
-        if ( self.type == JBData.JBIMAGE_SVG ):
-            s = self.__repr_html_svg__( cls, style )
-        elif ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFile ):
-            s = self.__repr_html_file__( cls, style )
-        elif self.url:
+        if mode == "url":
             s = self.__repr_html_url__( cls, style )
-        else:
-            s = self.__repr_html_base64__( cls, style )
+        elif mode == "localhost":
+            s = self.__repr_html_localhost__( cls, style )
+        elif mode == "path":
+            s = self.__repr_html_file__( cls, style )
+        elif mode == "inline":
+            s = self.__repr_html_inline__(cls, style )
+        elif mode == "file":
+            s = self.__repr_html_file__(cls, style )
+
         return s
+
+    # def updateAsset( self, id, mode ):
+    #     newContent = ""
+    #     if ( mode == "local" ):
+    #         newContent = "<a id=\"img-" + id + "\" href=\"file://" + self.getLocalName() + "\">" + self.name + "</a>"
+    #     elif ( mode == "url" ):
+    #         newContent = self.__repr_html_url__()
+    #     elif ( mode == "localhost" ):
+    #         newContent = self.__repr_html_file__()
+    #     elif ( mode == "remote" ):
+    #         newContent = "<a id=\"dat-" + id + "\" href=\"" + self.getLocalName() + "\">" + self.name + "</a>"
+    #     return newContent
 
 class JBVideo(JBData):
     def __init__(self, name, width, height, url=None, data=None, localFile=None, suffix="webm"):
@@ -279,7 +397,7 @@ class JBVideo(JBData):
             <iframe id="vid-{id}" {width} {height} src="{src}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </span>\n'''.format(id=id, width=w, height=h, src=self.url, style=cs )
 
-    def __repr_html_localhost_(self, cls = None, style=None):
+    def __repr_html_url__(self, cls = None, style=None):
         id = self.generateId()
         w = self.createWidthString()
         h = self.createHeightString()
@@ -297,6 +415,31 @@ class JBVideo(JBData):
     def createWidthString( self ):
         return JBImage.sCreateWidthString( self.width )
 
+    # Modes are None/"auto", "url", "localhost", "path", "file"
+    def __repr_html__(self, cls = None, style=None, mode = None ):
+        if mode is None or mode == "auto":
+            if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFile ):
+                mode = "localhost"
+            elif self.url:
+                mode = "url"
+            elif self.localFile:
+                mode = "path"
+            else:
+                mode = "inline"
+
+        s = ""
+        if mode == "url":
+            s = self.__repr_html_url__( cls, style )
+        elif mode == "localhost":
+            s = self.__repr_html_localhost__( cls, style )
+        elif mode == "path":
+            s = self.__repr_html_path__( cls, style )
+        elif mode == "inline":
+            s = self.__repr_html_inline__(cls, style )
+        elif mode == "file":
+            s = self.__repr_html_file__(cls, style )
+
+        return s
 
 def createEnvironment( mycfg ):
     global cfg

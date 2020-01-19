@@ -51,7 +51,7 @@ class MGDocParser():
 
     def parseFile0( self, root, soup ):
         for c in soup.find_all("section"):
-            #print('Found slide', c['id'] )
+            print('Found slide', c['id'] )
             slide = c.find( "div", class_ = "jb-slide")
             if ( slide ):
                 html = slide
@@ -138,6 +138,8 @@ def fetchMGData( mgHome, dir ):
     updateGit( "https://github.com/Monogatari/Monogatari.git", "Monogatari", "", mgHome  )
     dir.mkdir( parents = True, exist_ok = True )
     copy_tree( str( mgHome / "Monogatari" / "dist" ), str( dir ) ) 
+
+def setupNPM( dir ):
     installNPMCanopy( dir )
     installNPM( dir )
 
@@ -210,4 +212,4 @@ def main( args = None ):
     
 if __name__ == "__main__":
     cwd = pathlib.Path(".").resolve()
-    main( [ cwd / "reveal.js" / "index.html", cwd / "mg-test" ] )
+    main( [ cwd / "Test-Implementation" / "index.html", cwd / "mg-test" ] )

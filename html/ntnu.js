@@ -23,11 +23,11 @@ class JBData {
         if ( mode == "local" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"file://" + this.getLocalName() + "\">" + this.name + "</a>";
         } else if ( mode == "url" ) {
-            newContent = "<a id=\"img-" + id + "\" href=\"" + this.url + "\">" + this.name + "</a>";
+            newContent = "<a id=\"dat-" + id + "\" href=\"" + this.url + "\">" + this.name + "</a>";
         } else if ( mode == "localhost" ) {
-            newContent = "<a id=\"img-" + id + "\" href=\"" + "http://localhost:8000/" + this.getLocalName() + "\">" + this.name + "</a>";
+            newContent = "<a id=\"dat-" + id + "\" href=\"" + "http://localhost:8000/" + this.getLocalName() + "\">" + this.name + "</a>";
         } else if ( mode == "remote" ) {
-            newContent = "<a id=\"img-" + id + "\" href=\"" + this.getLocalName() + "\">" + this.name + "</a>";
+            newContent = "<a id=\"dat-" + id + "\" href=\"" + this.getLocalName() + "\">" + this.name + "</a>";
         }
 
         console.log("JBData.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );

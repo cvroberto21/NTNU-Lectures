@@ -39,6 +39,7 @@ def main( argv = None ):
     parser.add_argument("--port", "-p", default=8888)
     parser.add_argument("--client_port", default=8888)
     parser.add_argument("--command", default="lab")
+    parser.add_argument("--local", action="store_true", default=False)
 
     args = parser.parse_args( argv )
     
@@ -56,6 +57,9 @@ def main( argv = None ):
     else:
         cmdExec = args.command
 
+    if (args.local):
+        args.container = args.container + ":local"
+        
     id = runningContainer( args.container )
     print("id", id)
     if not id:
