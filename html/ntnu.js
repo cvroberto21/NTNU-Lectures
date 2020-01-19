@@ -51,9 +51,9 @@ class JBImage extends JBData {
                     suffix = "png";
                 } else if ( ( lfLen - 4 >= 0 ) && ( localFile. substring( lfLen - 4, lfLen ) == ".svg" ) ) {
                     suffix = "svg";
-                } else if ( ( lfLen - 4 >= 0 ) && ( localFile. substring( lfLen - 4, lfLen ) == "..jpg" ) ) {
+                } else if ( ( lfLen - 4 >= 0 ) && ( localFile. substring( lfLen - 4, lfLen ) == ".jpg" ) ) {
                     suffix = "jpg";
-                } else if ( (lfLen - 5 >= 0 ) && ( localFile. substring( lfLen -5, lfLen ) == ".png" ) ) { 
+                } else if ( (lfLen - 5 >= 0 ) && ( localFile. substring( lfLen -5, lfLen ) == ".jpeg" ) ) { 
                     suffix = "jpeg";
                 }
             }
@@ -77,16 +77,17 @@ class JBImage extends JBData {
         console.log("JBImage(" + name + "," + url + "," + localFile + "." + suffix + ")" );
     }
 
+    // modes are null/"auto", "url", "localhost", "path", "inline", "file"
     updateAsset( id, mode ) {
         var newContent = "";
-        if ( mode == "local" ) {
+        if ( mode == "path" ) {
             newContent = "<img id=\"img-" + id + "\" src=\"" + this.getLocalName() + "\"/>";
         } else if ( mode == "url" ) {
             newContent = "<img id=\"img-" + id + "\" src=\"" + this.url + "\"/>";
         } else if ( mode == "localhost" ) {
             newContent = "<img id=\"img-" + id + "\" src=\"" + "http://localhost:8000/" + this.getLocalName() + "\"/>";
-        } else if ( mode == "remote" ) {
-            newContent = "<img id=\"img-" + id + "\" src=\"" + this.getLocalName() + "\"/>";
+        } else if ( mode == "file" ) {
+            newContent = "<img id=\"img-" + id + "\" src=\"file://" + this.getLocalName() + "\"/>";
         }
 
         console.log("JBImage.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );
