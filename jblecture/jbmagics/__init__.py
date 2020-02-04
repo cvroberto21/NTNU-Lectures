@@ -177,6 +177,7 @@ class JBMagics(Magics):
         })();
         </script>
         """))
+
         display(HTML("""
             <div class="reveal">
                 <div class="slides">
@@ -366,7 +367,7 @@ class JBMagics(Magics):
             <div class="reveal">
                 <div class="slides">
         """))
-        display(HTML(slide.html))
+        display( HTML( slide.html ) )
         display(HTML("""
                 </div>
             </div>
