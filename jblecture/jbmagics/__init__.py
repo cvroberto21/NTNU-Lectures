@@ -299,7 +299,9 @@ class JBMagics(Magics):
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
         #print('**HTML***', slide.html )
 
-        display(HTML("""
+        html = ""
+
+        html = html + """
             <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
             <script>
                 (() => {
@@ -325,18 +327,22 @@ class JBMagics(Magics):
                 mathjax.Hub.Configured();
             })();
             </script>
-            """))
-        display( HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' ) )
-        display( HTML("""
+            """
+
+        html = html + '<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>'
+        html = html + """
             <div class="reveal">
                 <div class="slides">
-        """))
+        """
 
-        display( HTML( slide.html ) )
-        display( HTML("""
+        html = html + slide.html
+        
+        html = html + """
                 </div>
             </div>
-        """))
+        """
+
+        display ( HTML( html ) )
 
     @magic_arguments.magic_arguments()
     @magic_arguments.argument('--id', type=str, default='',
