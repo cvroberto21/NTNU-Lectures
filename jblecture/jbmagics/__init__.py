@@ -192,7 +192,8 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_rst(self, line, cell):
-
+        print("cell_magic reveal_rst called")
+        
         display(HTML("""
         <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
         <script>
@@ -292,7 +293,7 @@ class JBMagics(Magics):
         disp = not args.no_display
         math = args.math
         
-
+        print("cell_magic slide called")
         # print('args', args )
 
         if args.id:
