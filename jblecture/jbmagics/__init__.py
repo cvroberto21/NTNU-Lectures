@@ -160,7 +160,7 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_rst(self, line, cell):
-        print("cell_magic reveal_rst called")
+        #print("cell_magic reveal_rst called")
 
         md = self.html_body(input_string=cell)
         it = ""
@@ -233,7 +233,7 @@ class JBMagics(Magics):
         disp = not args.no_display
         math = args.math
         
-        print("cell_magic slide called")
+        #print("cell_magic slide called")
         # print('args', args )
 
         if args.id:
