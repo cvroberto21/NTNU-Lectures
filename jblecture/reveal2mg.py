@@ -1,7 +1,6 @@
 """
 A module that converts a reveal slideshow to a monogatari visual novel.
 """
-import bs4
 from bs4 import BeautifulSoup
 import sys
 import re
@@ -10,8 +9,6 @@ import argparse
 from distutils.dir_util import copy_tree
 import os
 import subprocess 
-
-GIT_CMD = "D://PortableApps/GitPortable/bin/git.exe"
 
 try:
     GIT_CMD
@@ -54,7 +51,7 @@ class MGDocParser():
 
     def parseFile0( self, root, soup ):
         for c in soup.find_all("section"):
-            #print('Found slide', c['id'] )
+            print('Found slide', c['id'] )
             slide = c.find( "div", class_ = "jb-slide")
             if ( slide ):
                 html = slide
@@ -76,7 +73,7 @@ class MGDocParser():
         if not node:
             node = self.root
         #print("type", type(node))
-        print("   " * level, node.id )
+        print("   " * level, node.id ) 
         #print("   " * level, node.html )
         print("   " * level, node.dialog )
         for c in node.children:
@@ -141,6 +138,8 @@ def fetchMGData( mgHome, dir ):
     updateGit( "https://github.com/Monogatari/Monogatari.git", "Monogatari", "", mgHome  )
     dir.mkdir( parents = True, exist_ok = True )
     copy_tree( str( mgHome / "Monogatari" / "dist" ), str( dir ) ) 
+
+def setupNPM( dir ):
     installNPMCanopy( dir )
     installNPM( dir )
 
@@ -169,7 +168,7 @@ def updateGit( url, dirname, branch,  root ):
                 if ( o ):
                     print( 'git pull:' + o.decode('utf-8') )
 
-def npmInstallCanopy( dirname ):
+def installNPMCanopy( dirname ):
     with cd( dirname ):
         print("Executing npm install")
         o = None
@@ -180,7 +179,7 @@ def npmInstallCanopy( dirname ):
         if ( o ):
             print( 'npm install canopy:' + o.decode('utf-8') )
 
-def npmInstall( dirname ):
+def installNPM( dirname ):
     with cd( dirname ):
         print("Executing npm install")
         o = None
@@ -205,13 +204,12 @@ def compileGrammar( dirname, grammar, lang ):
 def main( args = None ):
     if args is None:
         args = sys.argv[1:]
-    home = pathlib.Path.home().resolve()
-    fetchMGData( home / "Desktop", args[1] )    
+    fetchMGData( pathlib.Path("..") / "Monogatari", args[1] )    
     parser = MGDocParser()
     parser.parseFile( args[0] )
     parser.printTree( )
     parser.writeMGDirectory( args[1] )
     
 if __name__ == "__main__":
-    home = pathlib.Path.home().resolve()
-    main( [ home / "Desktop" / "reveal.js" / "index.html", home / "Desktop" / "mg" ] )
+    cwd = pathlib.Path(".").resolve()
+    main( [ cwd / "Test-Implementation" / "index.html", cwd / "mg-test" ] )

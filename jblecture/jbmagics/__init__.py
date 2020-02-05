@@ -89,7 +89,7 @@ class JBMagics(Magics):
         if css:
             it = it + "<style>\n" + css + "\n" + "</style>" + "\n"
 
-        it = it + '<div class="section">'
+        # it = it + '<div class="section">'
         it = it + '<div class="{cls} jb-render">\n'.format(cls=cls)
 
         if line:
@@ -100,7 +100,6 @@ class JBMagics(Magics):
 
         it = it + '</div>\n'
 
-        it = it + '</div>'
 
         # it = it + """
         #          <script src="reveal.js/js/reveal.js"></script>
@@ -110,6 +109,9 @@ class JBMagics(Magics):
         # """
         if line:
             it = it + "</div>\n"
+
+        #it = it + '</div>'
+
         # print(self.shell.user_ns['test'])
         # print(s
         return it
@@ -147,91 +149,27 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_html(self, line, cell):
-        it = """
-        <div class="reveal">
-          <div class="slides">
-        """
+        print("cell_magic reveal_html called")
+
+        it = ""
         it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
 
-        it = it + """
-            </div>
-        </div>
-        """
-
-        display(HTML("""
-        <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
-        <script>
-            (() => {
-            const mathjax = window.MathJax;
-            mathjax.Hub.Config({
-            'tex2jax': {
-                'inlineMath': [['$', '$'], ['\\(', '\\)']],
-                'displayMath': [['$$', '$$'], ['\\[', '\\]']],
-                'processEscapes': true,
-                'processEnvironments': true,
-                'skipTags': ['script', 'noscript', 'style', 'textarea', 'code'],
-                'displayAlign': 'center',
-            },
-            'HTML-CSS': {
-                'styles': {'.MathJax_Display': {'margin': 0}},
-                'linebreaks': {'automatic': true},
-                // Disable to prevent OTF font loading, which aren't part of our
-                // distribution.
-                'imageFont': null,
-            },
-            'messageStyle': 'none'
-            });
-            mathjax.Hub.Configured();
-        })();
-        </script>
-        """))
       #display(HTML("<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=default'></script>"))
 
         display(HTML(self.instTemplate(it, {})))
 
     @cell_magic
     def reveal_rst(self, line, cell):
+        #print("cell_magic reveal_rst called")
 
         md = self.html_body(input_string=cell)
-
-        it = """
-        <div class="reveal">
-          <div class="slides">
-        """
+        it = ""
         it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
-
-        it = it + """
-            </div>
-        </div>
-        """
-
         display(HTML("""
-        <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
-        <script>
-            (() => {
-            const mathjax = window.MathJax;
-            mathjax.Hub.Config({
-            'tex2jax': {
-                'inlineMath': [['$', '$'], ['\\(', '\\)']],
-                'displayMath': [['$$', '$$'], ['\\[', '\\]']],
-                'processEscapes': true,
-                'processEnvironments': true,
-                'skipTags': ['script', 'noscript', 'style', 'textarea', 'code'],
-                'displayAlign': 'center',
-            },
-            'HTML-CSS': {
-                'styles': {'.MathJax_Display': {'margin': 0}},
-                'linebreaks': {'automatic': true},
-                // Disable to prevent OTF font loading, which aren't part of our
-                // distribution.
-                'imageFont': null,
-            },
-            'messageStyle': 'none'
-            });
-            mathjax.Hub.Configured();
-        })();
-        </script>
+            <div class="reveal">
+                <div class="slides">
         """))
+
         display(HTML(self.instTemplate(it, {})))
 
     @cell_magic
@@ -295,7 +233,7 @@ class JBMagics(Magics):
         disp = not args.no_display
         math = args.math
         
-
+        #print("cell_magic slide called")
         # print('args', args )
 
         if args.id:
@@ -334,15 +272,16 @@ class JBMagics(Magics):
 
         if (out):
             if io.stdout != "":
-                # print("Adding output", io.stdout)
-                h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
-                h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
-                h = h + '<pre {s}>\n'.format(s=mystyle)
-                h = h + io.stdout
-                h = h + '</pre>\n'
-                h = h + '</div>\n'
-                h = h + '</div>\n'
-                html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
+                display( Pretty( io.stdout ) )
+                # # print("Adding output", io.stdout)
+                # h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
+                # h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
+                # h = h + '<pre {s}>\n'.format(s=mystyle)
+                # h = h + io.stdout
+                # h = h + '</pre>\n'
+                # h = h + '</div>\n'
+                # h = h + '</div>\n'
+                # html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
 
         for o in io.outputs:
             # print('Output', o)
@@ -363,20 +302,46 @@ class JBMagics(Magics):
             self.shell.user_ns[args.output] = html
 
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
+        #print('**HTML***', slide.html )
 
-        # print(t)
-        display(HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' + '\n'))
         display(HTML("""
+            <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
+            <script>
+                (() => {
+                const mathjax = window.MathJax;
+                mathjax.Hub.Config({
+                'tex2jax': {
+                    'inlineMath': [['$', '$'], ['\\(', '\\)']],
+                    'displayMath': [['$$', '$$'], ['\\[', '\\]']],
+                    'processEscapes': true,
+                    'processEnvironments': true,
+                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code'],
+                    'displayAlign': 'center',
+                },
+                'HTML-CSS': {
+                    'styles': {'.MathJax_Display': {'margin': 0}},
+                    'linebreaks': {'automatic': true},
+                    // Disable to prevent OTF font loading, which aren't part of our
+                    // distribution.
+                    'imageFont': null,
+                },
+                'messageStyle': 'none'
+                });
+                mathjax.Hub.Configured();
+            })();
+            </script>
+            """))
+        display( HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' ) )
+        display( HTML("""
             <div class="reveal">
                 <div class="slides">
         """))
-        display(HTML(slide.html))
-        display(HTML("""
+
+        display( HTML( slide.html ) )
+        display( HTML("""
                 </div>
             </div>
         """))
-        
-        # display( Image(slide.image ) )
 
     @magic_arguments.magic_arguments()
     @magic_arguments.argument('--id', type=str, default='',

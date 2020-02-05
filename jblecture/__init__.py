@@ -81,7 +81,6 @@ defaults['REVEAL_SLIDE_TEMPLATE'] = """
 defaults['REVEAL_SLIDE_FOOTER'] = """
 <div class="jb-footer-left">
     {{ cfg['ASSETS']['logo'](cls="jb-footer-left-img plain", style="") }}
-    <!-- {{ cfg['ASSETS']['pairLogo'](cls="jb-footer-left-img plain") }} -->
 </div>
 <div class="jb-footer-right">
     {{ cfg['ASSETS']['robbi'](cls="jb-footer-right-img plain") }}
@@ -211,7 +210,7 @@ def createEnvironment( params = {} ):
 
     for d in [ cfg['REVEAL_IMAGES_DIR'], cfg['REVEAL_VIDEOS_DIR'], cfg['REVEAL_SOUNDS_DIR'] ]:
         d.mkdir( parents = True, exist_ok=True )
-        
+    
     fetchRenpyData( cfg )
 
     shutil.copy2( cfg['ORIG_ROOT'] / 'NTNU-Lectures' / 'html' / 'ntnuerc.css' , 
