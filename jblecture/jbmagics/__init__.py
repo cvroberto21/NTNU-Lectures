@@ -362,14 +362,14 @@ class JBMagics(Magics):
             self.shell.user_ns[args.output] = html
 
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
-
+        print('**HTML***', slide.html )
         # print(t)
         # display(HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' + '\n'))
         # display(HTML("""
         #     <div class="reveal">
         #         <div class="slides">
         # """))
-        display( HTML( slide.html ) )
+        #display( HTML( slide.html ) )
         # display(HTML("""
         #         </div>
         #     </div>
