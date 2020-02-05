@@ -149,7 +149,7 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_html(self, line, cell):
-        print("cell_magic reveal_html called")
+        #print("cell_magic reveal_html called")
 
         it = ""
         it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
