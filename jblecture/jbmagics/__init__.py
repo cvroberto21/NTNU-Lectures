@@ -333,15 +333,16 @@ class JBMagics(Magics):
 
         if (out):
             if io.stdout != "":
-                # print("Adding output", io.stdout)
-                h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
-                h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
-                h = h + '<pre {s}>\n'.format(s=mystyle)
-                h = h + io.stdout
-                h = h + '</pre>\n'
-                h = h + '</div>\n'
-                h = h + '</div>\n'
-                html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
+                display( io.stdout )
+                # # print("Adding output", io.stdout)
+                # h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
+                # h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
+                # h = h + '<pre {s}>\n'.format(s=mystyle)
+                # h = h + io.stdout
+                # h = h + '</pre>\n'
+                # h = h + '</div>\n'
+                # h = h + '</div>\n'
+                # html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
 
         for o in io.outputs:
             # print('Output', o)
