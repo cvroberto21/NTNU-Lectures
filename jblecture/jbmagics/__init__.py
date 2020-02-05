@@ -331,14 +331,14 @@ class JBMagics(Magics):
             })();
             </script>
             """))
-
-        display(HTML("""
+        display( HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' ) )
+        display( HTML("""
             <div class="reveal">
                 <div class="slides">
         """))
 
         display( HTML( slide.html ) )
-        display(HTML("""
+        display( HTML("""
                 </div>
             </div>
         """))
