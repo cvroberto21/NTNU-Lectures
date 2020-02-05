@@ -333,7 +333,7 @@ class JBMagics(Magics):
 
         if (out):
             if io.stdout != "":
-                display( io.stdout )
+                display( Pretty( io.stdout ) )
                 # # print("Adding output", io.stdout)
                 # h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
                 # h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
@@ -363,7 +363,7 @@ class JBMagics(Magics):
             self.shell.user_ns[args.output] = html
 
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
-        print('**HTML***', slide.html )
+        #print('**HTML***', slide.html )
         # print(t)
         # display(HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' + '\n'))
         # display(HTML("""
