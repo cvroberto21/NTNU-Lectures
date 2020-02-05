@@ -149,6 +149,7 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_html(self, line, cell):
+        print("cell_magic reveal_html called")
 
         display(HTML("""
         <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
@@ -193,7 +194,7 @@ class JBMagics(Magics):
     @cell_magic
     def reveal_rst(self, line, cell):
         print("cell_magic reveal_rst called")
-        
+
         display(HTML("""
         <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
         <script>
@@ -368,7 +369,7 @@ class JBMagics(Magics):
         #     <div class="reveal">
         #         <div class="slides">
         # """))
-        # display( HTML( slide.html ) )
+        display( HTML( slide.html ) )
         # display(HTML("""
         #         </div>
         #     </div>
