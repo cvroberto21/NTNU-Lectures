@@ -337,7 +337,7 @@ class JBMagics(Magics):
                 <div class="slides">
         """))
 
-        display( HTML( slide.html )
+        display( HTML( slide.html ) )
         display(HTML("""
                 </div>
             </div>
