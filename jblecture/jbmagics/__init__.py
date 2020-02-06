@@ -10,6 +10,7 @@ from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 from docutils import core, io
+import re
 
 from ..jbdocument import JBDocument
 

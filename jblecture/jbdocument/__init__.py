@@ -152,7 +152,20 @@ class JBDocument:
         print(assets)
         print("*** Assets ***")
         presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
+        presentation = self.updateAssets( presentation, cfg['ASSETS'] )        
         return presentation
+
+    def updateAssets( self, presentation, assets ):
+        for aName in assets:
+            a = assets[ aName ]
+            print( 'a',a, 'id', id )
+            for id in a.ids:
+                presentation = re.sub( 
+                    f'<span id="{id}" (?P<fmt>[^>]*)>(?P<data> [.\n]*)</span>', 
+                    f'<span id="{id}" (?P=fmt)>' + a.__repr_html_path__() + '</span>', 
+                    presentation 
+                )
+        return presentation        
 
     def createAssets( self, assets, rdir ):
         s = "var assets = {"

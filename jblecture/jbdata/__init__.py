@@ -336,7 +336,7 @@ class JBImage(JBData):
                 mode = "path"
             else:
                 mode = "inline"
-        mode = "inline"
+
         s = ""
         if mode == "url":
             s = self.__repr_html_url__( cls, style )
