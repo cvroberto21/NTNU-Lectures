@@ -101,7 +101,7 @@ def modUrl( url, tok ):
     if m:
         n = m.group('scheme') + "://" + m.group('user') + ':' + tok + '@' + m.group('host') + '/' + m.group('user') + '/' + m.group('repo')
         cfg['GITHUB_USER'] = m.group('user')
-        cfg['GITHUB_PAGES_URL' ] =  'https://{user}.github.io/{repo}'.format( user=m.group('user'), repo=m.group('repo')[:-4] )
+        cfg['GITHUB_PAGES_URL' ] =  'https://{user}.github.io/{repo}/'.format( user=m.group('user'), repo=m.group('repo')[:-4] )
     else:
         raise(Exception("Invalid URL Format"))
     return n

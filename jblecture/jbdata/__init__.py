@@ -359,7 +359,7 @@ class JBImage(JBData):
     #         newContent = self.__repr_html_url__()
     #     elif ( mode == "localhost" ):
     #         newContent = self.__repr_html_file__()
-    #     elif ( mode == "remote" ):
+    #     elif ( mode == "path" ):
     #         newContent = "<a id=\"dat-" + id + "\" href=\"" + self.getLocalName() + "\">" + self.name + "</a>"
     #     return newContent
 

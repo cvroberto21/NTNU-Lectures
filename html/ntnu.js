@@ -20,14 +20,14 @@ class JBData {
 
     updateAsset( id, mode ) {
         newContent = "";
-        if ( mode == "local" ) {
-            newContent = "<a id=\"dat-" + id + "\" href=\"file://" + this.getLocalName() + "\">" + this.name + "</a>";
+        if ( mode == "path" ) {
+            newContent = "<a id=\"dat-" + id + "\" href=\"" + this.getLocalName() + "\">" + this.name + "</a>";
         } else if ( mode == "url" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"" + this.url + "\">" + this.name + "</a>";
         } else if ( mode == "localhost" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"" + "http://localhost:8000/" + this.getLocalName() + "\">" + this.name + "</a>";
-        } else if ( mode == "remote" ) {
-            newContent = "<a id=\"dat-" + id + "\" href=\"" + this.getLocalName() + "\">" + this.name + "</a>";
+        } else if ( mode == "file" ) {
+            newContent = "<a id=\"dat-" + id + "\" href=\"file://" + this.getLocalName() + "\">" + this.name + "</a>";
         }
 
         console.log("JBData.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );
@@ -105,14 +105,14 @@ class JBVideo extends JBData {
 
     updateAsset( id, mode ) {
         var newContent = "";
-        if ( mode == "local" ) {
+        if ( mode == "path" ) {
             newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"" + this.getLocalName() + "\"/></video>";
         } else if ( mode == "url" ) {
             newContent = "<iframe id=\"vid-" + id + "\" src=\"" + this.url + "\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>/>";
         } else if ( mode == "localhost" ) {
             newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"" + "http://localhost:8000/" + this.getLocalName() + "\"/></video>";
-        } else if ( mode == "remote" ) {
-            newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"" + this.getLocalName() + "\"/></video>";
+        } else if ( mode == "file" ) {
+            newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"file://" + this.getLocalName() + "\"/></video>";
         }
         
         console.log("JBVideo.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );

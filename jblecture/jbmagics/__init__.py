@@ -149,7 +149,7 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_html(self, line, cell):
-        print("cell_magic reveal_html called")
+        #print("cell_magic reveal_html called")
 
         it = ""
         it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
@@ -165,11 +165,6 @@ class JBMagics(Magics):
         md = self.html_body(input_string=cell)
         it = ""
         it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
-        display(HTML("""
-            <div class="reveal">
-                <div class="slides">
-        """))
-
         display(HTML(self.instTemplate(it, {})))
 
     @cell_magic
@@ -304,7 +299,9 @@ class JBMagics(Magics):
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
         #print('**HTML***', slide.html )
 
-        display(HTML("""
+        html = ""
+
+        html = html + """
             <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
             <script>
                 (() => {
@@ -330,18 +327,22 @@ class JBMagics(Magics):
                 mathjax.Hub.Configured();
             })();
             </script>
-            """))
-        display( HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' ) )
-        display( HTML("""
+            """
+
+        html = html + '<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>'
+        html = html + """
             <div class="reveal">
                 <div class="slides">
-        """))
+        """
 
-        display( HTML( slide.html ) )
-        display( HTML("""
+        html = html + slide.html
+        
+        html = html + """
                 </div>
             </div>
-        """))
+        """
+
+        display ( HTML( html ) )
 
     @magic_arguments.magic_arguments()
     @magic_arguments.argument('--id', type=str, default='',
