@@ -160,7 +160,7 @@ class JBDocument:
             a = assets[ aName ]
             #print( 'a', a )
             for id in a.ids:
-                re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*)</span>', re.DOTALL)
+                re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
                 presentation = re.sub( 
                     re1, 
                     f'<span id="{id}" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
