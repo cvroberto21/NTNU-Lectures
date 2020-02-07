@@ -162,7 +162,7 @@ class JBDocument:
             for id in a.ids:
                 presentation = re.sub( 
                     r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*)</span>', 
-                    f'<span id="{id}" (?P=fmt)>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
+                    f'<span id="{id}" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
                     presentation 
                 )
         return presentation        
