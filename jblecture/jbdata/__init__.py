@@ -11,7 +11,7 @@ def genId( func ):
     @functools.wraps( func )
     def wrapperGenId( *args, **kwargs ):
         self = args[0]
-        print('args', args, 'kwargs', kwargs )
+        #print('args', args, 'kwargs', kwargs )
         id = None
         if 'id' in kwargs:
             id = kwargs['id']
@@ -83,7 +83,7 @@ class JBData:
             if lfname[-len(suffix)-1:] != "." + suffix:
                 lfname = lfname + "." + suffix
             data = JBData.sReadData(  lfname )
-            print('localFileStem',  lfname )
+            #print('localFileStem',  lfname )
             self.localFileStem = lfname[0:-len(suffix)-1]
         else:
             uploaded = files.upload()
@@ -231,7 +231,7 @@ class JBImage(JBData):
         elif suffix == "jpg" or suffix == "jpeg":
             atype = JBData.JBIMAGE_JPG
         else:
-            print('name', name, 'localFileStem', localFileStem, 'suffix', suffix)
+            #print('name', name, 'localFileStem', localFileStem, 'suffix', suffix)
             raise Exception("Unknown JBImage data type: " + suffix )
         super(JBImage, self).__init__(name, url, data, localFileStem, atype=atype, suffix=suffix)
         self.width = width
@@ -331,7 +331,7 @@ class JBImage(JBData):
     # Modes are None/"auto", "url", "localhost", "path", "inline", "file"
     
     def __repr_html__(self, cls = None, style=None, mode = None, *, id = None ):
-        print("JBImage.__repr_html__", 'mode', mode )
+        #print("JBImage.__repr_html__", 'mode', mode )
         if ( mode is None ) or ( mode == "auto" ) or ( mode == "" ):
             if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFileStem ):
                 mode = "localhost"
@@ -375,12 +375,6 @@ class JBVideo(JBData):
         self.width = width
         self.height = height
 
-    def __repr_html_file__(self, style=""):
-        return """<video controls>
-                    <source src="{src}" style="{style}">'
-                    </video>
-                 """.format(src=self.localFileStem, port=cfg['HTTP_PORT'], name=self.name, style=style)
-
     def readDataFromURL( self, url, localFileStem ):
         print('Reading video from', url)
         ydl_opts = {'outtmpl': localFileStem }
@@ -393,7 +387,7 @@ class JBVideo(JBData):
         return str(  p.expanduser().resolve() )
 
     @genId
-    def __repr_html__(self, cls = None, style=None, id=None ):
+    def __repr_html_url__(self, cls = None, style=None, id=None ):
         w = self.createWidthString()
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
@@ -402,14 +396,22 @@ class JBVideo(JBData):
         </span>\n'''.format(id=id, width=w, height=h, src=self.url, style=cs )
 
     @genId
-    def __repr_html_url__(self, cls = None, style=None, id=None ):
+    def __repr_html_path__(self, cls = None, style=None, id=None ):
         w = self.createWidthString()
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         return '''<span id="{id}" {style}>
            <video id="vid-{id}" controls>
            <source src="{src}"/>
-           </span>\n'''.format(id=id, width=w, height=h, src=self.url, style=cs )
+           </span>\n'''.format(id=id, width=w, height=h, src=rpath + "." + self.suffix, style=cs )
+
+    @genId
+    def __repr_html_localhost__(self, style=""):
+        return """<video controls>
+                    <source src="{src}" style="{style}">'
+                    </video>
+                 """.format(src=self.localFileStem, port=cfg['HTTP_PORT'], name=self.name, style=style)
 
     def createHeightString( self ):
         return JBImage.sCreateHeightString( self.height )
@@ -417,29 +419,31 @@ class JBVideo(JBData):
     def createWidthString( self ):
         return JBImage.sCreateWidthString( self.width )
 
-    # Modes are None/"auto", "url", "localhost", "path", "file"
-    def __repr_html__(self, cls = None, style=None, mode = None ):
+    # Modes are None/"auto", "url", "localhost", "path", "file", "inline?"
+    def __repr_html__(self, cls = None, style=None, mode = None, id = None ):
         if mode is None or mode == "auto":
             if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFileStem ):
                 mode = "localhost"
             elif self.url:
                 mode = "url"
-            elif self.localFileStem:
-                mode = "path"
+            # elif self.localFileStem:
+            #     mode = "path"
             else:
                 mode = "inline"
 
         s = ""
         if mode == "url":
-            s = self.__repr_html_url__( cls, style )
+            s = self.__repr_html_url__( cls, style, id = id )
         elif mode == "localhost":
-            s = self.__repr_html_localhost__( cls, style )
+            s = self.__repr_html_localhost__( cls, style, id = id )
         elif mode == "path":
-            s = self.__repr_html_path__( cls, style )
-        elif mode == "inline":
-            s = self.__repr_html_inline__(cls, style )
+            s = self.__repr_html_path__( cls, style, id = id )
+        # elif mode == "inline":
+        #     s = self.__repr_html_inline__(cls, style, id = id )
         elif mode == "file":
-            s = self.__repr_html_file__(cls, style )
+            s = self.__repr_html_file__(cls, style, id = id )
+        else:
+            raise Exception("JBVideo unknown mode", mode )
 
         return s
 
