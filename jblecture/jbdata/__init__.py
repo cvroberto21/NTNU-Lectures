@@ -421,7 +421,7 @@ class JBVideo(JBData):
 
     # Modes are None/"auto", "url", "localhost", "path", "file", "inline?"
     def __repr_html__(self, cls = None, style=None, mode = None, *, id = None ):
-        if (mode is None) or (mode == "auto") or ( mode = ""):
+        if (mode is None) or (mode == "auto") or ( mode == ""):
             if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFileStem ):
                 mode = "localhost"
             elif self.url:
