@@ -158,11 +158,10 @@ class JBDocument:
     def updateAssets( self, presentation, assets ):
         for aName in assets:
             a = assets[ aName ]
-            print( 'a', a )
+            #print( 'a', a )
             for id in a.ids:
-                print( 'id', id )
                 presentation = re.sub( 
-                    f'<span id="{id}" (?P<fmt>[^>]*)>(?P<data> [.\n]*)</span>', 
+                    r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*)</span>', 
                     f'<span id="{id}" (?P=fmt)>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
                     presentation 
                 )
