@@ -16,7 +16,7 @@ def runningContainer( container ):
         "{{.Image }} {{.ID }}",
     ]
 
-    running = None
+    running = []
     o = subprocess.check_output( cmd ).decode('utf-8')
     print("check", o, "container", container )
     for cl in o.splitlines():
@@ -25,9 +25,28 @@ def runningContainer( container ):
         print("img", img, "id", id )
         if img == container:
             print("Found container")
-            running = id
-            break
+            running.append(  id )
     return running
+
+def killAll( container ):
+    ids = runningContainer( container )
+    for id in ids:
+        cmd = [
+            "docker",
+            "container",
+            "stop",
+            id,
+        ]
+        o = subprocess.check_output( cmd ).decode('utf-8')
+        print("killAll", o, "container", container )
+        cmd = [
+            "docker",
+            "container",
+            "rm",
+            id,
+        ]
+        o = subprocess.check_output( cmd ).decode('utf-8')
+        print("killAll", o, "container", container )
 
 def main( argv = None ):
     if not argv:
@@ -40,6 +59,7 @@ def main( argv = None ):
     parser.add_argument("--client_port", default=8888)
     parser.add_argument("--command", default="lab")
     parser.add_argument("--local", action="store_true", default=False)
+    parser.add_argument("--kill", action="store_true", default=False)
 
     args = parser.parse_args( argv )
     
@@ -59,10 +79,13 @@ def main( argv = None ):
 
     if (args.local):
         args.container = args.container + ":local"
-        
-    id = runningContainer( args.container )
-    print("id", id)
-    if not id:
+    
+    if ( args.kill ):
+        killAll( args.container )
+
+    ids = runningContainer( args.container )
+    print("id", ids)
+    if len( ids ) == 0:
         cmd = [
             "docker",
             "run",
@@ -80,7 +103,7 @@ def main( argv = None ):
             "exec",
             "-i",
             "-t",
-            '' + str( id ) +'',       
+            '' + str( ids[0] ) +'',       
         ]   
 
     cmd.extend( cmdExec )

@@ -7,15 +7,15 @@ var atype = {
 };
 
 class JBData {
-    constructor( name, url=None, data=None, localFile=None, mytype = JBData.atype.JBDATA, suffix="dat" ) {
+    constructor( name, url=None, data=None, localFileStem=None, mytype = JBData.atype.JBDATA, suffix="dat" ) {
         this.mytype = mytype;
         this.name = name;
         this.url = url;
         this.data = data;
-        this.localFile = localFile;
+        this.localFileStem = localFileStem;
         this.suffix = suffix;
 
-        console.log("JBData(" + name + "," + url + "," + localFile + ")" );
+        console.log("JBData(" + name + "," + url + "," + localFileStem + ")" );
     }
 
     updateAsset( id, mode ) {
@@ -35,32 +35,32 @@ class JBData {
     }
     
     getLocalName() {
-        return this.localFile + "." + this.suffix
+        return this.localFileStem + "." + this.suffix
     }
 }
 
 JBData.atype = atype;
 
 class JBImage extends JBData {
-    constructor( name, width, height, url=null, data=null, localFile=None, suffix = null ) {
+    constructor( name, width, height, url=null, data=null, localFileStem=None, suffix = null ) {
         var lfLen = 0;
         if (suffix == null ) {
-            if (localFile != null ) {
-                lfLen = localFile.length;
-                if ( ( lfLen - 4 >= 0 ) && ( localFile. substring( lfLen - 4, lfLen ) == ".png" ) ) {
+            if (localFileStem != null ) {
+                lfLen = localFileStem.length;
+                if ( ( lfLen - 4 >= 0 ) && ( localFileStem. substring( lfLen - 4, lfLen ) == ".png" ) ) {
                     suffix = "png";
-                } else if ( ( lfLen - 4 >= 0 ) && ( localFile. substring( lfLen - 4, lfLen ) == ".svg" ) ) {
+                } else if ( ( lfLen - 4 >= 0 ) && ( localFileStem. substring( lfLen - 4, lfLen ) == ".svg" ) ) {
                     suffix = "svg";
-                } else if ( ( lfLen - 4 >= 0 ) && ( localFile. substring( lfLen - 4, lfLen ) == ".jpg" ) ) {
+                } else if ( ( lfLen - 4 >= 0 ) && ( localFileStem. substring( lfLen - 4, lfLen ) == ".jpg" ) ) {
                     suffix = "jpg";
-                } else if ( (lfLen - 5 >= 0 ) && ( localFile. substring( lfLen -5, lfLen ) == ".jpeg" ) ) { 
+                } else if ( (lfLen - 5 >= 0 ) && ( localFileStem. substring( lfLen -5, lfLen ) == ".jpeg" ) ) { 
                     suffix = "jpeg";
                 }
             }
         }
 
-        if ( ( localFile != null ) && ( lfLen - suffix.length - 1 >= 0 ) && ( localFile.substring( lfLen - suffix.length - 1, lfLen ) == "." + suffix  ) ) {
-            localFile = localFile.substring( 0, lfLen - suffix.length - 1 );
+        if ( ( localFileStem != null ) && ( lfLen - suffix.length - 1 >= 0 ) && ( localFileStem.substring( lfLen - suffix.length - 1, lfLen ) == "." + suffix  ) ) {
+            localFileStem = localFileStem.substring( 0, lfLen - suffix.length - 1 );
         }
 
         var mytype = null;
@@ -71,10 +71,10 @@ class JBImage extends JBData {
         } else if ( ( suffix == "jpg") || ( suffix == "jpeg" ) ) {
             mytype = JBData.atype.JBIMAGE_JPG;
         } 
-        super( name, url, data, localFile, mytype, suffix );
+        super( name, url, data, localFileStem, mytype, suffix );
         this.width = width;
         this.height = height;
-        console.log("JBImage(" + name + "," + url + "," + localFile + "." + suffix + ")" );
+        console.log("JBImage(" + name + "," + url + "," + localFileStem + "." + suffix + ")" );
     }
 
     // modes are null/"auto", "url", "localhost", "path", "inline", "file"
@@ -96,11 +96,11 @@ class JBImage extends JBData {
 }
 
 class JBVideo extends JBData {
-    constructor( name, width, height, url=None, data=None, localFile=None ) {
-        super( name, url, data, localFile, JBData.atype.JBVIDEO, "mp4");
+    constructor( name, width, height, url=None, data=None, localFileStem=None ) {
+        super( name, url, data, localFileStem, JBData.atype.JBVIDEO, "mp4");
         this.width = width;
         this.height = height;
-        console.log("JBVideo(" + name + "," + url + "," + localFile + ")" );
+        console.log("JBVideo(" + name + "," + url + "," + localFileStem + ")" );
     }
 
     updateAsset( id, mode ) {

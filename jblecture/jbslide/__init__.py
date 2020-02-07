@@ -25,7 +25,7 @@ class JBSlide:
         doc = html.render( stylesheets = [ css ] )
         png, width, height = doc.write_png( target=None )
         from ..jbdata import JBImage
-        img = JBImage( self.id, width, height, data = png, localFile= cfg['ROOT_DIR'] / self.getImageFileName() )
+        img = JBImage( self.id, width, height, data = png, localFileStem= cfg['ROOT_DIR'] / self.getImageFileName() )
         return img
 
     def getImageFileName( self ):

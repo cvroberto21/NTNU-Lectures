@@ -158,11 +158,12 @@ class JBDocument:
     def updateAssets( self, presentation, assets ):
         for aName in assets:
             a = assets[ aName ]
-            print( 'a',a, 'id', id )
+            print( 'a', a )
             for id in a.ids:
+                print( 'id', id )
                 presentation = re.sub( 
                     f'<span id="{id}" (?P<fmt>[^>]*)>(?P<data> [.\n]*)</span>', 
-                    f'<span id="{id}" (?P=fmt)>' + a.__repr_html_path__() + '</span>', 
+                    f'<span id="{id}" (?P=fmt)>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
                     presentation 
                 )
         return presentation        
@@ -179,7 +180,7 @@ class JBDocument:
                 s = s + ","
             s = s + "\n"
             s = s + f'"{a.name}" : '
-            rpath = str( pathlib.Path(a.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+            rpath = str( pathlib.Path(a.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
 
             if ( a.type == JBData.JBIMAGE_PNG ) or ( a.type == JBData.JBIMAGE_SVG ) or ( a.type == JBData.JBIMAGE_JPG ):
                 if a.type == JBData.JBIMAGE_PNG:
