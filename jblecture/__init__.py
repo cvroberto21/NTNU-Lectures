@@ -331,6 +331,18 @@ def addJBData( name, url=None, data=None, localFileStem=None, suffix="dat" ):
     cfg['ASSETS'][dat.name] = dat
     return dat
 
+def addJBFigure( name, width, height, fig, suffix = "svg" ):
+    if suffix == "svg":
+        img = createSVGImageFromFigure( fig )
+        f = addJBImage( name, width, height, data = img.encode('utf-8'), suffix = "svg" )
+    elif suffix == "png":
+        img = createBase64ImageFromFigure( fig )
+        f = addJBImage( name, width, height, data = img, suffix = "png" )
+    else:
+        raise Exception( "addJBFigure unknown suffix " + suffix )
+
+    return f
+
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
