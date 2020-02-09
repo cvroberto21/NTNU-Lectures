@@ -42,6 +42,10 @@ class Slide:
 
     def addChild( self, sl ):
         self.children.append( sl )
+    
+    def __repr__(self):
+        s = f"Slide {self.id}\nHTML:\n{self.html}\nDialog:\n{self.dialog}"
+        return s
 
 class MGDocParser():
     def __init__(self):
@@ -111,19 +115,16 @@ class MGDocParser():
 
         with cd( slideDir ):
             stack = [ s for s in self.root.children ]
-            first = True
             while len(stack) > 0:
                 n = stack.pop()
-                if not first:
-                    id = n.id
-                else:
-                    id = 'Start'
-                if n.dialog:
-                    fname = id + ".js"
+                print('Slide', n)
+                if n.dialog or n.html:
+                    fname = n.id + ".js"
                     print('Writing file', fname )
                     with open( fname, "w" ) as f:
                         s = """
 script["{id}"] = [
+{html}
 {dialog}
 ]
                         """.format( dialog=self.dialogToStr( n.dialog ), id=n.id )

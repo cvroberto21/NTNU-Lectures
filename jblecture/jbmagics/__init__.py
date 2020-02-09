@@ -237,7 +237,7 @@ class JBMagics(Magics):
                 args.id = args.id[1:]
             if args.id[-1] == '"' or args.id[-1] == "'":
                 args.id = args.id[0:-1]
-            
+
         if (args.style):
             if args.style[0] == '"' or args.style[0] == "'":
                 args.style = args.style[1:]
@@ -254,7 +254,7 @@ class JBMagics(Magics):
         with capture_output(out, err, disp) as io:
             self.shell.run_cell(s)
 
-        html = '<div class="{cls}" id="{id}">\n'.format(cls="jb-slide", id=args.id)
+        html = '<div class="{cls}">\n'.format(cls="jb-slide")
 
         # print(args.echo)
         if (args.echo):
