@@ -81,7 +81,12 @@ class JBImage extends JBData {
     updateAsset( id, mode ) {
         var newContent = "";
         if ( mode == "path" ) {
-            newContent = "<img id=\"img-" + id + "\" src=\"" + this.getLocalName() + "\"/>";
+            if ( this.atype == "svg" ) {
+//                newContent = "<object id=\"img-" + id + "\"" + " type=\"image/svg+xml\"" + " data=\"" + this.getLocalName() + "\"></object>";
+                newContent = "<img id=\"img-" + id + "\" src=\"" + this.getLocalName() + "\"/>";
+            } else {
+                newContent = "<img id=\"img-" + id + "\" src=\"" + this.getLocalName() + "\"/>";
+            }
         } else if ( mode == "url" ) {
             newContent = "<img id=\"img-" + id + "\" src=\"" + this.url + "\"/>";
         } else if ( mode == "localhost" ) {

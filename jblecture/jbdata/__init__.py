@@ -251,7 +251,12 @@ class JBImage(JBData):
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
-        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+        if self.atype == JBData.JBIMAGE_SVG:
+#            s = '<span id="{id}" {style}><object type="image/svg+xml" id="img-{id}" {width} {height} data="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+            s = '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+        else:
+            s = '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+        return s
 
     @genId
     def __repr_html_file__(self, cls = None, style=None, *, id=None ):
