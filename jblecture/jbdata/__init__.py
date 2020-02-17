@@ -59,7 +59,7 @@ class JBData:
         self.name = name
         self.data = None
         self.ids = []
-        self.type = atype
+        self.atype = atype
 
         if suffix and suffix[0] == ".":
             suffix = suffix[1:]
@@ -301,7 +301,7 @@ class JBImage(JBData):
 
     def __repr_html_inline__( self, cls = None, style = None, *, id = None ):
         s = ""
-        if ( self.type == JBData.JBIMAGE_SVG ):
+        if ( self.atype == JBData.JBIMAGE_SVG ):
             s = self.__repr_html_svg__( cls, style, id=id )
         else:
             s = self.__repr_html_base64__( cls, style, id=id )
