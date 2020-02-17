@@ -297,7 +297,7 @@ def fetchRenpyData( cfg ):
     copy_tree( str( src / "images" / "Characters" ), str( cfg['RENPY_IMAGES_DIR'] / "characters" ) )
 
 def fetchMGData( cfg ):
-    updateGit( cfg, "https://github.com/Monogatari/Monogatari.git", "Monogatari", "", cfg['ORIG_ROOT'] )
+    updateGit( cfg, "https://github.com/cvroberto21/Monogatari", "Monogatari", "develop", cfg['ORIG_ROOT'] )
     copy_tree( str( cfg['ORIG_ROOT'] / "Monogatari" / "dist" ), str( cfg['MG_GAME_DIR'] ) ) 
             
 def load_ipython_extension(ipython):
