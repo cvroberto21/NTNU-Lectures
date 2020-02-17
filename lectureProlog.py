@@ -91,10 +91,10 @@ node = platform.node()
 import jblecture
 jblecture.load_ipython_extension( get_ipython() )
 
-from jblecture import addJBImage, addJBVideo, addJBData
+from jblecture import addJBImage, addJBVideo, addJBData, addJBFigure
 from jblecture import createTable
 from jblecture import instTemplate
-from jblecture import _a, createBase64ImageFromFigure, createSVGImageFromFigure
+from jblecture import _a
 from jblecture import cfg
 from jblecture import downloadDir, zipDirectory
 from IPython.core.display import display, HTML, Math
@@ -137,7 +137,7 @@ def finalize():
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
     if jblecture.jbgithub.createGitHub( cfg['TITLE'], cfg['ROOT_DIR']):
         print("Successful upload of presentation")
-        print("You can access presentation at " + cfg['GITHUB_PAGES_URL'] )
+        print("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
     else:
         print("Upload of presentation failed")
 

@@ -10,6 +10,7 @@ from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 from docutils import core, io
+import re
 
 from ..jbdocument import JBDocument
 
@@ -149,7 +150,7 @@ class JBMagics(Magics):
 
     @cell_magic
     def reveal_html(self, line, cell):
-        print("cell_magic reveal_html called")
+        #print("cell_magic reveal_html called")
 
         it = ""
         it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
@@ -165,11 +166,6 @@ class JBMagics(Magics):
         md = self.html_body(input_string=cell)
         it = ""
         it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
-        display(HTML("""
-            <div class="reveal">
-                <div class="slides">
-        """))
-
         display(HTML(self.instTemplate(it, {})))
 
     @cell_magic
@@ -241,7 +237,7 @@ class JBMagics(Magics):
                 args.id = args.id[1:]
             if args.id[-1] == '"' or args.id[-1] == "'":
                 args.id = args.id[0:-1]
-            
+
         if (args.style):
             if args.style[0] == '"' or args.style[0] == "'":
                 args.style = args.style[1:]
@@ -258,7 +254,7 @@ class JBMagics(Magics):
         with capture_output(out, err, disp) as io:
             self.shell.run_cell(s)
 
-        html = '<div class="{cls}" id="{id}">\n'.format(cls="jb-slide", id=args.id)
+        html = '<div class="{cls}">\n'.format(cls="jb-slide")
 
         # print(args.echo)
         if (args.echo):
@@ -304,7 +300,9 @@ class JBMagics(Magics):
         slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
         #print('**HTML***', slide.html )
 
-        display(HTML("""
+        html = ""
+
+        html = html + """
             <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
             <script>
                 (() => {
@@ -330,18 +328,22 @@ class JBMagics(Magics):
                 mathjax.Hub.Configured();
             })();
             </script>
-            """))
-        display( HTML('<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>' ) )
-        display( HTML("""
+            """
+
+        html = html + '<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>'
+        html = html + """
             <div class="reveal">
                 <div class="slides">
-        """))
+        """
 
-        display( HTML( slide.html ) )
-        display( HTML("""
+        html = html + slide.html
+        
+        html = html + """
                 </div>
             </div>
-        """))
+        """
+
+        display ( HTML( html ) )
 
     @magic_arguments.magic_arguments()
     @magic_arguments.argument('--id', type=str, default='',

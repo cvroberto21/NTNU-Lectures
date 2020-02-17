@@ -152,7 +152,21 @@ class JBDocument:
         print(assets)
         print("*** Assets ***")
         presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
+        presentation = self.updateAssets( presentation, cfg['ASSETS'] )        
         return presentation
+
+    def updateAssets( self, presentation, assets ):
+        for aName in assets:
+            a = assets[ aName ]
+            #print( 'a', a )
+            for id in a.ids:
+                re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
+                presentation = re.sub( 
+                    re1, 
+                    f'<span id="{id}" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
+                    presentation 
+                )
+        return presentation        
 
     def createAssets( self, assets, rdir ):
         s = "var assets = {"
@@ -166,7 +180,7 @@ class JBDocument:
                 s = s + ","
             s = s + "\n"
             s = s + f'"{a.name}" : '
-            rpath = str( pathlib.Path(a.localFile).relative_to(cfg['REVEAL_DIR'] ) )
+            rpath = str( pathlib.Path(a.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
 
             if ( a.type == JBData.JBIMAGE_PNG ) or ( a.type == JBData.JBIMAGE_SVG ) or ( a.type == JBData.JBIMAGE_JPG ):
                 if a.type == JBData.JBIMAGE_PNG:

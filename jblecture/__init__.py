@@ -80,10 +80,10 @@ defaults['REVEAL_SLIDE_TEMPLATE'] = """
 
 defaults['REVEAL_SLIDE_FOOTER'] = """
 <div class="jb-footer-left">
-    {{ cfg['ASSETS']['logo'](cls="jb-footer-left-img plain", style="") }}
+    {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain", style="" ) }}
 </div>
 <div class="jb-footer-right">
-    {{ cfg['ASSETS']['robbi'](cls="jb-footer-right-img plain") }}
+    {{ cfg['ASSETS']['robbi']( cls="jb-footer-right-img plain" ) }}
 </div>
 """
 
@@ -234,10 +234,10 @@ def createEnvironment( params = {} ):
 
     cfg['ASSETS'] = {}
 
-    cfg['ASSETS']['robbi'] = jbdata.JBImage( name = 'robbi', width=162, height=138, localFile= str( cfg['REVEAL_IMAGES_DIR']  / "robbi" ), suffix="png" )
-    cfg['ASSETS']['logo'] = jbdata.JBImage( name = 'logo', width=0, height=0, localFile= str( cfg['REVEAL_IMAGES_DIR'] / "logo" ), suffix="png" )
-    cfg['ASSETS']['fira-logo-1'] = jbdata.JBImage( name = 'fira-logo-1', width=0, height=0, localFile= str( cfg['REVEAL_IMAGES_DIR'] / "FIRA-logo-1"), suffix="png" )
-    cfg['ASSETS']['pairLogo'] = jbdata.JBImage( name = 'pairLogo', width=0, height=0, localFile= str( cfg['REVEAL_IMAGES_DIR'] / "pairLogo" ), suffix="png" )
+    cfg['ASSETS']['robbi'] = jbdata.JBImage( name = 'robbi', width=162, height=138, localFileStem= str( cfg['REVEAL_IMAGES_DIR']  / "robbi" ), suffix="png" )
+    cfg['ASSETS']['logo'] = jbdata.JBImage( name = 'logo', width=0, height=0, localFileStem= str( cfg['REVEAL_IMAGES_DIR'] / "logo" ), suffix="png" )
+    cfg['ASSETS']['fira-logo-1'] = jbdata.JBImage( name = 'fira-logo-1', width=0, height=0, localFileStem= str( cfg['REVEAL_IMAGES_DIR'] / "FIRA-logo-1"), suffix="png" )
+    cfg['ASSETS']['pairLogo'] = jbdata.JBImage( name = 'pairLogo', width=0, height=0, localFileStem= str( cfg['REVEAL_IMAGES_DIR'] / "pairLogo" ), suffix="png" )
 
     ratio = 1.0
     cssStr = """
@@ -297,7 +297,7 @@ def fetchRenpyData( cfg ):
     copy_tree( str( src / "images" / "Characters" ), str( cfg['RENPY_IMAGES_DIR'] / "characters" ) )
 
 def fetchMGData( cfg ):
-    updateGit( cfg, "https://github.com/Monogatari/Monogatari.git", "Monogatari", "", cfg['ORIG_ROOT'] )
+    updateGit( cfg, "https://github.com/cvroberto21/Monogatari", "Monogatari", "develop", cfg['ORIG_ROOT'] )
     copy_tree( str( cfg['ORIG_ROOT'] / "Monogatari" / "dist" ), str( cfg['MG_GAME_DIR'] ) ) 
             
 def load_ipython_extension(ipython):
@@ -316,20 +316,32 @@ def load_ipython_extension(ipython):
     ipython.register_magics(magics)
 
 # Functions that should be exported
-def addJBImage( name, width, height, url=None, data=None, localFile=None, suffix=None ):
-    img = jbdata.JBImage( name, width, height, url, data, localFile, suffix )
+def addJBImage( name, width, height, url=None, data=None, localFileStem=None, suffix=None ):
+    img = jbdata.JBImage( name, width, height, url, data, localFileStem, suffix )
     cfg['ASSETS'][img.name] = img
     return img
 
-def addJBVideo( name, width, height, url=None, data=None, localFile=None, suffix=None ):
-    vid = jbdata.JBVideo( name, width, height, url, data, localFile, suffix )
+def addJBVideo( name, width, height, url=None, data=None, localFileStem=None, suffix=None ):
+    vid = jbdata.JBVideo( name, width, height, url, data, localFileStem, suffix )
     cfg['ASSETS'][vid.name] = vid
     return vid
 
-def addJBData( name, url=None, data=None, localFile=None, suffix="dat" ):
-    dat = jbdata.JBData( name, url, data, localFile, suffix )
+def addJBData( name, url=None, data=None, localFileStem=None, suffix="dat" ):
+    dat = jbdata.JBData( name, url, data, localFileStem, suffix )
     cfg['ASSETS'][dat.name] = dat
     return dat
+
+def addJBFigure( name, width, height, fig, suffix = "svg" ):
+    if suffix == "svg":
+        img = createSVGImageFromFigure( fig )
+        f = addJBImage( name, width, height, data = img.encode('utf-8'), suffix = "svg" )
+    elif suffix == "png":
+        img = createBase64ImageFromFigure( fig )
+        f = addJBImage( name, width, height, data = img, suffix = "png" )
+    else:
+        raise Exception( "addJBFigure unknown suffix " + suffix )
+
+    return f
 
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
