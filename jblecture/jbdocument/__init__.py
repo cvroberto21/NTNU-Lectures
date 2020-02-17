@@ -182,18 +182,18 @@ class JBDocument:
             s = s + f'"{a.name}" : '
             rpath = str( pathlib.Path(a.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
 
-            if ( a.type == JBData.JBIMAGE_PNG ) or ( a.type == JBData.JBIMAGE_SVG ) or ( a.type == JBData.JBIMAGE_JPG ):
-                if a.type == JBData.JBIMAGE_PNG:
+            if ( a.atype == JBData.JBIMAGE_PNG ) or ( a.atype == JBData.JBIMAGE_SVG ) or ( a.atype == JBData.JBIMAGE_JPG ):
+                if a.atype == JBData.JBIMAGE_PNG:
                     suffix = "png"
-                elif a.type == JBData.JBIMAGE_SVG:
+                elif a.atype == JBData.JBIMAGE_SVG:
                     suffix = "svg"
-                elif a.type == JBData.JBIMAGE_JPG:
+                elif a.atype == JBData.JBIMAGE_JPG:
                     suffix = a.suffix
                 else:
                     raise Exception("Unknown JBImage Type")
 
                 s = s + f'new JBImage( "{a.name}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }", "{suffix}" )'
-            elif ( a.type == JBData.JBVIDEO ):
+            elif ( a.atype == JBData.JBVIDEO ):
                 s = s + f'new JBVideo( "{a.name}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }" )'
 
             for id in a.ids:
