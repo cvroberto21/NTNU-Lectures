@@ -46,7 +46,7 @@ class Slide:
         self.children.append( sl )
     
     def __repr__(self):
-        s = f"Slide {self.id}\nnext:{self.next}\nHTML:\n{self.html}\nDialog:\n{self.dialog}"
+        s = f'Slide {self.id}\nnext:{self.next}\nHTML:\n{self.html}\nDialog:\n{self.dialog}'
         return s
 
 class MGDocParser():
@@ -125,12 +125,13 @@ class MGDocParser():
         return s
 
     def writeMGDirectory( self, mgRoot ):
-
-        lstyles = []
+        print("ROOT", self.revealRoot)
         for s in self.styles:
-            shutil.copyfile( s, mgRoot / "css" / s.name )
-            lstyles.append( mgRoot / "css" / s.name )
-        self.lstyles = lstyles
+            rp = self.revealRoot / s['href']
+            mp = mgRoot / s['href'] 
+            mp.parent.mkdir(parents = True, exist_ok=True)
+            print("s", s,  s.href, str( self.revealRoot / s['href'] ) )
+            shutil.copyfile( str( rp ), str( mp ) )
         
         slideDir = mgRoot / "dialog"
         slideDir.mkdir( parents = True, exist_ok = True )
@@ -150,7 +151,7 @@ class MGDocParser():
                     if n.dialog:
                         dialog = self.dialogToStr( n.dialog.splitlines() )
                     else:
-                        dialog = ""
+                        dialog = '"pause"'
                     print("DIA", type(n.dialog), n.dialog, dialog )
 
                     if not n.next:
@@ -163,7 +164,11 @@ class MGDocParser():
                         s = """
 monogatari.asset('scenes', 'scene-{id}',
    [ "", `
+   <div class="reveal">
+   <div class="slides">
    {html}
+   </div>
+   </div>
    `]
 );
 
@@ -185,7 +190,7 @@ monogatari.script()["{id}"] = [
         for lnk in self.soup.find_all("link"):
             print('rel', lnk['rel'] )
             if lnk['rel'] == ["stylesheet"]:
-                styles.append( self.mgRoot / lnk['href'] )
+                styles.append( lnk )
         self.styles = styles
 
         return styles
@@ -268,7 +273,6 @@ def main( args = None ):
     
     parser.printTree( )
     parser.writeMGDirectory( mgRoot )
-    print('Styles', styles )
     
 if __name__ == "__main__":
     cwd = pathlib.Path(".").resolve()

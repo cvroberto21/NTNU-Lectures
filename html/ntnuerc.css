@@ -311,6 +311,8 @@ body {
 .jb-slide {
   text-align: center;
   background-color: var(--global-bg-color);
+  width: 100%;
+  height: 100%
 }
 
 .jb-center {

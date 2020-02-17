@@ -197,7 +197,7 @@ def createEnvironment( params = {} ):
     updateGit( cfg, "https://github.com/hakimel/reveal.js.git", "reveal.js", "", cfg['ROOT_DIR'] )
 
     # 'decktape',
-    for pkg in [  'scenejs' ]:            
+    for pkg in []: #[  'scenejs' ]:            
         with JBcd( cfg['REVEAL_DIR']  ):
             print( f"Executing npm install {pkg}" )
             o = None
