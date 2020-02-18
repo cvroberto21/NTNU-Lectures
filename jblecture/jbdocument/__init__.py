@@ -163,7 +163,7 @@ class JBDocument:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
                 presentation = re.sub( 
                     re1, 
-                    f'<span id="{id}" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + '</span>', 
+                    r'<span id="{' + id + r'" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + r'</span>', 
                     presentation 
                 )
         return presentation        

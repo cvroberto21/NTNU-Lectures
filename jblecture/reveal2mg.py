@@ -46,31 +46,38 @@ class Slide:
         self.children.append( sl )
     
     def __repr__(self):
-        s = f'Slide {self.id}\nnext:{self.next}\nHTML:\n{self.html}\nDialog:\n{self.dialog}'
+        s = f'id:{self.id} next:{self.next}\nHTML:\n{self.html}\nDialog:\n{self.dialog}'
         return s
 
 class MGDocParser():
-    def __init__( self, revealRoot, mgRoot ):
+    def __init__( self, revealRoot ):
         self.revealRoot = pathlib.Path( revealRoot )
-        self.mgRoot = pathlib.Path( mgRoot )
 
         self.slides = []
         self.soup = None
         self.root = None
 
     def parseIndex0( self, root, soup ):
-        for c in soup.find_all("section"):
-            print('Found slide', c['id'] )
-            slide = c.find( "div", class_ = "jb-slide")
-            if ( slide ):
-                html = slide
-                d = c.find( "aside", class_ = "notes" )
-                if ( d ):
-                    dialog = self.parseRenpy( d.get_text() )
-                    # print("*** dialog", type(dialog), dialog )
+        prev = None
+        for slide in soup.find_all("section"):
+            print('Found slide', slide['id'] )
+
+            html = []
+            dialog = []
+            for c in slide.find_all( recursive = False ):
+                print("Soup c", c.name)
+                if c.name != "aside":
+                    html.append( str(c) )
                 else:
-                    dialog = ""
-                root.addChild( self.parseIndex0( Slide( c['id'], html, "\n".join(dialog) ), slide ) )
+                    dialog.extend( self.parseRenpy( c.get_text() ) )
+            print('HTML', html)
+            print('dialog', dialog)
+            sl = Slide( slide['id'], "\n".join( html ), "\n".join(dialog) )
+            if prev:
+                prev.next = sl.id
+            root.addChild( self.parseIndex0( sl, slide ) )
+            self.slides.append( sl )
+            prev = sl
         return root
 
     def parseIndex( self ):
@@ -124,6 +131,30 @@ class MGDocParser():
             s = s + "\n"
         return s
 
+    def copyAssets(self, mgRoot ):
+        copy_tree( str( self.revealRoot / "assets" ), str( mgRoot / "assets" ) )
+
+    def patchMGIndex( self, fname ):
+        with open( fname, "r" ) as f:
+            index = f.readlines()
+
+        for i,line in enumerate( index ):
+            if re.match( '\s*<link rel="stylesheet" href="./style/main.css">\s*', line ):
+                print("Inserting stylesheets at index", i)
+                for s in self.styles:
+                    index.insert( i+1, '        <link rel="stylesheet" href="{href}">\n'.format(href=s['href']))
+
+        for i,line in enumerate( index ):
+            if re.match( '\s*<script src="./js/main.js"></script>\s*', line ):
+                print("Inserting scenes at index", i)
+                for s in self.slides:
+                    index.insert( i+1, '        <script src="./scenes/{d}.js"></script>\n'.format(d=s.id))
+
+        with open( fname, "w" ) as f:
+            f.writelines( index )
+
+        return index
+
     def writeMGDirectory( self, mgRoot ):
         print("ROOT", self.revealRoot)
         for s in self.styles:
@@ -133,12 +164,14 @@ class MGDocParser():
             print("s", s,  s.href, str( self.revealRoot / s['href'] ) )
             shutil.copyfile( str( rp ), str( mp ) )
         
-        slideDir = mgRoot / "dialog"
+        slideDir = mgRoot / "scenes"
         slideDir.mkdir( parents = True, exist_ok = True )
-        dialogFiles = []
+        sceneFiles = []
 
         with cd( slideDir ):
             stack = [ s for s in self.root.children ]
+            stack.reverse()
+
             while len(stack) > 0:
                 n = stack.pop()
                 print('Slide', n)
@@ -151,10 +184,10 @@ class MGDocParser():
                     if n.dialog:
                         dialog = self.dialogToStr( n.dialog.splitlines() )
                     else:
-                        dialog = '"pause"'
+                        dialog = self.dialogToStr( [ "pause" ] )
                     print("DIA", type(n.dialog), n.dialog, dialog )
 
-                    if not n.next:
+                    if n.next:
                         nxt = n.next
                     else:
                         nxt = "Start"
@@ -180,10 +213,12 @@ monogatari.script()["{id}"] = [
                         """.format( dialog=dialog, html=html, id=n.id, next=nxt )
                         f.write( s )
                         
-                        dialogFiles.append( slideDir / fname )
+                        sceneFiles.append( slideDir / fname )
 
-                for c in n.children:
-                    stack.append(c)       
+                for i in range( len(n.children) - 1, -1, -1 ):
+                    stack.append( n.children[i] )
+        self.copyAssets( mgRoot )       
+        self.patchMGIndex( mgRoot / "index.html" )
 
     def parseStyleSheets( self ):
         styles = []
@@ -268,7 +303,7 @@ def main( args = None ):
     revealRoot = pathlib.Path( args[0] )
     mgRoot = pathlib.Path( args[1] )
     fetchMGData( pathlib.Path(".."), args[1] )    
-    parser = MGDocParser( revealRoot, mgRoot )
+    parser = MGDocParser( revealRoot )
     parser.parseRevealDir( )
     
     parser.printTree( )
