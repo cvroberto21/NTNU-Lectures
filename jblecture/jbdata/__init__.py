@@ -402,6 +402,7 @@ class JBVideo(JBData):
 
     @genId
     def __repr_html_path__(self, cls = None, style=None, id=None ):
+        style['pointer-select'] = 'all'
         w = self.createWidthString()
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
