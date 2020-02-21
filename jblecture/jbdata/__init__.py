@@ -402,7 +402,7 @@ class JBVideo(JBData):
 
     @genId
     def __repr_html_path__(self, cls = None, style=None, id=None ):
-        style['pointer-select'] = 'all'
+        #style['pointer-select'] = 'all'
         w = self.createWidthString()
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
@@ -477,6 +477,7 @@ class JBVideo(JBData):
         s = ""
         s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
         return s
+
 def createEnvironment( mycfg ):
     global cfg
     cfg = mycfg
