@@ -466,6 +466,17 @@ class JBVideo(JBData):
 
         return s
 
+    def encodeMIME( self ):
+        if ( self.suffix == "mp4" ) or ( self.suffix == "m4a" ) or ( self.suffix == "m4p" ) or ( self.suffix == "m4b" ) or ( self.suffix == "m4a" ) or ( self.suffix == "m4v" ):
+            tag = "data:video/mp4;"
+        elif self.suffix == "ogg":
+            tag = "data:video/ogg;"
+        elif self.suffix == "webm":
+            tag = "data:video/webm;"
+
+        s = ""
+        s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
+        return s
 def createEnvironment( mycfg ):
     global cfg
     cfg = mycfg
