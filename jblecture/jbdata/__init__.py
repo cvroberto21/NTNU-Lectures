@@ -419,6 +419,19 @@ class JBVideo(JBData):
                     </video>
                  """.format(src=self.localFileStem, port=cfg['HTTP_PORT'], name=self.name, style=style)
 
+    @genId
+    def __repr_html_base64__(self, cls = None, style=None, id=None ):
+        style['pointer-select'] = 'all'
+        w = self.createWidthString()
+        h = self.createHeightString()
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        mime = self.encodeMIME( )
+        rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
+        return '''<span id="{id}" {style}>
+           <video id="vid-{id}" controls>
+           <source src="{src}"/>
+           </span>\n'''.format(id=id, width=w, height=h, src=mime, style=cs )
+
     def createHeightString( self ):
         return JBImage.sCreateHeightString( self.height )
     
@@ -445,7 +458,7 @@ class JBVideo(JBData):
         elif mode == "path":
             s = self.__repr_html_path__( cls, style, id = id )
         elif mode == "inline":
-            s = self.__repr_html_inline__(cls, style, id = id )
+            s = self.__repr_html_base64__(cls, style, id = id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id = id )
         else:
