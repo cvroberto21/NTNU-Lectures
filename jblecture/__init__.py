@@ -80,7 +80,7 @@ defaults['REVEAL_SLIDE_TEMPLATE'] = """
 
 defaults['REVEAL_SLIDE_FOOTER'] = """
 <div class="jb-footer-left">
-    {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain", style="" ) }}
+    {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain" ) }}
 </div>
 <div class="jb-footer-right">
     {{ cfg['ASSETS']['robbi']( cls="jb-footer-right-img plain" ) }}
@@ -451,4 +451,3 @@ def createBase64VideoFromAnimation( anim ):
     aniFile.seek(0)  # rewind to beginning of file
     a = aniFile.getvalue()
     return base64.b64encode( a.decode('utf-8') )
-    
