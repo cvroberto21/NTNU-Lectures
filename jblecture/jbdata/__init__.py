@@ -444,8 +444,8 @@ class JBVideo(JBData):
             s = self.__repr_html_localhost__( cls, style, id = id )
         elif mode == "path":
             s = self.__repr_html_path__( cls, style, id = id )
-        # elif mode == "inline":
-        #     s = self.__repr_html_inline__(cls, style, id = id )
+        elif mode == "inline":
+            s = self.__repr_html_inline__(cls, style, id = id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id = id )
         else:

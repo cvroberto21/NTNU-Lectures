@@ -443,3 +443,12 @@ def createSVGImageFromFigure( fig ):
     figfile.seek(0)  # rewind to beginning of file
     image = figfile.getvalue().decode('utf-8')
     return image
+
+def createBase64VideoFromAnimation( anim ):
+    from io import BytesIO
+    aniFile = BytesIO()
+    anim.save( aniFile )
+    aniFile.seek(0)  # rewind to beginning of file
+    a = aniFile.getvalue()
+    return base64.b64encode( a.decode('utf-8') )
+    
