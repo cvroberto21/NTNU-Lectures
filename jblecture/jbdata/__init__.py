@@ -59,7 +59,7 @@ class JBData:
         self.name = name
         self.data = None
         self.ids = []
-        self.type = atype
+        self.atype = atype
 
         if suffix and suffix[0] == ".":
             suffix = suffix[1:]
@@ -243,7 +243,7 @@ class JBImage(JBData):
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
-        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="http://localhost:{port}/{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, port=cfg['HTTP_PORT'], src=rpath + "." + self.suffix )
+        return '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="http://localhost:{port}/{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, port=cfg['HTTP_PORT'], src=rpath + "." + self.suffix )
 
     @genId
     def __repr_html_path__(self, cls = None, style=None, *, id=None ):
@@ -252,10 +252,10 @@ class JBImage(JBData):
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         if self.atype == JBData.JBIMAGE_SVG:
-#            s = '<span id="{id}" {style}><object type="image/svg+xml" id="img-{id}" {width} {height} data="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
-            s = '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+#            s = '<span id="{id}"><object type="image/svg+xml" id="img-{id}" {width} {height}  {style} data="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+            s = '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
         else:
-            s = '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+            s = '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
         return s
 
     @genId
@@ -264,14 +264,14 @@ class JBImage(JBData):
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
-        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="file://{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
+        return '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="file://{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
 
     @genId
     def __repr_html_url__(self, cls=None, style=None, *, id=None ):
         w = self.createWidthString()
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
-        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{url}"/></span>\n'.format(id=id, width=w, height=h, url=self.url, style=cs )        
+        return '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{url}"/></span>\n'.format(id=id, width=w, height=h, url=self.url, style=cs )        
 
     @genId
     def __repr_html_base64__(self, cls=None, style=None, *, id=None ):
@@ -279,7 +279,7 @@ class JBImage(JBData):
         h = self.createHeightString()
         mime = self.encodeMIME()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
-        return '<span id="{id}" {style}><img id="img-{id}" {width} {height} src="{mime}"/></span>\n'.format(id=id, width=w, height=h, style=cs, mime=mime )
+        return '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{mime}"/></span>\n'.format(id=id, width=w, height=h, style=cs, mime=mime )
 
     def encodeMIME( self ):
         if self.suffix == "png":
@@ -301,7 +301,7 @@ class JBImage(JBData):
 
     def __repr_html_inline__( self, cls = None, style = None, *, id = None ):
         s = ""
-        if ( self.type == JBData.JBIMAGE_SVG ):
+        if ( self.atype == JBData.JBIMAGE_SVG ):
             s = self.__repr_html_svg__( cls, style, id=id )
         else:
             s = self.__repr_html_base64__( cls, style, id=id )
@@ -396,27 +396,43 @@ class JBVideo(JBData):
         w = self.createWidthString()
         h = self.createHeightString()
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
-        return '''<span id="{id}" {style}>
-            <iframe id="vid-{id}" {width} {height} src="{src}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        return '''<span id="{id}">
+            <iframe id="vid-{id}" {width} {height} {style} src="{src}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </span>\n'''.format(id=id, width=w, height=h, src=self.url, style=cs )
 
     @genId
     def __repr_html_path__(self, cls = None, style=None, id=None ):
         w = self.createWidthString()
         h = self.createHeightString()
-        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style + ";pointer-select:all")
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
-        return '''<span id="{id}" {style}>
-           <video id="vid-{id}" controls>
+        return '''<span id="{id}">
+           <video id="vid-{id}"  {style} controls>
            <source src="{src}"/>
            </span>\n'''.format(id=id, width=w, height=h, src=rpath + "." + self.suffix, style=cs )
 
     @genId
-    def __repr_html_localhost__(self, style=""):
+    def __repr_html_localhost__(self, style=None):
+        if style:
+            style=""
+
         return """<video controls>
-                    <source src="{src}" style="{style}">'
+                    <source src="{src}" {style}">'
                     </video>
                  """.format(src=self.localFileStem, port=cfg['HTTP_PORT'], name=self.name, style=style)
+
+    @genId
+    def __repr_html_base64__(self, cls = None, style=None, id=None ):
+        #style['pointer-select'] = 'all'
+        w = self.createWidthString()
+        h = self.createHeightString()
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style + ";pointer-select:all" )
+        mime = self.encodeMIME( )
+        rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
+        return '''<span id="{id}">
+           <video id="vid-{id}"  {style} controls>
+           <source src="{src}"/>
+           </span>\n'''.format(id=id, width=w, height=h, src=mime, style=cs )
 
     def createHeightString( self ):
         return JBImage.sCreateHeightString( self.height )
@@ -443,13 +459,25 @@ class JBVideo(JBData):
             s = self.__repr_html_localhost__( cls, style, id = id )
         elif mode == "path":
             s = self.__repr_html_path__( cls, style, id = id )
-        # elif mode == "inline":
-        #     s = self.__repr_html_inline__(cls, style, id = id )
+        elif mode == "inline":
+            s = self.__repr_html_base64__(cls, style, id = id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id = id )
         else:
             raise Exception("JBVideo unknown mode", mode )
 
+        return s
+
+    def encodeMIME( self ):
+        if ( self.suffix == "mp4" ) or ( self.suffix == "m4a" ) or ( self.suffix == "m4p" ) or ( self.suffix == "m4b" ) or ( self.suffix == "m4a" ) or ( self.suffix == "m4v" ):
+            tag = "data:video/mp4;"
+        elif self.suffix == "ogg":
+            tag = "data:video/ogg;"
+        elif self.suffix == "webm":
+            tag = "data:video/webm;"
+
+        s = ""
+        s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
         return s
 
 def createEnvironment( mycfg ):

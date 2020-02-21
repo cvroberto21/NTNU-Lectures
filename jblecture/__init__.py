@@ -80,7 +80,7 @@ defaults['REVEAL_SLIDE_TEMPLATE'] = """
 
 defaults['REVEAL_SLIDE_FOOTER'] = """
 <div class="jb-footer-left">
-    {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain", style="" ) }}
+    {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain" ) }}
 </div>
 <div class="jb-footer-right">
     {{ cfg['ASSETS']['robbi']( cls="jb-footer-right-img plain" ) }}
@@ -197,7 +197,7 @@ def createEnvironment( params = {} ):
     updateGit( cfg, "https://github.com/hakimel/reveal.js.git", "reveal.js", "", cfg['ROOT_DIR'] )
 
     # 'decktape',
-    for pkg in [  'scenejs' ]:            
+    for pkg in []: #[  'scenejs' ]:            
         with JBcd( cfg['REVEAL_DIR']  ):
             print( f"Executing npm install {pkg}" )
             o = None
@@ -443,3 +443,11 @@ def createSVGImageFromFigure( fig ):
     figfile.seek(0)  # rewind to beginning of file
     image = figfile.getvalue().decode('utf-8')
     return image
+
+def createBase64VideoFromAnimation( anim ):
+    from io import BytesIO
+    aniFile = BytesIO()
+    anim.save( aniFile )
+    aniFile.seek(0)  # rewind to beginning of file
+    a = aniFile.getvalue()
+    return base64.b64encode( a.decode('utf-8') )
