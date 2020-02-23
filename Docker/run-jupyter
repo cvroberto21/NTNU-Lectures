@@ -1,4 +1,0 @@
-docker run -v /home/abthil023/Documents:/documents -i -t \
-  -p 8888:8888 anaconda3-latest /bin/bash --login \
-  -c "/opt/conda/bin/conda install jupyter -y --quiet && /opt/conda/bin/jupyter notebook --notebook-dir=/documents/jupyter/ --ip='*' --port=8888 --no-browser --allow-root"
-

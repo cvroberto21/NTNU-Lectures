@@ -57,7 +57,7 @@ def main( argv = None ):
     parser.add_argument("--client_dir", "-c", default="/data")
     parser.add_argument("--port", "-p", default=8888)
     parser.add_argument("--client_port", default=8888)
-    parser.add_argument("--command", default="lab")
+    parser.add_argument("commands", nargs="+", default="lab")
     parser.add_argument("--local", action="store_true", default=False)
     parser.add_argument("--kill", action="store_true", default=False)
 
@@ -66,16 +66,18 @@ def main( argv = None ):
     data_dir = str( pathlib.Path( args.data_dir ).resolve() )
     client_dir = str( args.client_dir )
 
-    print( "Command", args.command )
+    print( "Command", args.commands )
 
-    if args.command == "lab":
-        cmdExec = [ "/bin/bash", "--login", "-c",
-            '' + f"/opt/conda/bin/conda install jupyterlab -y --quiet && /opt/conda/bin/jupyter lab --notebook-dir={args.client_dir} --ip='*' --port={args.client_port} --no-browser --NotebookApp.token='' --NotebookApp.password='' --allow-root" + ''
-        ]
-    elif args.command == "shell":
+    if args.commands == [ "lab" ]:
+        # cmdExec = [ "/bin/bash", "--login", "-c",
+        #     '' + f"/opt/conda/bin/conda install jupyterlab -y --quiet && /opt/conda/bin/jupyter lab --notebook-dir={args.client_dir} --ip='*' --port={args.client_port} --no-browser --NotebookApp.token='' --NotebookApp.password='' --allow-root" + ''
+        # ]
+        cmdExec = [ "/usr/bin/startlab.sh" ]
+        
+    elif args.commands == [ "shell" ]:
         cmdExec = [ "/bin/bash", "--login" ]
     else:
-        cmdExec = args.command
+        cmdExec = args.commands 
 
     if (args.local):
         args.container = args.container + ":local"
@@ -91,8 +93,8 @@ def main( argv = None ):
             "run",
             "--volume",
             '' + data_dir + '' + ":" + '' + client_dir + '',
-            # "-i",
-            # "-t",
+             "--interactive",
+             "--tty",
             "-p",
             str(args.port) + ":" + str(args.client_port),
             '' + str( args.container ) +'',       
