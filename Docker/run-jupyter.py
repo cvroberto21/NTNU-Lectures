@@ -68,7 +68,9 @@ def main( argv = None ):
 
     print( "Command", args.commands )
 
-    if args.commands == [ "lab" ]:
+    if args.commands == []:
+        cmdExec = [ "/usr/bin/startlab.sh" ]
+    elif args.commands == [ "lab" ]:
         # cmdExec = [ "/bin/bash", "--login", "-c",
         #     '' + f"/opt/conda/bin/conda install jupyterlab -y --quiet && /opt/conda/bin/jupyter lab --notebook-dir={args.client_dir} --ip='*' --port={args.client_port} --no-browser --NotebookApp.token='' --NotebookApp.password='' --allow-root" + ''
         # ]
