@@ -402,9 +402,13 @@ class JBVideo(JBData):
 
     @genId
     def __repr_html_path__(self, cls = None, style=None, id=None ):
+        if style is not None:
+            st = str(style)
+        else:
+            st = ""       
         w = self.createWidthString()
         h = self.createHeightString()
-        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style + ";pointer-select:all")
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", st + ";pointer-select:all")
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         return '''<span id="{id}">
            <video id="vid-{id}"  {style} controls>
