@@ -12,7 +12,7 @@ def genId( func ):
     @functools.wraps( func )
     def wrapperGenId( *args, **kwargs ):
         self = args[0]
-        #logging.debug('args', args, 'kwargs', kwargs )
+        #logging.debug('args %s kwargs %s', args, kwargs )
         id = None
         if 'id' in kwargs:
             id = kwargs['id']
@@ -89,7 +89,7 @@ class JBData:
         else:
             uploaded = files.upload()
             for fn in uploaded.keys():
-                logging.info('User uploaded file "{name}" with length {length} bytes'.format(
+                print('User uploaded file "{name}" with length {length} bytes'.format(
                     name=fn, length=len(uploaded[fn])))
                 self.localFileStem = fn
         self.clearCache()
@@ -382,7 +382,7 @@ class JBVideo(JBData):
         self.height = height
 
     def readDataFromURL( self, url, localFileStem ):
-        logging.debug('Reading video from', url)
+        logging.debug('Reading video from %s', str(url) )
         ydl_opts = {'outtmpl': localFileStem }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])

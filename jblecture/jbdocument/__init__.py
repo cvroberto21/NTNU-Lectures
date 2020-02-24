@@ -150,7 +150,7 @@ class JBDocument:
         slides = self.createSlides( startId )
         assets = self.createAssets( cfg['ASSETS'], cfg['REVEAL_DIR'] )
         logging.debug("*** Assets ***")
-        logging.debug(assets)
+        logging.debug(str(assets) )
         logging.debug("*** Assets ***")
         presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
         presentation = self.updateAssets( presentation, cfg['ASSETS'] )        
@@ -159,7 +159,7 @@ class JBDocument:
     def updateAssets( self, presentation, assets ):
         for aName in assets:
             a = assets[ aName ]
-            #logging.debug( 'a', a )
+            #logging.debug( 'a' +str( a ) )
             for id in a.ids:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
                 presentation = re.sub( 
@@ -256,10 +256,10 @@ class JBDocument:
         while ( currentIdx >= 0 ) and ( currentIdx < len( self.slides) ):
             s = self.slides[ currentIdx ]
             if ( s.renpy ):
-                logging.info('Slide', s.id, 'has renpy', s.renpy )
+                logging.info('Slide ' + str(s.id) + ' has renpy ' + str( s.renpy ) )
             rpyScript = self.instTemplate( cfg['RenpyScriptTemplate'], { 'label': s.id, 'transition': cfg['RenpyTransition'], 'id': s.id, 'renpy': s.renpy, 'right': s.right } )
             sp = pathlib.Path( rdir ) / f"{s.id}.rpy"
-            logging.debug("Writing renpy script", str(sp) )
+            logging.debug("Writing renpy script %s", str(sp) )
             with sp.open( "w" ) as f:
                 f.write( rpyScript )
 

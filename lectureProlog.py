@@ -30,12 +30,12 @@ def updateGit( url, dirname, branch,  root ):
             else:
                 bs = ""
             if not p.is_dir():
-                logging.info("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', GIT_CMD)
+                print("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', GIT_CMD)
                     
                 cmd = GIT_CMD + " clone " + bs + " " + url + " " + dirname 
                 os.system( cmd )
             else:
-                logging.info("git directory exists")
+                print("git directory exists")
 
             with cd( dirname ):
                 logging.info("Executing git pull")
@@ -74,13 +74,13 @@ def gDriveUpload( dir, file ):
     uploaded = drive.CreateFile( file )
     uploaded.SetContentFile( dir / file )
     uploaded.Upload()
-    logging.debug('Uploaded file with ID {}'.format(uploaded.get('id')))
+    logging.debug('Uploaded file with ID %s', uploaded.get('id'))
 
 
 d = str( pathlib.Path( pathlib.Path('.') / 'NTNU-Lectures' ).resolve() )
 if d not in sys.path:    
     sys.path.append(  d )
-logging.debug('System Path', sys.path)
+logging.debug('System Path %s', sys.path)
 
 import jblecture
 
@@ -139,7 +139,7 @@ def finalize():
     
     if jblecture.jbgithub.createGitHub( cfg['TITLE'], cfg['ROOT_DIR']):
         logging.debug("Successful upload of presentation")
-        logging.info("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
+        print("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
     else:
         logging.warning("Upload of presentation failed")
 
