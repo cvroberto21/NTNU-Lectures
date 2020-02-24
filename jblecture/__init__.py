@@ -160,7 +160,7 @@ def loadModules( cfg ):
     logger.info('Loading Modules' + str( cfg['MODULE_ROOT'] ) )
     if cfg['MODULE_ROOT'] not in sys.path:
         sys.path.append( str( cfg['MODULE_ROOT']  ) )
-    logger.debug('sys.path', sys.path )    
+    logger.debug('sys.path:' + sys.path )    
 
     from .jbcd import JBcd
 

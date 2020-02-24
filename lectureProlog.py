@@ -4,6 +4,7 @@ import os
 import sys
 import platform
 from importlib import reload 
+import logging
 
 try:
     GIT_CMD
@@ -98,7 +99,6 @@ from jblecture import _a
 from jblecture import cfg
 from jblecture import downloadDir, zipDirectory
 from IPython.core.display import display, HTML, Math
-import logging
 
 doc = cfg['doc']
 GDrive = None

@@ -116,7 +116,7 @@ def main( argv = None ):
             cmd = [
                 "docker",
                 "run",
-                #"--rm",
+                "--rm",
                 "--volume",
                 '' + data_dir + '' + ":" + '' + client_dir + '',
                     "--interactive",
@@ -124,7 +124,8 @@ def main( argv = None ):
                 "--publish",
                 str(args.port) + ":" + str(args.client_port),
                 '' + str( args.container ) +'',       
-            ] 
+            ]
+            cmd.extend( cmdExec ) 
         else:
             cmd = [
                 "docker",
@@ -141,9 +142,8 @@ def main( argv = None ):
             "-t",
             '' + str( ids[0] ) +'',       
         ]   
-
-    cmd.extend( cmdExec )
-
+        cmd.extend( cmdExec )
+    
     print("Running cmd", " ".join(cmd) )
 
     subprocess.call( cmd )
