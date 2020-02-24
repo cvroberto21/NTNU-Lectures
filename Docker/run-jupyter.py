@@ -57,7 +57,7 @@ def main( argv = None ):
     parser.add_argument("--client_dir", "-c", default="/data")
     parser.add_argument("--port", "-p", default=8888)
     parser.add_argument("--client_port", default=8888)
-    parser.add_argument("commands", nargs="+", default="lab")
+    parser.add_argument("commands", nargs="*", default=[ "lab" ])
     parser.add_argument("--local", action="store_true", default=False)
     parser.add_argument("--kill", action="store_true", default=False)
 
@@ -68,9 +68,7 @@ def main( argv = None ):
 
     print( "Command", args.commands )
 
-    if args.commands == []:
-        cmdExec = [ "/usr/bin/startlab.sh" ]
-    elif args.commands == [ "lab" ]:
+    if args.commands == [] or args.commands == [ "lab" ]:
         # cmdExec = [ "/bin/bash", "--login", "-c",
         #     '' + f"/opt/conda/bin/conda install jupyterlab -y --quiet && /opt/conda/bin/jupyter lab --notebook-dir={args.client_dir} --ip='*' --port={args.client_port} --no-browser --NotebookApp.token='' --NotebookApp.password='' --allow-root" + ''
         # ]

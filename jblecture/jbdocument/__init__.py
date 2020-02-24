@@ -215,7 +215,7 @@ class JBDocument:
         html = self.createRevealSlideShow()
         with open( pathlib.Path( dir ).joinpath( fname ), "w" ) as f:
             f.write( html )
-        self.npmInstall( dir )
+        #self.npmInstall( dir )
         logging.info("Finished creating reveal slideshow")
 
     def npmInstall( self, dir ):
