@@ -3,6 +3,7 @@ from jinja2 import Template
 import re
 import pathlib
 import subprocess
+import logging
 
 from ..jbslide import JBSlide
 from ..jbdata import JBData, JBImage, JBVideo
@@ -66,12 +67,12 @@ class JBDocument:
         return JBDocument.sInstTemplate( text, d )
         
     def findSlideIndex( self, id ):
-        #print('Looking for', id)
+        #logging.debug('Looking for', id)
         try:
             ind = next(i for i,v in enumerate( self.slides ) if v.id == id )
         except StopIteration:
             ind = -1
-        #print('returning', ind )
+        #logging.debug('returning', ind )
         return ind
 
     def addSlide( self, id, slideHTML, background = None, header = None, footer = None ):
@@ -148,9 +149,9 @@ class JBDocument:
             startId = self.slides[0].id
         slides = self.createSlides( startId )
         assets = self.createAssets( cfg['ASSETS'], cfg['REVEAL_DIR'] )
-        print("*** Assets ***")
-        print(assets)
-        print("*** Assets ***")
+        logging.debug("*** Assets ***")
+        logging.debug(assets)
+        logging.debug("*** Assets ***")
         presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
         presentation = self.updateAssets( presentation, cfg['ASSETS'] )        
         return presentation
@@ -158,7 +159,7 @@ class JBDocument:
     def updateAssets( self, presentation, assets ):
         for aName in assets:
             a = assets[ aName ]
-            #print( 'a', a )
+            #logging.debug( 'a', a )
             for id in a.ids:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
                 presentation = re.sub( 
@@ -210,21 +211,23 @@ class JBDocument:
         return s + inst
 
     def createRevealDownload( self, dir, fname = 'index.html' ):
+        logging.info("Starting to create reveal slideshow")
         html = self.createRevealSlideShow()
         with open( pathlib.Path( dir ).joinpath( fname ), "w" ) as f:
             f.write( html )
         self.npmInstall( dir )
+        logging.info("Finished creating reveal slideshow")
 
     def npmInstall( self, dir ):
         with JBcd( dir ):
-            print("Executing npm install")
+            logging.debug("Executing npm install")
             o = None
             try:
                 o = subprocess.check_output("npm install", stderr=subprocess.STDOUT, shell = True)
             except subprocess.CalledProcessError:
                 pass
             if ( o ):    
-                print( 'npm install:' + o.decode('utf-8') )
+                logging.debug( 'npm install:' + o.decode('utf-8') )
     
     def createSlideImages(self, rdir ):
         for s in self.slides:
@@ -253,10 +256,10 @@ class JBDocument:
         while ( currentIdx >= 0 ) and ( currentIdx < len( self.slides) ):
             s = self.slides[ currentIdx ]
             if ( s.renpy ):
-                print('Slide', s.id, 'has renpy', s.renpy )
+                logging.info('Slide', s.id, 'has renpy', s.renpy )
             rpyScript = self.instTemplate( cfg['RenpyScriptTemplate'], { 'label': s.id, 'transition': cfg['RenpyTransition'], 'id': s.id, 'renpy': s.renpy, 'right': s.right } )
             sp = pathlib.Path( rdir ) / f"{s.id}.rpy"
-            print("Writing renpy script", str(sp) )
+            logging.debug("Writing renpy script", str(sp) )
             with sp.open( "w" ) as f:
                 f.write( rpyScript )
 

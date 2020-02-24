@@ -30,22 +30,22 @@ def updateGit( url, dirname, branch,  root ):
             else:
                 bs = ""
             if not p.is_dir():
-                print("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', GIT_CMD)
+                logging.info("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', GIT_CMD)
                     
                 cmd = GIT_CMD + " clone " + bs + " " + url + " " + dirname 
                 os.system( cmd )
             else:
-                print("git directory exists")
+                logging.info("git directory exists")
 
             with cd( dirname ):
-                print("Executing git pull")
+                logging.info("Executing git pull")
                 o = None
                 try:
                     o = subprocess.check_output(GIT_CMD + " pull", stderr=subprocess.STDOUT, shell=True)
                 except subprocess.CalledProcessError:
                     pass
                 if ( o ):
-                    print( 'git pull:' + o.decode('utf-8') )
+                    logging.info( 'git pull:' + o.decode('utf-8') )
 
 updateGit('https://github.com/cvroberto21/NTNU-Lectures.git', 'NTNU-Lectures', 'mg', '.')
 
@@ -74,13 +74,13 @@ def gDriveUpload( dir, file ):
     uploaded = drive.CreateFile( file )
     uploaded.SetContentFile( dir / file )
     uploaded.Upload()
-    print('Uploaded file with ID {}'.format(uploaded.get('id')))
+    logging.debug('Uploaded file with ID {}'.format(uploaded.get('id')))
 
 
 d = str( pathlib.Path( pathlib.Path('.') / 'NTNU-Lectures' ).resolve() )
 if d not in sys.path:    
     sys.path.append(  d )
-print('System Path', sys.path)
+logging.debug('System Path', sys.path)
 
 import jblecture
 
@@ -98,6 +98,7 @@ from jblecture import _a
 from jblecture import cfg
 from jblecture import downloadDir, zipDirectory
 from IPython.core.display import display, HTML, Math
+import logging
 
 doc = cfg['doc']
 GDrive = None
@@ -127,7 +128,7 @@ class InvokeButton(object):
     return html
 
 def createRevealJSAndDownload():
-    print('Create reveal.js and download it')
+    logging.info('Create reveal.js and download it')
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
     downloadDir( cfg['ROOT_DIR'] / "{title}_reveal.zip".format( title=title ), "reveal.js", cfg['ROOT_DIR'] )
 
@@ -135,17 +136,20 @@ def finalize():
     cfg['TITLE'] = title
     
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
+    
     if jblecture.jbgithub.createGitHub( cfg['TITLE'], cfg['ROOT_DIR']):
-        print("Successful upload of presentation")
-        print("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
+        logging.debug("Successful upload of presentation")
+        logging.info("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
     else:
-        print("Upload of presentation failed")
+        logging.warning("Upload of presentation failed")
+
+logging.getLogger().setLevel(logging.DEBUG)
 
 # jblecture.jbgithub.login( jblecture.jbgithub.readGithubToken() )
 # if ( cfg['GITHUB'] ):
-#     print("Successful login to github")
+#     logging.info("Successful login to github")
 # else:
-#     print("Github integration disabled")
+#     logging.warning("Github integration disabled")
 
 # This must come last
 InvokeButton('Create and Download Reveal.js Slideshow', createRevealJSAndDownload )
