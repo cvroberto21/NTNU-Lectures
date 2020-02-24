@@ -1,7 +1,8 @@
 FROM continuumio/anaconda3
 LABEL version="1.1" maintainer="Marcella Schutz <abthil023@protonmail.com>"
 COPY startlab.sh /usr/bin/
-RUN apt update && apt --fix-missing --yes dist-upgrade; \ 
+RUN chmod a+x /usr/bin/startlab.sh; \
+ apt update && apt --fix-missing --yes dist-upgrade; \ 
  adduser conda --system; \
  apt install -y npm; \
  apt install -y ffmpeg; \

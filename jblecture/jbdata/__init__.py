@@ -424,9 +424,14 @@ class JBVideo(JBData):
     @genId
     def __repr_html_base64__(self, cls = None, style=None, id=None ):
         #style['pointer-select'] = 'all'
+        if style is not None:
+            st = str(style)
+        else:
+            st = ""
+            
         w = self.createWidthString()
         h = self.createHeightString()
-        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style + ";pointer-select:all" )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", st + ";pointer-select:all" )
         mime = self.encodeMIME( )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         return '''<span id="{id}">
