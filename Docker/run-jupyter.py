@@ -28,6 +28,29 @@ def runningContainer( container ):
             running.append(  id )
     return running
 
+def existingContainer( container ):
+    cmd = [
+        "docker",
+        "container",
+        "ls",
+        "--filter",
+        "status=exited",
+        "--format",
+        "{{.Image }} {{.ID }}",
+    ]
+
+    running = []
+    o = subprocess.check_output( cmd ).decode('utf-8')
+    print("check", o, "container", container )
+    for cl in o.splitlines():
+        print("exited", cl)
+        img,id = cl.split()
+        print("img", img, "id", id )
+        if img == container:
+            print("Found container")
+            running.append(  id )
+    return running
+
 def killAll( container ):
     ids = runningContainer( container )
     for id in ids:
@@ -88,17 +111,28 @@ def main( argv = None ):
     ids = runningContainer( args.container )
     print("id", ids)
     if len( ids ) == 0:
-        cmd = [
-            "docker",
-            "run",
-            "--volume",
-            '' + data_dir + '' + ":" + '' + client_dir + '',
-             "--interactive",
-             "--tty",
-            "-p",
-            str(args.port) + ":" + str(args.client_port),
-            '' + str( args.container ) +'',       
-        ]   
+        existingIds = existingContainer( args.container )
+        if len(existingIds) == 0:
+            cmd = [
+                "docker",
+                "run",
+                #"--rm",
+                "--volume",
+                '' + data_dir + '' + ":" + '' + client_dir + '',
+                    "--interactive",
+                    "--tty",
+                "--publish",
+                str(args.port) + ":" + str(args.client_port),
+                '' + str( args.container ) +'',       
+            ] 
+        else:
+            cmd = [
+                "docker",
+                "start",
+                '--attach',
+                '--interactive',
+                '' + str( existingIds[0] ) +'',       
+            ]         
     else:
         cmd = [
             "docker",

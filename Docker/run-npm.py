@@ -110,6 +110,7 @@ def main( argv = None ):
             cmd = [
                 "docker",
                 "run",
+                #"--rm",
                 "--volume",
                 '' + data_dir + '' + ":" + '' + client_dir + '',
                 '--name',
