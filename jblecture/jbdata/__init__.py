@@ -6,13 +6,16 @@ import uuid
 import functools
 import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
+
 cfg = {}
 
 def genId( func ):
     @functools.wraps( func )
     def wrapperGenId( *args, **kwargs ):
         self = args[0]
-        #logging.debug('args %s kwargs %s', args, kwargs )
+        #logger.debug('args %s kwargs %s', args, kwargs )
         id = None
         if 'id' in kwargs:
             id = kwargs['id']
@@ -41,7 +44,7 @@ class JBData:
 
     @staticmethod
     def sReadData( fname ):
-        #logging.debug('JBData.sReadData', 'Reading file', fname)
+        #logger.debug('JBData.sReadData', 'Reading file', fname)
         with open( fname, "rb") as f:
             data = f.read()
         return data
@@ -84,7 +87,7 @@ class JBData:
             if lfname[-len(suffix)-1:] != "." + suffix:
                 lfname = lfname + "." + suffix
             data = JBData.sReadData(  lfname )
-            #logging.debug('localFileStem',  lfname )
+            #logger.debug('localFileStem',  lfname )
             self.localFileStem = lfname[0:-len(suffix)-1]
         else:
             uploaded = files.upload()
@@ -95,7 +98,7 @@ class JBData:
         self.clearCache()
 
     def readDataFromURL(self, url, tmpFile):
-        # logging.debug('JBData.readDataFromURL', url )
+        # logger.debug('JBData.readDataFromURL', url )
         return JBData.sReadDataFromURL(url)
 
     def writeData(self, rdir):
@@ -232,7 +235,7 @@ class JBImage(JBData):
         elif suffix == "jpg" or suffix == "jpeg":
             atype = JBData.JBIMAGE_JPG
         else:
-            #logging.debug('name', name, 'localFileStem', localFileStem, 'suffix', suffix)
+            #logger.debug('name', name, 'localFileStem', localFileStem, 'suffix', suffix)
             raise Exception("Unknown JBImage data type: " + suffix )
         super(JBImage, self).__init__(name, url, data, localFileStem, atype=atype, suffix=suffix)
         self.width = width
@@ -337,7 +340,7 @@ class JBImage(JBData):
     # Modes are None/"auto", "url", "localhost", "path", "inline", "file"
     
     def __repr_html__(self, cls = None, style=None, mode = None, *, id = None ):
-        #logging.debug("JBImage.__repr_html__", 'mode', mode )
+        #logger.debug("JBImage.__repr_html__", 'mode', mode )
         if ( mode is None ) or ( mode == "auto" ) or ( mode == "" ):
             if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFileStem ):
                 mode = "localhost"
@@ -382,7 +385,7 @@ class JBVideo(JBData):
         self.height = height
 
     def readDataFromURL( self, url, localFileStem ):
-        logging.debug('Reading video from %s', str(url) )
+        logger.debug('Reading video from %s', str(url) )
         ydl_opts = {'outtmpl': localFileStem }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])

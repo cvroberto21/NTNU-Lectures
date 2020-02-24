@@ -17,6 +17,9 @@ import logging
 
 from .jbcd import JBcd
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
+
 defaults = {}
 defaults['TITLE'] = '{title}'
 defaults['HOME_DIR'] = pathlib.Path.home().resolve()
@@ -132,7 +135,7 @@ def updateGit( cfg, url, dirname, branch,  root ):
     with JBcd( root ):
         p = pathlib.Path( dirname )
         if not p.is_dir():
-            logging.info("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', cfg['GIT_CMD'])
+            logger.info("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', cfg['GIT_CMD'])
             if ( branch ):
                 bs = " --branch " + branch
             else:
@@ -141,23 +144,23 @@ def updateGit( cfg, url, dirname, branch,  root ):
             cmd = cfg['GIT_CMD'] + " clone " + bs + " " + url + " " + dirname 
             os.system( cmd )
         else:
-            logging.info("git directory exists")
+            logger.info("git directory exists")
 
         with JBcd( dirname ):
-            logging.info("Executing git pull")
+            logger.info("Executing git pull")
             o = None
             try:
                 o = subprocess.check_output(cfg['GIT_CMD'] + " pull", stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError:
                 pass
             if ( o ):
-                logging.debug( 'git pull:' + o.decode('utf-8') )
+                logger.debug( 'git pull:' + o.decode('utf-8') )
 
 def loadModules( cfg ):
-    logging.info('Loading Modules' + str( cfg['MODULE_ROOT'] ) )
+    logger.info('Loading Modules' + str( cfg['MODULE_ROOT'] ) )
     if cfg['MODULE_ROOT'] not in sys.path:
         sys.path.append( str( cfg['MODULE_ROOT']  ) )
-    logging.debug('sys.path', sys.path )    
+    logger.debug('sys.path', sys.path )    
 
     from .jbcd import JBcd
 
@@ -176,12 +179,12 @@ def loadModules( cfg ):
     from .jbgithub import createEnvironment, login, getRepositories
     cfg = jbgithub.createEnvironment( cfg )
 
-    logging.info('Loading of modules finished')
+    logger.info('Loading of modules finished')
     return cfg
 
 def createEnvironment( params = {} ):
     cfg = { **defaults, **params }
-    logging.debug('Title ' + cfg['TITLE'] )
+    logger.debug('Title ' + cfg['TITLE'] )
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
 
     node = platform.node()
@@ -190,7 +193,7 @@ def createEnvironment( params = {} ):
         try:
             importlib.import_module( p )
         except ModuleNotFoundError:
-            logging.debug('Using pip to install missing dependency ' +  p )
+            logger.debug('Using pip to install missing dependency ' +  p )
             os.system("python -m pip" + " install " + p )
 
     cfg = loadModules( cfg )
@@ -200,14 +203,14 @@ def createEnvironment( params = {} ):
     # 'decktape',
     for pkg in []: #[  'scenejs' ]:            
         with JBcd( cfg['REVEAL_DIR']  ):
-            logging.info( f"Executing npm install {pkg}" )
+            logger.info( f"Executing npm install {pkg}" )
             o = None
             try:
                 o = subprocess.check_output( f"npm install {pkg}", stderr=subprocess.STDOUT, shell = True)
             except subprocess.CalledProcessError:
                 pass
             if ( o ):    
-                logging.info( f'npm install {pkg}:' + o.decode('utf-8') )
+                logger.info( f'npm install {pkg}:' + o.decode('utf-8') )
 
     for d in [ cfg['REVEAL_IMAGES_DIR'], cfg['REVEAL_VIDEOS_DIR'], cfg['REVEAL_SOUNDS_DIR'] ]:
         d.mkdir( parents = True, exist_ok=True )
@@ -287,7 +290,7 @@ def fetchRenpyData( cfg ):
     src = cfg['ORIG_ROOT'] / 'Lecture-VN' / 'Resources' / 'templateProject' / 'game'
     cfg['RENPY_GAME_DIR'].mkdir(parents = True, exist_ok = True )
     with JBcd( cfg['RENPY_GAME_DIR'] ):
-        logging.info("Creating renpy directory in " + str( cfg['RENPY_GAME_DIR'] ) )
+        logger.info("Creating renpy directory in " + str( cfg['RENPY_GAME_DIR'] ) )
         for d in [ cfg['RENPY_IMAGES_DIR'], cfg['RENPY_IMAGES_DIR'] / "slides", cfg['RENPY_SOUNDS_DIR'], cfg['RENPY_VIDEOS_DIR'], "renpy/game/tl" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
     
