@@ -106,7 +106,7 @@ class MGDocParser():
         for c in node.children:
             self.printTree( c, level + 1 )
 
-    def parseRenpyLine( line ):
+    def parseRenpyLine( self, line ):
         pass
 
     def parseRenpy(self, dialog ):
