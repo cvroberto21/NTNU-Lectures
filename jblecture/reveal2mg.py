@@ -226,9 +226,9 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    'show scene scene-{id} {args}',
-    {dialog}
-    "jump {next}"
+'show scene scene-{id} {args}',
+{dialog}
+'jump {next}'
 ];
                         """.format( dialog=dialog, html=html, id=n.id, next=nxt, args=args )
                         f.write( s )
