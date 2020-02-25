@@ -135,7 +135,8 @@ def updateGit( cfg, url, dirname, branch,  root ):
     with JBcd( root ):
         p = pathlib.Path( dirname )
         if not p.is_dir():
-            logger.info("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', cfg['GIT_CMD'])
+            logger.debug("cloning {0} from url {1} root {2}".format( dirname, url, root ) )
+            logger.debug( 'git command', cfg['GIT_CMD'] )
             if ( branch ):
                 bs = " --branch " + branch
             else:
