@@ -6,6 +6,9 @@ import platform
 from importlib import reload 
 import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
+
 try:
     GIT_CMD
 except NameError:
@@ -36,17 +39,17 @@ def updateGit( url, dirname, branch,  root ):
                 cmd = GIT_CMD + " clone " + bs + " " + url + " " + dirname 
                 os.system( cmd )
             else:
-                print("git directory exists")
+                logger.info("git directory exists")
 
             with cd( dirname ):
-                logging.info("Executing git pull")
+                logger.info("Executing git pull")
                 o = None
                 try:
                     o = subprocess.check_output(GIT_CMD + " pull", stderr=subprocess.STDOUT, shell=True)
                 except subprocess.CalledProcessError:
                     pass
                 if ( o ):
-                    logging.info( 'git pull:' + o.decode('utf-8') )
+                    logger.info( 'git pull:' + o.decode('utf-8') )
 
 updateGit('https://github.com/cvroberto21/NTNU-Lectures.git', 'NTNU-Lectures', 'mg', '.')
 
@@ -75,13 +78,13 @@ def gDriveUpload( dir, file ):
     uploaded = drive.CreateFile( file )
     uploaded.SetContentFile( dir / file )
     uploaded.Upload()
-    logging.debug('Uploaded file with ID %s', uploaded.get('id'))
+    logger.debug('Uploaded file with ID %s', uploaded.get('id'))
 
 
 d = str( pathlib.Path( pathlib.Path('.') / 'NTNU-Lectures' ).resolve() )
 if d not in sys.path:    
     sys.path.append(  d )
-logging.debug('System Path %s', sys.path)
+logger.debug('System Path %s', sys.path)
 
 import jblecture
 
@@ -128,7 +131,7 @@ class InvokeButton(object):
     return html
 
 def createRevealJSAndDownload():
-    logging.info('Create reveal.js and download it')
+    logger.info('Create reveal.js and download it')
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
     downloadDir( cfg['ROOT_DIR'] / "{title}_reveal.zip".format( title=title ), "reveal.js", cfg['ROOT_DIR'] )
 
@@ -138,12 +141,12 @@ def finalize():
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
     
     if jblecture.jbgithub.createGitHub( cfg['TITLE'], cfg['ROOT_DIR']):
-        logging.debug("Successful upload of presentation")
+        logger.debug("Successful upload of presentation")
         print("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
     else:
-        logging.warning("Upload of presentation failed")
+        logger.warning("Upload of presentation failed")
 
-logging.getLogger().setLevel(logging.WARNING)
+# logging.getLogger().setLevel(logging.WARNING)
 
 # jblecture.jbgithub.login( jblecture.jbgithub.readGithubToken() )
 # if ( cfg['GITHUB'] ):

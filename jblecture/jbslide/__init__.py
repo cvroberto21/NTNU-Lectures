@@ -40,7 +40,7 @@ class JBSlide:
         if len(self.renpy) == 0:
             logger.debug( f'adding initial preamble {style}' )
             self.renpy = """
-                show scene-{id} {style}
+show scene-{id} {style}
             """.format(id=self.id, style=style)
         self.renpy = self.renpy + '\n' + txt
         self.renpyStyle = style

@@ -354,7 +354,7 @@ class JBMagics(Magics):
                               help="Select slide id. Use current slide if unspecified."
                               )
     @magic_arguments.argument('--style', type=str, default='',
-                              help="Additional style applied to the slide"
+                              help="Additional style applied to the scene"
                               )
     @cell_magic
     def renpy(self, line, cell):
@@ -366,7 +366,7 @@ class JBMagics(Magics):
             if args.style[-1] == '"' or args.style[-1] == "'":
                 args.style = args.style[0:-1]
 
-            myStyle = 'style="{s}"'.format(s=args.style)
+            myStyle = '"{s}"'.format(s=args.style)
         else:
             myStyle = ""
 

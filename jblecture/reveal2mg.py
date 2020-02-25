@@ -124,14 +124,18 @@ class MGDocParser():
         return [ f for f in filter(lambda x: not re.match(r'^\s*$', x), out.splitlines() ) ]
     
     def dialogToStr(self, dialog ):
+        pre = ""
         s = ""
+
+        (?P<host>[^/]*)
         for l in dialog:
+            m = re.match( r"^\s*//\s*args\s*=\s*(?P<args>.*)$", l)
+            if m:
+                pre = pre + m.group('args') + '\n'
             s = s + "'"
             s = s + l 
-            s = s + "'"
-            s = s + ","
-            s = s + "\n"
-        return s
+            s = s + "',\n"
+        return pre + "\n" + s
 
     def copyAssets(self, mgRoot ):
         copy_tree( str( self.revealRoot / "assets" ), str( mgRoot / "assets" ) )
