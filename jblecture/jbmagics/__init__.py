@@ -381,7 +381,7 @@ class JBMagics(Magics):
         display(Pretty(rp))
         cs = self.doc.getCurrentSlide()
         if (cs):
-            logging.debug( f"*** Adding renpy to slide {cs.id}" )
+            logger.debug( f"*** Adding renpy to slide {cs.id}" )
             # print(rp)
 
             cs.addRenpy( rp, myStyle )

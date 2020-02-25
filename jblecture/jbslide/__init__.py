@@ -36,9 +36,9 @@ class JBSlide:
         return cfg['RENPY_IMAGES_DIR'] / "slides" / f"{self.id}.png"
       
     def addRenpy( self, txt, style = ''):
-        logging.debug( f'addRenpy {txt} {style}' )
+        logger.debug( f'addRenpy {txt} {style}' )
         if len(self.renpy) == 0:
-            logging.debug( f'adding initial preamble {style}' )
+            logger.debug( f'adding initial preamble {style}' )
             self.renpy = """
                 show scene-{id} {style}
             """.format(id=self.id, style=style)
