@@ -112,7 +112,7 @@ class JBDocument:
         htmltxt = '\n<!-- Header -->\n' + header + '\n<!-- Background -->\n' + background + '\n<!-- Slide -->\n' + slideHTML + '\n<!-- Footer -->\n' + footer
         htmltxt = self.instTemplate( htmltxt, {} )
         #sl = JBSlide( id, header + '\n' + background + '\n' + slideHTML + '\n' + footer, renpy = '', left='', right='', up='', down='' )
-        sl = JBSlide( id, htmltxt, renpy = '', left='', right='', up='', down='' )
+        sl = JBSlide( id, htmltxt, renpyStyle='', renpy = '', left='', right='', up='', down='' )
         
         if ( self.current != '' ):
             c = self.findSlideIndex( self.current )

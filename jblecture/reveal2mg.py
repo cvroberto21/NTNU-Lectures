@@ -218,7 +218,7 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    "show scene scene-{id} {anim}",
+    //"show scene scene-{id} {anim}",
     {dialog}
     "jump {next}"
 ];

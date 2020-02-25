@@ -379,8 +379,10 @@ class JBMagics(Magics):
         if (cs):
             # print("*** Adding renpy to slide ", cs.id )
             # print(rp)
-
-            cs.addRenpy(rp, myStyle)
+            rp = """
+            show scene-{id} {style},
+            """.format(id=cs.id, style=myStyle) + rp
+            cs.addRenpy( rp, myStyle )
 
 def createEnvironment( mycfg ):
     global cfg

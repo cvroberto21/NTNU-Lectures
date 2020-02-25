@@ -1,13 +1,14 @@
 
 
 class JBSlide:
-    def __init__(self, id, html, renpy, left = '', right = '', up = '', down = '', parent = '' ):
+    def __init__(self, id, html, renpyStyle, renpy, left = '', right = '', up = '', down = '', parent = '' ):
         self.id = id
         self.parent = parent
         self.html = html
         
+        self.renpyStyle = renpyStyle
         self.renpy = renpy
-      
+        
         self.up = up
         self.left = left
         self.right = right
@@ -31,7 +32,11 @@ class JBSlide:
     def getImageFileName( self ):
         return cfg['RENPY_IMAGES_DIR'] / "slides" / f"{self.id}.png"
       
-    def addRenpy( self, txt, style ):
+    def addRenpy( self, txt, style = ''):
+        if len(self.renpy) == 0:
+            self.renpy = """
+                show scene-{id} {style}
+            """.format(id=self.id, style=style)
         self.renpy = self.renpy + '\n' + txt
         self.renpyStyle = style
 
