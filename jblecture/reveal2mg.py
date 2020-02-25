@@ -200,7 +200,7 @@ class MGDocParser():
                     if n.dialog:
                         args, dialog = self.dialogToStr( n.dialog.splitlines() )
                     else:
-                        dialog = self.dialogToStr( [ "pause" ] )
+                        args, dialog = self.dialogToStr( [ "pause" ] )
                     print("DIA", type(n.dialog), n.dialog, dialog )
 
                     if n.next:
