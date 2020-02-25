@@ -131,9 +131,10 @@ class MGDocParser():
             m = re.match( r"^\s*//\s*args\s*=\s*(?P<args>.*)$", l)
             if m:
                 pre = pre + m.group('args') + '\n'
-            s = s + "'"
-            s = s + l 
-            s = s + "',\n"
+            else:
+                s = s + "'"
+                s = s + l 
+                s = s + "',\n"
         return pre + "\n" + s
 
     def copyAssets(self, mgRoot ):
