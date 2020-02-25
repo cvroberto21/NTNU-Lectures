@@ -1,4 +1,7 @@
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 class JBSlide:
     def __init__(self, id, html, renpyStyle, renpy, left = '', right = '', up = '', down = '', parent = '' ):
@@ -33,7 +36,9 @@ class JBSlide:
         return cfg['RENPY_IMAGES_DIR'] / "slides" / f"{self.id}.png"
       
     def addRenpy( self, txt, style = ''):
+        logging.debug( f'addRenpy {txt} {style}' )
         if len(self.renpy) == 0:
+            logging.debug( f'adding initial preamble {style}' )
             self.renpy = """
                 show scene-{id} {style}
             """.format(id=self.id, style=style)
