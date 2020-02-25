@@ -10,6 +10,7 @@ from distutils.dir_util import copy_tree
 import os
 import subprocess
 import shutil 
+import logging
 
 try:
     GIT_CMD
@@ -60,18 +61,18 @@ class MGDocParser():
     def parseIndex0( self, root, soup ):
         prev = None
         for slide in soup.find_all("section"):
-            print('Found slide', slide['id'] )
+            logging.info('Found slide '+ str( slide['id'] ) )
 
             html = []
             dialog = []
             for c in slide.find_all( recursive = False ):
-                print("Soup c", c.name)
+                logging.info("Soup c " + str( c.name ) )
                 if c.name != "aside":
                     html.append( str(c) )
                 else:
                     dialog.extend( self.parseRenpy( c.get_text() ) )
-            print('HTML', html)
-            print('dialog', dialog)
+            logging.debug('HTML ' + str( html ) )
+            logging.debug('dialog ' + str( dialog ) )
             sl = Slide( slide['id'], "\n".join( html ), "\n".join(dialog) )
             if prev:
                 prev.next = sl.id
@@ -109,7 +110,7 @@ class MGDocParser():
         for d in dialog.splitlines():
             if not re.match(r'^\s*$', d):
                 #d = d.replace('"', '\\"').lstrip().rstrip()
-                print('d=', d)
+                logging.debug('d=' + str(d) )
                 line = ""
                 if d:
                     #line = line + '"'
@@ -118,7 +119,7 @@ class MGDocParser():
                     #line = line + ','
                 if ( line ):
                     out = out + line + '\n'
-            print('**out', out )
+            logging.debug('**out ' + str( out ) )
         return [ f for f in filter(lambda x: not re.match(r'^\s*$', x), out.splitlines() ) ]
     
     def dialogToStr(self, dialog ):
@@ -140,15 +141,25 @@ class MGDocParser():
 
         for i,line in enumerate( index ):
             if re.match( '\s*<link rel="stylesheet" href="./style/main.css">\s*', line ):
-                print("Inserting stylesheets at index", i)
+                logging.debug( "Inserting stylesheets at index " +  str(i) )
                 for s in self.styles:
                     index.insert( i+1, '        <link rel="stylesheet" href="{href}">\n'.format(href=s['href']))
 
         for i,line in enumerate( index ):
             if re.match( '\s*<script src="./js/main.js"></script>\s*', line ):
-                print("Inserting scenes at index", i)
-                for s in self.slides:
-                    index.insert( i+1, '        <script src="./scenes/{d}.js"></script>\n'.format(d=s.id))
+                logging.debug( "Inserting scenes at index "  +  str(i) )
+                out = i + 1
+                for j,s in enumerate( self.slides ):
+                    index.insert( out + j, '        <script src="./scenes/{d}.js"></script>\n'.format(d=s.id))
+
+        for i,line in enumerate( index ):
+            if re.match( '\s*</head>\s*', line ):
+                logging.debug("Inserting mathjax libraries at index" + str(i) )
+                index.insert( i, """
+                <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+                <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+                    """)
+                break
 
         with open( fname, "w" ) as f:
             f.writelines( index )
