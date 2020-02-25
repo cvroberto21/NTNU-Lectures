@@ -127,7 +127,6 @@ class MGDocParser():
         pre = ""
         s = ""
 
-        (?P<host>[^/]*)
         for l in dialog:
             m = re.match( r"^\s*//\s*args\s*=\s*(?P<args>.*)$", l)
             if m:
