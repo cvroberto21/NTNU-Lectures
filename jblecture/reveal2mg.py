@@ -135,7 +135,7 @@ class MGDocParser():
                 s = s + "'"
                 s = s + l 
                 s = s + "',\n"
-        return pre + "\n" + s
+        return pre, s
 
     def copyAssets(self, mgRoot ):
         copy_tree( str( self.revealRoot / "assets" ), str( mgRoot / "assets" ) )
@@ -198,7 +198,7 @@ class MGDocParser():
                     else:
                         html = ""
                     if n.dialog:
-                        dialog = self.dialogToStr( n.dialog.splitlines() )
+                        args, dialog = self.dialogToStr( n.dialog.splitlines() )
                     else:
                         dialog = self.dialogToStr( [ "pause" ] )
                     print("DIA", type(n.dialog), n.dialog, dialog )
@@ -222,11 +222,11 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    //"show scene scene-{id}",
+    "show scene scene-{id} {args}",
     {dialog}
     "jump {next}"
 ];
-                        """.format( dialog=dialog, html=html, id=n.id, next=nxt )
+                        """.format( dialog=dialog, html=html, id=n.id, next=nxt, args=args )
                         f.write( s )
                         
                         sceneFiles.append( slideDir / fname )
