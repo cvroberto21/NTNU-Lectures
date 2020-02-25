@@ -121,7 +121,7 @@ class MGDocParser():
                 if ( line ):
                     out = out + line + '\n'
             logging.debug('**out ' + str( out ) )
-        return [ f for f in filter(lambda x: not re.match(r'^\s*$', x), out.splitlines() ) ]
+        return [ f for f in filter(lambda x: not re.match( r'^\s*$', x), out.splitlines() ) ]
     
     def dialogToStr(self, dialog ):
         pre = ""
@@ -145,20 +145,20 @@ class MGDocParser():
             index = f.readlines()
 
         for i,line in enumerate( index ):
-            if re.match( '\s*<link rel="stylesheet" href="./style/main.css">\s*', line ):
+            if re.match( r'\s*<link rel="stylesheet" href="./style/main.css">\s*', line ):
                 logging.debug( "Inserting stylesheets at index " +  str(i) )
                 for s in self.styles:
                     index.insert( i+1, '        <link rel="stylesheet" href="{href}">\n'.format(href=s['href']))
 
         for i,line in enumerate( index ):
-            if re.match( '\s*<script src="./js/main.js"></script>\s*', line ):
+            if re.match( r'\s*<script src="./js/main.js"></script>\s*', line ):
                 logging.debug( "Inserting scenes at index "  +  str(i) )
                 out = i + 1
                 for j,s in enumerate( self.slides ):
                     index.insert( out + j, '        <script src="./scenes/{d}.js"></script>\n'.format(d=s.id))
 
         for i,line in enumerate( index ):
-            if re.match( '\s*</head>\s*', line ):
+            if re.match( r'\s*</head>\s*', line ):
                 logging.debug("Inserting mathjax libraries at index" + str(i) )
                 index.insert( i, """
                 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
