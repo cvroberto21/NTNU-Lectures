@@ -218,11 +218,11 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    //"show scene scene-{id} {anim}",
+    //"show scene scene-{id}",
     {dialog}
     "jump {next}"
 ];
-                        """.format( dialog=dialog, html=html, id=n.id, next=nxt, anim=self.renpyStyle )
+                        """.format( dialog=dialog, html=html, id=n.id, next=nxt )
                         f.write( s )
                         
                         sceneFiles.append( slideDir / fname )
