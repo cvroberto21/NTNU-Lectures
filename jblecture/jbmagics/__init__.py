@@ -349,20 +349,26 @@ class JBMagics(Magics):
     @magic_arguments.argument('--id', type=str, default='',
                               help="Select slide id. Use current slide if unspecified."
                               )
-    @magic_arguments.argument('--label', type=str, default='',
-                              help="Select start label for renpy script of this slide"
+    @magic_arguments.argument('--style', type=str, default='',
+                              help="Additional style applied to the slide"
                               )
     @cell_magic
     def renpy(self, line, cell):
         args = magic_arguments.parse_argstring(self.renpy, line)
-        RENPY_INDENT = 4
-        it = ""
-        if args.label:
-            it = it + "\n" + "label" + " " + args.label + ":"
-            indent = 2 * RENPY_INDENT
+        
+        if (args.style):
+            if args.style[0] == '"' or args.style[0] == "'":
+                args.style = args.style[1:]
+            if args.style[-1] == '"' or args.style[-1] == "'":
+                args.style = args.style[0:-1]
+
+            mystyle = 'style="{s}"'.format(s=args.style)
         else:
-            indent = RENPY_INDENT
-        cellText = "\n".join([" " * indent + c if (len(c) > 0) else "\n" for c in cell.splitlines()])
+            mystyle = ""
+
+        it = ""
+
+        cellText = "\n".join([" " * 4 + c if (len(c) > 0) else "\n" for c in cell.splitlines()])
         it = it + cellText + "\n"
 
         # print(self.shell.user_ns['test'])
@@ -374,7 +380,7 @@ class JBMagics(Magics):
             # print("*** Adding renpy to slide ", cs.id )
             # print(rp)
 
-            cs.addRenpy(rp)
+            cs.addRenpy(rp, style)
 
 def createEnvironment( mycfg ):
     global cfg

@@ -40,6 +40,7 @@ class Slide:
         self.id = id
         self.html = str( html )
         self.dialog = str( dialog )
+        self.renpyStyle = ""
         self.children = []
         self.next = None
 
@@ -217,11 +218,11 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    "show scene scene-{id}",
+    "show scene scene-{id} {anim}",
     {dialog}
     "jump {next}"
 ];
-                        """.format( dialog=dialog, html=html, id=n.id, next=nxt )
+                        """.format( dialog=dialog, html=html, id=n.id, next=nxt, anim=self.renpyStyle )
                         f.write( s )
                         
                         sceneFiles.append( slideDir / fname )

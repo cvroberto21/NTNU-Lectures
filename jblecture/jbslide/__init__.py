@@ -31,8 +31,9 @@ class JBSlide:
     def getImageFileName( self ):
         return cfg['RENPY_IMAGES_DIR'] / "slides" / f"{self.id}.png"
       
-    def addRenpy( self, txt ):
+    def addRenpy( self, txt, style ):
         self.renpy = self.renpy + '\n' + txt
+        self.renpyStyle = style
 
 cfg = {}
 
