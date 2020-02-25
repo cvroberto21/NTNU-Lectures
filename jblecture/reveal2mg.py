@@ -12,6 +12,9 @@ import subprocess
 import shutil 
 import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
+
 try:
     GIT_CMD
 except NameError:
@@ -130,6 +133,7 @@ class MGDocParser():
         for l in dialog:
             m = re.match( r"^\s*//\s*args\s*=\s*(?P<args>.*)$", l)
             if m:
+                logger.debug( f'Found argument comments ' + m.group( 'args' ) )
                 pre = pre + m.group('args') + '\n'
             else:
                 s = s + "'"
@@ -263,7 +267,8 @@ def updateGit( url, dirname, branch,  root ):
             else:
                 bs = ""
             if not p.is_dir():
-                print("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', GIT_CMD)
+                logger.debug( "cloning {0} from url {1} root {2}".format( dirname, url, root ) )
+                logger.debug( 'git command' + GIT_CMD )
                     
                 cmd = GIT_CMD + " clone " + bs + " " + url + " " + dirname 
                 os.system( cmd )
