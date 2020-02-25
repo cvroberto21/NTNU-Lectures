@@ -372,7 +372,7 @@ class JBMagics(Magics):
 
         it = ""
 
-        cellText = "\n".join([" " * 4 + c if (len(c) > 0) else "\n" for c in cell.splitlines()])
+        cellText = "\n".join([ c if (len(c) > 0) else "\n" for c in cell.splitlines()])
         it = it + cellText + "\n"
 
         # print(self.shell.user_ns['test'])
