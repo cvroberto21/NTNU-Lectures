@@ -362,9 +362,9 @@ class JBMagics(Magics):
             if args.style[-1] == '"' or args.style[-1] == "'":
                 args.style = args.style[0:-1]
 
-            mystyle = 'style="{s}"'.format(s=args.style)
+            myStyle = 'style="{s}"'.format(s=args.style)
         else:
-            mystyle = ""
+            myStyle = ""
 
         it = ""
 
@@ -380,7 +380,7 @@ class JBMagics(Magics):
             # print("*** Adding renpy to slide ", cs.id )
             # print(rp)
 
-            cs.addRenpy(rp, style)
+            cs.addRenpy(rp, myStyle)
 
 def createEnvironment( mycfg ):
     global cfg
