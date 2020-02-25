@@ -134,7 +134,7 @@ class MGDocParser():
             m = re.match( r"^\s*//\s*args\s*=\s*(?P<args>.*)$", l)
             if m:
                 logger.debug( f'Found argument comments ' + m.group( 'args' ) )
-                pre = pre + m.group('args') + '\n'
+                pre = pre + m.group('args') + ''
             else:
                 s = s + "'"
                 s = s + l 
@@ -226,7 +226,7 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    "show scene scene-{id} {args}",
+    'show scene scene-{id} {args}',
     {dialog}
     "jump {next}"
 ];
