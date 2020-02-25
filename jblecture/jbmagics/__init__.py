@@ -14,6 +14,10 @@ import re
 
 from ..jbdocument import JBDocument
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 @magics_class
 class JBMagics(Magics):
