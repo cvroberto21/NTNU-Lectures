@@ -175,7 +175,8 @@ class JBDocument:
         return presentation        
 
     def createAssets( self, assets, rdir ):
-        s = "var assets = {"
+        s = "<!-- Assets -->\n"
+        s = s + "var assets = {"
         inst = "var assetInstances = {"
 
         ia = 0
@@ -213,7 +214,7 @@ class JBDocument:
         s = s + " \n};\n"
         inst = inst + "\n};\n"
 
-        return s + inst
+        return s + inst + "<!-- End of Assets -->\n"
 
     def createCharacters( self, characters ):
         s = "<!-- Characters -->\n"
