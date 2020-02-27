@@ -157,7 +157,7 @@ class JBDocument:
         presentation = self.updateAssets( presentation, cfg['ASSETS'] ) 
 
         chars = self.createCharacters( cfg['CHARACTERS'] ) 
-        self.writeCharacters( chars, cfg['MG_GAME_DIR'] / 'scripts' / 'characters.js' )      
+        self.writeCharacters( chars, cfg['MG_GAME_DIR'] / 'js' / 'characters.js' )      
         return presentation
 
     def updateAssets( self, presentation, assets ):
