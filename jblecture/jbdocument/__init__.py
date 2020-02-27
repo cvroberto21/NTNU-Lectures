@@ -4,6 +4,7 @@ import re
 import pathlib
 import subprocess
 import logging
+import json
 
 from ..jbslide import JBSlide
 from ..jbdata import JBData, JBImage, JBVideo
@@ -12,7 +13,6 @@ from ..jbcd import JBcd
 class JBDocument:
     def __init__( self ):
         self.slides = []
-        self.renpy = []
       
         self.current = ''
         self.parent = ''
@@ -152,8 +152,12 @@ class JBDocument:
         logging.debug("*** Assets ***")
         logging.debug(str(assets) )
         logging.debug("*** Assets ***")
+
         presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
-        presentation = self.updateAssets( presentation, cfg['ASSETS'] )        
+        presentation = self.updateAssets( presentation, cfg['ASSETS'] ) 
+
+        chars = self.createCharacters( cfg['CHARACTERS'] ) 
+        self.writeCharacters( chars, cfg['MG_GAME_DIR'] / 'scripts' / 'characters.js' )      
         return presentation
 
     def updateAssets( self, presentation, assets ):
@@ -209,6 +213,15 @@ class JBDocument:
         inst = inst + "\n};\n"
 
         return s + inst
+
+    def createCharacters( self, characters ):
+        s = 'var characters =\n'
+        s = s + json.dumps( characters, sort_keys=True, indent=4)
+        return s
+
+    def writeCharacters( self, chars, fname ):
+        with open( fname, "w" ) as f:
+            f.write( chars )
 
     def createRevealDownload( self, dir, fname = 'index.html' ):
         logging.info("Starting to create reveal slideshow")
