@@ -216,9 +216,11 @@ class JBDocument:
         return s + inst
 
     def createCharacters( self, characters ):
-        s = 'var characters =\n'
+        s = "<!-- Characters -->\n"
+        s = s + 'var characters =\n'
         s = s + json.dumps( characters, sort_keys=True, indent=4)
         s = s  + ";\n"
+        s = "<!-- End of Characters -->\n"
         return s
 
     def writeCharacters( self, chars, fname ):
