@@ -56,6 +56,8 @@ defaults['GOOGLE_COLAB'] = False
 
 defaults['HTTP_PORT'] = None
 
+defaults['CHARACTERS'] = dict()
+
 try:
     from google.colab import files
     defaults['GOOGLE_COLAB'] = True
@@ -336,6 +338,15 @@ def addJBData( name, url=None, data=None, localFileStem=None, suffix="dat" ):
     cfg['ASSETS'][dat.name] = dat
     return dat
 
+def addJBCharacter( name, data = None ):
+    if data:
+        cfg['CHARACTERS'][name] = data
+        ret = data
+    else:
+        ret = cfg['CHARACTERS'][name]
+        del cfg['CHARACTERS'][name]
+    return ret
+    
 def addJBFigure( name, width, height, fig, suffix = "svg" ):
     if suffix == "svg":
         img = createSVGImageFromFigure( fig )
