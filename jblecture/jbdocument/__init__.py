@@ -153,11 +153,12 @@ class JBDocument:
         logging.debug(str(assets) )
         logging.debug("*** Assets ***")
 
-        presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
+        chars = self.createCharacters( cfg['CHARACTERS'] ) 
+        
+        presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets, 'characters' : chars  } )
         presentation = self.updateAssets( presentation, cfg['ASSETS'] ) 
 
-        chars = self.createCharacters( cfg['CHARACTERS'] ) 
-        self.writeCharacters( chars, cfg['MG_GAME_DIR'] / 'js' / 'characters.js' )      
+
         return presentation
 
     def updateAssets( self, presentation, assets ):
