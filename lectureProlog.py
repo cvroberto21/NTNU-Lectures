@@ -96,7 +96,7 @@ import jblecture
 jblecture.load_ipython_extension( get_ipython() )
 
 from jblecture import addJBImage, addJBVideo, addJBData, addJBFigure
-from jblecture import addCharacter
+from jblecture import addJBCharacter
 from jblecture import createTable
 from jblecture import instTemplate
 from jblecture import _a
