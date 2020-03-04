@@ -95,6 +95,13 @@ def modUrl( url, tok ):
         raise(Exception("Invalid URL Format"))
     return n
 
+def installLFS( tdir=pathlib.Path("/tmp") ):
+    with JBcd( tdir ):
+        runCommand( "wget -O /tmp/lfs.tgz https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz, True )
+        runCommand( "tar -xzpvf /tmp/lfs.tgz", True )
+        runCommand( "sudo ./install.sh", True )
+
+
 def createGitHub( title, root = None):
     title = createRepoTitle( title )
     if not root:
@@ -140,6 +147,7 @@ def createGitHub( title, root = None):
             runCommand( cfg['GIT_CMD'] + " clone " + '"' + repo.clone_url + '"' + " " + str(p), True )
 
         with JBcd( p ):
+            
             if ( not findBranchByName(repo, "gh-pages") ):
                 print("Creating branch gh-pages")
                 runCommand( cfg['GIT_CMD'] + " branch gh-pages", True )
