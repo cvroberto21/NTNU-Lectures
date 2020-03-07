@@ -182,6 +182,9 @@ def loadModules( cfg ):
     from .jbgithub import createEnvironment, login, getRepositories
     cfg = jbgithub.createEnvironment( cfg )
 
+    from .jbgoogle import createEnvironment
+    cfg = jbgoogle.createEnvironment( cfg )
+    
     logger.info('Loading of modules finished')
     return cfg
 

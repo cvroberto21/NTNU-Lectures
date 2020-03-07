@@ -53,34 +53,6 @@ def updateGit( url, dirname, branch,  root ):
 
 updateGit('https://github.com/cvroberto21/NTNU-Lectures.git', 'NTNU-Lectures', 'mg', '.')
 
-def gDriveLogin():
-    from pydrive.auth import GoogleAuth
-    from pydrive.drive import GoogleDrive
-    from google.colab import auth
-    from oauth2client.client import GoogleCredentials
-    global GDrive
-
-    # 1. Authenticate and create the PyDrive client.
-    auth.authenticate_user()
-    gauth = GoogleAuth()
-    gauth.credentials = GoogleCredentials.get_application_default()
-    drive = GoogleDrive(gauth)
-
-    GDrive = drive
-    return drive
-
-def gDriveUpload( dir, file ):
-    global GDrive
-
-    if (not GDrive):
-        gDriveLogin()
-    # 2. Create & upload a file file.
-    uploaded = drive.CreateFile( file )
-    uploaded.SetContentFile( dir / file )
-    uploaded.Upload()
-    logger.debug('Uploaded file with ID %s', uploaded.get('id'))
-
-
 d = str( pathlib.Path( pathlib.Path('.') / 'NTNU-Lectures' ).resolve() )
 if d not in sys.path:    
     sys.path.append(  d )
