@@ -4,6 +4,7 @@ import subprocess
 import sys
 import argparse
 import pathlib
+import os
 
 def runningContainer( container ):
     cmd = [
