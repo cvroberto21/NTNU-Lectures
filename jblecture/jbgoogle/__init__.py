@@ -4,9 +4,6 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
-defaults = {'GDRIVE' : None }
-cfg = {}
-
 def gDriveLogin( ):
     from pydrive.auth import GoogleAuth
     from pydrive.drive import GoogleDrive
@@ -48,11 +45,15 @@ def loadModules():
     from google.colab import auth
     from oauth2client.client import GoogleCredentials
 
-def createEnvironment( params = {} ):
+cfg = {}
+def createEnvironment( mycfg = {} ):
     global cfg
-    cfg = { **defaults, **params }
+    print('jbgoogle', hex(id(cfg)), hex(id(mycfg)))
+    cfg = mycfg
     cfg['GDRIVE'] = None
+    print('jbgoogle', hex(id(cfg)))
 
     installModules()
     loadModules()
+
     return cfg

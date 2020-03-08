@@ -50,5 +50,7 @@ cfg = {}
 
 def createEnvironment( mycfg ):
     global cfg
+    print('jbslide', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    print('jbslide', hex(id(cfg)))
     return cfg

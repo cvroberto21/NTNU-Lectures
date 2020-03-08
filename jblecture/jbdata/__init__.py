@@ -526,5 +526,7 @@ class JBVideo(JBData):
 
 def createEnvironment( mycfg ):
     global cfg
+    print('jbdata', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    print('jbdata', hex(id(cfg)))
     return cfg
