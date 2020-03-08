@@ -58,6 +58,8 @@ defaults['HTTP_PORT'] = None
 
 defaults['CHARACTERS'] = dict()
 
+cfg = {}
+
 try:
     from google.colab import files
     defaults['GOOGLE_COLAB'] = True
