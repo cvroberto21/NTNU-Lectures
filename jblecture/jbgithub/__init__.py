@@ -1,5 +1,4 @@
 from github import Github, GitAuthor, GithubException
-import os
 import getpass
 import pathlib
 from ..jbcd import JBcd
@@ -8,6 +7,7 @@ import distutils
 import shutil
 import git
 import re
+import sys
 
 cfg = {}
 
@@ -69,8 +69,8 @@ def runCommand( cmd, secure = False ):
     o = None
     
     if not secure:
-        myStdOut = subprocess.STDOUT
-        myStdErr = None
+        myStdOut = sys.stdout
+        myStdErr = sys.stderr
     else:
         myStdOut = subprocess.DEVNULL
         myStdErr = subprocess.DEVNULL
