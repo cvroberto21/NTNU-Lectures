@@ -70,7 +70,7 @@ def runCommand( cmd, secure = False ):
     
     if not secure:
         myStdOut = subprocess.STDOUT
-        myStdErr = subprocess.STDOUT
+        myStdErr = None
     else:
         myStdOut = subprocess.DEVNULL
         myStdErr = subprocess.DEVNULL
