@@ -213,7 +213,7 @@ class JBData:
         return p.stat().st_size
 
     def getSize( self ):
-        sGetSize( self.getLocalName() )
+        JBData.sGetSize( self.getLocalName() )
 
 class JBImage(JBData): 
     def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix=None):
