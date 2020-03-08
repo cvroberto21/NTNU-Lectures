@@ -174,13 +174,15 @@ def createGitHub( title, root = None):
             runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
         for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
+
         for aName in cfg['ASSETS']:
             a = cfg['ASSETS'][aName]
             if a.getSize() <= MAX_GITHUB_FILE_SIZE:
+                print("Copying asset", aName, a.getLocalName() )
                 shutil.copyfile( cfg['REVEAL_DIR'] / a.getLocalName(), a.getLocalName() )
                 runCommand( cfg['GIT_CMD'] + " add " + a.getLocalFileName(), True )
-                                    
-        runCommand( cfg['GIT_CMD'] + " commit -m \"Commit\"", True )
+                          
+        runCommand( cfg['GIT_CMD'] + " commit -a -m \"Commit\"", True )
 
     with JBcd(p):
         runCommand( cfg['GIT_CMD'] + " push", True )

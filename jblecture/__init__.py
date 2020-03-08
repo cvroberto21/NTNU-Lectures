@@ -47,8 +47,8 @@ defaults['RENPY_VIDEOS_DIR'] = defaults['RENPY_ASSETS_DIR'] / "videos"
 defaults['MG_GAME_DIR'] = defaults['ROOT_DIR'] / "Monogatari"
 defaults['MG_ASSETS_DIR'] = defaults['MG_GAME_DIR'] / "assets"
 defaults['MG_IMAGES_DIR'] = defaults['MG_ASSETS_DIR'] / "images"
-defaults['MG_SOUNDS_DIR'] = defaults['MG_ASSETS_DIR'] / "sound"
-defaults['MG_VIDEOS_DIR'] = defaults['MG_ASSETS_DIR'] / "video"
+defaults['MG_SOUNDS_DIR'] = defaults['MG_ASSETS_DIR'] / "sounds"
+defaults['MG_VIDEOS_DIR'] = defaults['MG_ASSETS_DIR'] / "videos"
 
 defaults['GIT_CMD'] = 'git'
 
