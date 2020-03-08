@@ -97,7 +97,7 @@ def modUrl( url, tok ):
 
 def installLFS( tdir=pathlib.Path("/tmp") ):
     with JBcd( tdir ):
-        runCommand( "wget -O /tmp/lfs.tgz https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz, True )
+        runCommand( "wget -O /tmp/lfs.tgz https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz", True )
         runCommand( "tar -xzpvf /tmp/lfs.tgz", True )
         runCommand( "sudo ./install.sh", True )
 
