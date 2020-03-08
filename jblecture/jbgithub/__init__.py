@@ -7,7 +7,6 @@ import distutils
 import shutil
 import git
 import re
-import sys
 
 cfg = {}
 
@@ -69,11 +68,12 @@ def runCommand( cmd, secure = False ):
     o = None
     
     if not secure:
-        myStdOut = sys.stdout
-        myStdErr = sys.stderr
+        myStdOut = None
+        myStdErr = None
     else:
         myStdOut = subprocess.DEVNULL
         myStdErr = subprocess.DEVNULL
+        
     try:
         o = subprocess.call( cmd, stdout=myStdOut, stderr=myStdErr, shell=True)
     except subprocess.CalledProcessError as error:
