@@ -180,7 +180,7 @@ def createGitHub( title, root = None):
             print('Asset', aName, 'Size', a.getSize(), 'Name', a.getLocalName() )
             if a.getSize() <= MAX_GITHUB_FILE_SIZE:
                 print("Copying asset", aName, a.getLocalName() )
-                rpath = pathlib.Path(a.getLocalName).relative_to(cfg['REVEAL_DIR'])
+                rpath = pathlib.Path(a.getLocalName() ).relative_to(cfg['REVEAL_DIR'])
                 shutil.copyfile( a.getLocalName(), str( rpath ) )
                 runCommand( cfg['GIT_CMD'] + " add " + str(rpath), False )
                           
