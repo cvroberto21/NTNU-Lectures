@@ -104,7 +104,7 @@ def installLFS( tdir=pathlib.Path("/tmp") ):
         runCommand( "sudo ./install.sh", True )
 
 
-MAX_GITHUB_FILE_SIZE=(25*2*20)
+MAX_GITHUB_FILE_SIZE=(25*2**20)
 
 def createGitHub( title, root = None):
     title = createRepoTitle( title )
@@ -177,7 +177,7 @@ def createGitHub( title, root = None):
 
         for aName in cfg['ASSETS']:
             a = cfg['ASSETS'][aName]
-            print('Asset', aName, 'Size', a.getSize() )
+            print('Asset', aName, 'Size', a.getSize(), 'max', MAX_GITHUB_FILE_SIZE )
             if a.getSize() <= MAX_GITHUB_FILE_SIZE:
                 print("Copying asset", aName, a.getLocalName() )
                 shutil.copyfile( cfg['REVEAL_DIR'] / a.getLocalName(), a.getLocalName() )
