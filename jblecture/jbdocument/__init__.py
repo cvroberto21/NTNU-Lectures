@@ -63,6 +63,7 @@ class JBDocument:
         return current 
       
     def instTemplate( self, text, vars ):
+        print('jbdocument CFG', cfg)
         d = { ** cfg['user_ns'], **vars }
         return JBDocument.sInstTemplate( text, d )
         
