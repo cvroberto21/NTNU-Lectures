@@ -86,7 +86,7 @@ class JBImage extends JBData {
         console.log("JBImage(" + name + "," + size + "," + url + "," + localFileStem + "." + suffix + ")" );
     }
 
-    // modes are null/"auto", "url", "localhost", "path", "inline", "file"
+    // modes are null/"auto", "url", "localhost", "path", "inline", "file", "smart-path"
     updateAsset( id, mode ) {
         var newContent = "";
         if ( mode == "path" ) {
