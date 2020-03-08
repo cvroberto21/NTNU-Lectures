@@ -102,6 +102,8 @@ def installLFS( tdir=pathlib.Path("/tmp") ):
         runCommand( "sudo ./install.sh", True )
 
 
+MAX_GITHUB_FILE_SIZE=(25*2*20)
+
 def createGitHub( title, root = None):
     title = createRepoTitle( title )
     if not root:
@@ -161,11 +163,20 @@ def createGitHub( title, root = None):
         
     with JBcd(p):
         shutil.copyfile( cfg['REVEAL_DIR'] / 'index.html', 'index.html' )
+        runCommand( cfg['GIT_CMD'] + " add index.html", True )
         shutil.copyfile( cfg['REVEAL_DIR'] / 'package.json', 'packages.json' )
-        for d in ["css", "js", "assets", "plugin", "lib" ]:
+        runCommand( cfg['GIT_CMD'] + " add packages.json", True )
+        for d in ["css", "js", "plugin", "lib" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
             distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
-        runCommand( cfg['GIT_CMD'] + " add .", True )
+            runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
+        for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
+            pathlib.Path(d).mkdir( parents = True, exist_ok = True )
+        for a in cfg['ASSETS']:
+            if a.getSize() <= MAX_GITHUB_FILE_SIZE:
+                shutil.copyfile( cfg['REVEAL_DIR'] / a.getLocalName(), a.getLocalName() )
+                runCommand( cfg['GIT_CMD'] + " add " + a.getLocalFileName(), True )
+                                    
         runCommand( cfg['GIT_CMD'] + " commit -m \"Commit\"", True )
 
     with JBcd(p):
