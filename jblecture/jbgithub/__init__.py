@@ -174,8 +174,8 @@ def createGitHub( title, root = None):
             runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
         for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
-        for asset in cfg['ASSETS']:
-            a = cfg['ASSETS'][a]
+        for aName in cfg['ASSETS']:
+            a = cfg['ASSETS'][aName]
             if a.getSize() <= MAX_GITHUB_FILE_SIZE:
                 shutil.copyfile( cfg['REVEAL_DIR'] / a.getLocalName(), a.getLocalName() )
                 runCommand( cfg['GIT_CMD'] + " add " + a.getLocalFileName(), True )
