@@ -6,10 +6,13 @@ var atype = {
     JBVIDEO: 30,    
 };
 
+const MAX_LOCAL_FILE_SIZE = (25*1024*1024);
+
 class JBData {
-    constructor( name, url=None, data=None, localFileStem=None, mytype = JBData.atype.JBDATA, suffix="dat" ) {
+    constructor( name, size=-1, url=None, data=None, localFileStem=None, mytype = JBData.atype.JBDATA, suffix="dat" ) {
         this.mytype = mytype;
         this.name = name;
+        this.size = size;
         this.url = url;
         this.data = data;
         this.localFileStem = localFileStem;
@@ -20,14 +23,20 @@ class JBData {
 
     updateAsset( id, mode ) {
         newContent = "";
-        if ( mode == "path" ) {
+        if ( mode === "path" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"" + this.getLocalName() + "\">" + this.name + "</a>";
-        } else if ( mode == "url" ) {
+        } else if ( mode === "url" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"" + this.url + "\">" + this.name + "</a>";
-        } else if ( mode == "localhost" ) {
+        } else if ( mode === "localhost" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"" + "http://localhost:8000/" + this.getLocalName() + "\">" + this.name + "</a>";
-        } else if ( mode == "file" ) {
+        } else if ( mode === "file" ) {
             newContent = "<a id=\"dat-" + id + "\" href=\"file://" + this.getLocalName() + "\">" + this.name + "</a>";
+        } else if ( mode === "smart-path" ) {
+            if ( this.size <= MAX_LOCAL_FILE_SIZE ) {
+                newContent = this.updateAsset( id, "path" );
+            } else {
+                newContent = this.updateAsset( id, "url" )
+            }
         }
 
         console.log("JBData.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );
@@ -42,7 +51,7 @@ class JBData {
 JBData.atype = atype;
 
 class JBImage extends JBData {
-    constructor( name, width, height, url=null, data=null, localFileStem=None, suffix = null ) {
+    constructor( name, size, width, height, url=null, data=null, localFileStem=None, suffix = null ) {
         var lfLen = 0;
         if (suffix == null ) {
             if (localFileStem != null ) {
@@ -74,7 +83,7 @@ class JBImage extends JBData {
         super( name, url, data, localFileStem, mytype, suffix );
         this.width = width;
         this.height = height;
-        console.log("JBImage(" + name + "," + url + "," + localFileStem + "." + suffix + ")" );
+        console.log("JBImage(" + name + "," + size + "," + url + "," + localFileStem + "." + suffix + ")" );
     }
 
     // modes are null/"auto", "url", "localhost", "path", "inline", "file"
@@ -93,6 +102,12 @@ class JBImage extends JBData {
             newContent = "<img id=\"img-" + id + "\" src=\"" + "http://localhost:8000/" + this.getLocalName() + "\"/>";
         } else if ( mode == "file" ) {
             newContent = "<img id=\"img-" + id + "\" src=\"file://" + this.getLocalName() + "\"/>";
+        } else if ( mode === "smart-path" ) {
+            if ( this.size <= MAX_LOCAL_FILE_SIZE ) {
+                newContent = this.updateAsset( id, "path" );
+            } else {
+                newContent = this.updateAsset( id, "url" )
+            }
         }
 
         console.log("JBImage.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );
@@ -101,11 +116,11 @@ class JBImage extends JBData {
 }
 
 class JBVideo extends JBData {
-    constructor( name, width, height, url=None, data=None, localFileStem=None ) {
+    constructor( name, size, width, height, url=None, data=None, localFileStem=None ) {
         super( name, url, data, localFileStem, JBData.atype.JBVIDEO, "mp4");
         this.width = width;
         this.height = height;
-        console.log("JBVideo(" + name + "," + url + "," + localFileStem + ")" );
+        console.log("JBVideo(" + name + "," + size  + "," + url + "," + localFileStem + ")" );
     }
 
     updateAsset( id, mode ) {
@@ -118,6 +133,12 @@ class JBVideo extends JBData {
             newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"" + "http://localhost:8000/" + this.getLocalName() + "\"/></video>";
         } else if ( mode == "file" ) {
             newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"file://" + this.getLocalName() + "\"/></video>";
+        } else if ( mode === "smart-path" ) {
+            if ( this.size <= MAX_LOCAL_FILE_SIZE ) {
+                newContent = this.updateAsset( id, "path" );
+            } else {
+                newContent = this.updateAsset( id, "url" )
+            }
         }
         
         console.log("JBVideo.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );

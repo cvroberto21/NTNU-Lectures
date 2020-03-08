@@ -179,6 +179,11 @@ class JBData:
             s = self.__repr_html_path__( cls, style, id=id )
         elif mode == "file":
             s = self.__repr_html_file__( cls, style, id=id )
+        elif mode == "smart-path":
+            if self.getSize() <= MAX_PATH_SIZE:
+                s = self.__repr_html_path__( cls, style, id=id )
+            else:
+                s = self.__repr_html_url__( cls, style, id=id )
         else:
             raise Exception( f"JBData - unknown mode {mode}" )
 
@@ -201,7 +206,14 @@ class JBData:
         s = ""
         s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
         return s
+    
+    @staticmethod
+    def sGetSize( fname ):
+        p = pathlib.Path( fname )
+        return p.stat().st_size
 
+    def getSize( self ):
+        sGetSize( self.getLocalName() )
 
 class JBImage(JBData): 
     def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix=None):
@@ -362,6 +374,11 @@ class JBImage(JBData):
             s = self.__repr_html_inline__( cls, style, id=id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id=id )
+        elif mode == "smart-path":
+            if self.getSize() <= MAX_PATH_SIZE:
+                s = self.__repr_html_path__( cls, style, id=id )
+            else:
+                s = self.__repr_html_url__( cls, style, id=id )
         else:
             raise Exception( f"JBImage - unknown mode {mode}" )
         return s
@@ -485,6 +502,11 @@ class JBVideo(JBData):
             s = self.__repr_html_base64__(cls, style, id = id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id = id )
+        elif mode == "smart-path":
+            if self.getSize() <= MAX_PATH_SIZE:
+                s = self.__repr_html_path__( cls, style, id=id )
+            else:
+                s = self.__repr_html_url__( cls, style, id=id )
         else:
             raise Exception("JBVideo unknown mode", mode )
 
