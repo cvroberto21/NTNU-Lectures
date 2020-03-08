@@ -199,9 +199,9 @@ class JBDocument:
                 else:
                     raise Exception("Unknown JBImage Type")
 
-                s = s + f'new JBImage( "{a.name}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }", "{suffix}" )'
+                s = s + f'new JBImage( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }", "{suffix}" )'
             elif ( a.atype == JBData.JBVIDEO ):
-                s = s + f'new JBVideo( "{a.name}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }" )'
+                s = s + f'new JBVideo( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }" )'
 
             for id in a.ids:
                 if iinst > 0:

@@ -34,13 +34,13 @@ def gDriveUpload( dir, file ):
     return uploaded.get('id')
 
 def installModules( ):
-    
+    from ..jbgithub import runCommand
     for p in [ "PyDrive", "google-colab", "portpicker", "google-api-python-client", "google-auth-oauthlib", "google-auth-httplib2" ]:
         try:
             importlib.import_module( p )
         except ModuleNotFoundError:
             logger.debug('Using pip to install missing dependency ' +  p )
-            os.system("python -m pip" + " install " + p )
+            jbgithub.runCommand("python -m pip" + " install " + p, False )
 
 def loadModules():
     from pydrive.auth import GoogleAuth
