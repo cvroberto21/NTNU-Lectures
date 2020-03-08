@@ -40,7 +40,7 @@ def installModules( ):
             importlib.import_module( p )
         except ModuleNotFoundError:
             logger.debug('Using pip to install missing dependency ' +  p )
-            jbgithub.runCommand("python -m pip" + " install " + p, False )
+            runCommand("python -m pip" + " install " + p, False )
 
 def loadModules():
     from pydrive.auth import GoogleAuth
