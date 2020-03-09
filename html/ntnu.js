@@ -80,7 +80,7 @@ class JBImage extends JBData {
         } else if ( ( suffix == "jpg") || ( suffix == "jpeg" ) ) {
             mytype = JBData.atype.JBIMAGE_JPG;
         } 
-        super( name, url, data, localFileStem, mytype, suffix );
+        super( name, size, url, data, localFileStem, mytype, suffix );
         this.width = width;
         this.height = height;
         console.log("JBImage(" + name + "," + size + "," + url + "," + localFileStem + "." + suffix + ")" );
@@ -119,7 +119,7 @@ class JBImage extends JBData {
 
 class JBVideo extends JBData {
     constructor( name, size, width, height, url=None, data=None, localFileStem=None ) {
-        super( name, url, data, localFileStem, JBData.atype.JBVIDEO, "mp4");
+        super( name, size, url, data, localFileStem, JBData.atype.JBVIDEO, "mp4");
         this.width = width;
         this.height = height;
         console.log("JBVideo(" + name + "," + size  + "," + url + "," + localFileStem + ")" );
