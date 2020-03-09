@@ -284,9 +284,9 @@ class JBMagics(Magics):
                 # html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
 
         for o in io.outputs:
-            logging.debug('Output ' + o)
+            logging.debug('Output ' + str(o) )
             h = self.createHTMLRepr(o)
-            logging.debug('SLIDE: h' + h)
+            logging.debug('SLIDE: h' + str(h) )
             if (h is not None):
                 html = html + "\n" + self.embedCellHTML(h, mystyle, 'jb-output-code', '') + "\n"
 
