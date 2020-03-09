@@ -87,10 +87,10 @@ defaults['REVEAL_SLIDE_TEMPLATE'] = """
 """
 
 defaults['REVEAL_SLIDE_FOOTER'] = """
-<div class="jb-footer-left">
+<div class="jb-footer-left plain">
     {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain" ) }}
 </div>
-<div class="jb-footer-right">
+<div class="jb-footer-right plain">
     {{ cfg['ASSETS']['robbi']( cls="jb-footer-right-img plain" ) }}
 </div>
 """

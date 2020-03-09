@@ -63,7 +63,7 @@ class JBDocument:
         return current 
       
     def instTemplate( self, text, vars ):
-        print('jbdocument CFG', hex(id(cfg)))
+        #print('jbdocument CFG', hex(id(cfg)))
         d = { ** cfg['user_ns'], **vars }
         return JBDocument.sInstTemplate( text, d )
         
@@ -170,7 +170,7 @@ class JBDocument:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
                 presentation = re.sub( 
                     re1, 
-                    r'<span id="{' + id + r'" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + r'</span>', 
+                    r'<span id="' + id + r'" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + r'</span>', 
                     presentation 
                 )
         return presentation        
@@ -190,6 +190,11 @@ class JBDocument:
             s = s + f'"{a.name}" : '
             rpath = str( pathlib.Path(a.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
 
+            if a.url is not None:
+                url = '"{a.url}"'
+            else:
+                url = "null"
+
             if ( a.atype == JBData.JBIMAGE_PNG ) or ( a.atype == JBData.JBIMAGE_SVG ) or ( a.atype == JBData.JBIMAGE_JPG ):
                 if a.atype == JBData.JBIMAGE_PNG:
                     suffix = "png"
@@ -200,9 +205,9 @@ class JBDocument:
                 else:
                     raise Exception("Unknown JBImage Type")
 
-                s = s + f'new JBImage( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }", "{suffix}" )'
+                s = s + f'new JBImage( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", {url}, null, "{ rpath }", "{suffix}" )'
             elif ( a.atype == JBData.JBVIDEO ):
-                s = s + f'new JBVideo( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }" )'
+                s = s + f'new JBVideo( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", {url}, null, "{ rpath }" )'
 
             for id in a.ids:
                 if iinst > 0:
@@ -297,7 +302,7 @@ cfg = {}
 
 def createEnvironment( mycfg ):
     global cfg
-    print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
-    print('jbdocument', hex(id(cfg)))
+    #print('jbdocument', hex(id(cfg)))
     return cfg

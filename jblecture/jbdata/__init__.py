@@ -268,7 +268,6 @@ class JBImage(JBData):
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         if self.atype == JBData.JBIMAGE_SVG:
-#            s = '<span id="{id}"><object type="image/svg+xml" id="img-{id}" {width} {height}  {style} data="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
             s = '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
         else:
             s = '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
@@ -330,7 +329,7 @@ class JBImage(JBData):
     @staticmethod
     def sCreateWidthString( width ):
         if width > 0:
-            w = "width={0}".format(width)
+            w = 'width="{0}"'.format(width)
         else:
             w = ""
         return w
@@ -341,7 +340,7 @@ class JBImage(JBData):
     @staticmethod
     def sCreateHeightString( height ):
         if height > 0:
-            h = "height={0}".format(height)
+            h = 'height="{0}"'.format(height)
         else:
             h = ""
         return h
@@ -526,7 +525,7 @@ class JBVideo(JBData):
 
 def createEnvironment( mycfg ):
     global cfg
-    print('jbdata', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbdata', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
-    print('jbdata', hex(id(cfg)))
+    #print('jbdata', hex(id(cfg)))
     return cfg
