@@ -104,13 +104,15 @@ class JBImage extends JBData {
             newContent = "<img id=\"img-" + id + "\" src=\"file://" + this.getLocalName() + "\"/>";
         } else if ( mode === "smart-path" ) {
             if ( this.size <= MAX_LOCAL_FILE_SIZE ) {
+                console.log( "JBImage.updateAsset(" + id + "," + mode + ") chooses path " + this.size );
                 newContent = this.updateAsset( id, "path" );
             } else {
+                console.log( "JBImage.updateAsset(" + id + "," + mode + ") chooses path " + this.size );
                 newContent = this.updateAsset( id, "url" )
             }
         }
 
-        console.log("JBImage.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );
+        console.log("JBImage.updateAsset(" + id + "," + mode + ") =>" + newContent );
         return newContent;
     }    
 }
