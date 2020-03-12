@@ -20,6 +20,10 @@ class JBDocument:
         self.slideCount = 1
         self.slideFragmentCount = 1
 
+        self.header = ""
+        self.footer = ""
+        self.background = ""
+        
         # self.user_ns = {}
         
         # self.setTheme( theme )
@@ -253,10 +257,10 @@ class JBDocument:
             if ( o ):    
                 logging.debug( 'npm install:' + o.decode('utf-8') )
     
-    def createSlideImages(self, rdir ):
-        for s in self.slides:
-            img = s.createJBImage( self.cssSlides )
-            img.writeData( rdir )
+    # def createSlideImages(self, rdir ):
+    #     for s in self.slides:
+    #         img = s.createJBImage( self.cssSlides )
+    #         img.writeData( rdir )
     
     def createBackgroundsFile( self, rdir ):
         with open( pathlib.Path( rdir ).joinpath( "backgrounds.rpy" ), "w" ) as f:
