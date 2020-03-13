@@ -395,7 +395,7 @@ class JBImage(JBData):
     #     return newContent
 
 class JBVideo(JBData):
-    def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix="webm"):
+    def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix="mp4"):
         super(JBVideo, self).__init__(name, url, data, localFileStem, atype=JBData.JBVIDEO, suffix=suffix)
         self.width = width
         self.height = height
@@ -518,6 +518,8 @@ class JBVideo(JBData):
             tag = "data:video/ogg;"
         elif self.suffix == "webm":
             tag = "data:video/webm;"
+        elif self.suffix == "mkv"
+            tag = "data:video/mkv;"
 
         s = ""
         s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
