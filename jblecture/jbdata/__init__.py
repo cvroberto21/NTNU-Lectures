@@ -85,7 +85,7 @@ class JBData:
                 self.localFileStem = lfname.with_suffix('')
         elif url:
             if not lfname:
-                lfname = self.getDefaultFileStem()
+                lfname = self.getDefaultFileNameStem()
             self.data = self.readDataFromURL(url, lfname)
             if (self.data):
                 JBData.sWriteData(lfname.with_suffix( "." + suffix ), self.data)
