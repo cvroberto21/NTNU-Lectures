@@ -401,7 +401,7 @@ class JBVideo(JBData):
         self.height = height
 
     def readDataFromURL( self, url, localFileStem ):
-        logger.debug('Reading video from %s', str(url) )
+        logger.debug('Reading video from %s localFileStem %s', str(url), str(localFileStem) )
         ydl_opts = {'outtmpl': localFileStem }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
