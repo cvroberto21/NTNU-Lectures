@@ -412,7 +412,7 @@ class JBVideo(JBData):
 
         stem = pathlib.Path( localFileName ).with_suffix('')
         ydl_opts = {'outtmpl': str(stem) + "." + "%(ext)s",
-                  #  'format': 'mp4',
+                    'format': 'mp4',
                      }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
