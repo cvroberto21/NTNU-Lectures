@@ -518,7 +518,7 @@ class JBVideo(JBData):
             tag = "data:video/ogg;"
         elif self.suffix == "webm":
             tag = "data:video/webm;"
-        elif self.suffix == "mkv"
+        elif self.suffix == "mkv":
             tag = "data:video/mkv;"
 
         s = ""
