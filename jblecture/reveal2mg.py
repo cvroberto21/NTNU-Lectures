@@ -194,7 +194,7 @@ class MGDocParser():
 
             while len(stack) > 0:
                 n = stack.pop()
-                print('Slide', n)
+                #print('Slide', n)
                 if n.dialog or n.html:
                     fname = n.id + ".js"
                     if n.html is not None:
