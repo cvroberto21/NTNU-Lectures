@@ -56,7 +56,12 @@ class JBData:
 
     def getDefaultFileName(self):
         p = cfg['ROOT_DIR'] / 'reveal.js' / 'assets' / "{name}.{suffix}".format(name=self.name, suffix=self.suffix)
-        return str(  p.expanduser().resolve() )
+        return p.expanduser().resolve()
+
+    def getDefaultFileNameStem( self ):
+        p = self.getDefaultFileName()
+        return p.with_suffix( '' )
+
 
     def __init__(self, name, url=None, data=None, lfname=None, atype = JBDATA, suffix="dat"):
         self.url = url
@@ -324,7 +329,7 @@ class JBImage(JBData):
 
     def getDefaultFileName(self):
         p = cfg['REVEAL_IMAGES_DIR'] /  "{name}.{suffix}".format(name=self.name, suffix=self.suffix)        
-        return str(  p.expanduser().resolve() )
+        return p.expanduser().resolve()
 
     @staticmethod
     def sCreateWidthString( width ):
@@ -400,16 +405,18 @@ class JBVideo(JBData):
         self.width = width
         self.height = height
 
-    def readDataFromURL( self, url, localFileStem ):
-        logger.debug('Reading video from %s localFileStem %s', str(url), str(localFileStem) )
-        ydl_opts = {'outtmpl': localFileStem }
+    def readDataFromURL( self, url, localFileName ):
+        logger.debug('Reading video from %s localFileStem %s', str(url), str(localFileName) )
+
+        stem = pathlib.Path( localFileName ).with_suffix('')
+        ydl_opts = {'outtmpl': str(stem) + "." + "{ext}s" }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        self.localFileStem = localFileStem
+        #self.localFileStem = pathlib.Path( localFileName ).with_suffix('')
 
     def getDefaultFileName(self):
         p = cfg['REVEAL_VIDEOS_DIR'] /  "{name}.{suffix}".format(name=self.name, suffix=self.suffix)
-        return str(  p.expanduser().resolve() )
+        return p.expanduser().resolve()
 
     @genId
     def __repr_html_url__(self, cls = None, style=None, id=None ):
