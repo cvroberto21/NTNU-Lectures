@@ -3,7 +3,7 @@ var atype = {
     JBIMAGE_PNG : 10,
     JBIMAGE_SVG : 11,
     JBIMAGE_JPG : 12,
-    JBVIDEO: 30,    
+    JBVIDEO_MP4 : 30,    
 };
 
 const MAX_LOCAL_FILE_SIZE = (25*1024*1024);
@@ -143,7 +143,7 @@ class JBVideo extends JBData {
             }
         }
         
-        console.log("JBVideo.updateAsset(" + id + "," + "," + mode + ") =>" + newContent );
+        console.log("JBVideo.updateAsset(" + id + "," + "," + mode + ") size (" + this.size + ") =>" + newContent );
         return newContent;
     }    
 }
