@@ -91,7 +91,7 @@ class JBData:
                 JBData.sWriteData(lfname, self.data)
             self.localFileStem = lfname.with_suffix('')
         elif lfname:
-            if lfname.ext != suffix:
+            if lfname.suffix != suffix:
                 lfname = lfname.with_suffix('')
             data = JBData.sReadData(  lfname )
             #logger.debug('localFileStem',  lfname )
