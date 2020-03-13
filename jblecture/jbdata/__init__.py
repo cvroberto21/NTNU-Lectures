@@ -478,7 +478,7 @@ class JBVideo(JBData):
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", st  )
         mime = self.encodeMIME( )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
-        return '''<span id="{id}">
+        return '''<span id="{id} {style}">
            <video id="vid-{id}"  {style} controls>
            <source src="{src}"/>
            </span>\n'''.format(id=id, width=w, height=h, src=mime, style=cs )

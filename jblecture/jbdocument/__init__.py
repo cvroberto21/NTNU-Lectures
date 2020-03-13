@@ -172,6 +172,11 @@ class JBDocument:
             #logging.debug( 'a' +str( a ) )
             for id in a.ids:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
+                m = re.match( re1, presentation ) 
+                if m:
+                    s = m.span[0]
+                    e = m.span[1]
+                    logger.debug( "updateAsset replacing presentation component ***%s***", presentation[s:e] )
                 presentation = re.sub( 
                     re1, 
                     r'<span id="' + id + r'" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + r'</span>', 
