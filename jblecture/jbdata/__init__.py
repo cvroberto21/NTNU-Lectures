@@ -76,7 +76,7 @@ class JBData:
         self.suffix = suffix
 
         if lfname:
-            lfname = Path( lfname )
+            lfname = pathlib.Path( lfname )
         if data:
             if not lfname:
                 lfname = self.getDefaultFileName()
