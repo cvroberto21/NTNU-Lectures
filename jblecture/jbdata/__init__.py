@@ -411,7 +411,7 @@ class JBVideo(JBData):
         logger.debug('Reading video from %s localFileStem %s', str(url), str(localFileName) )
 
         stem = pathlib.Path( localFileName ).with_suffix('')
-        ydl_opts = {'outtmpl': str(stem) + "." + "%%(ext)s" }
+        ydl_opts = {'outtmpl': str(stem) + "." + "%(ext)s" }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
         #self.localFileStem = pathlib.Path( localFileName ).with_suffix('')
