@@ -5,10 +5,14 @@ import pathlib
 import subprocess
 import logging
 import json
+import logging
 
 from ..jbslide import JBSlide
 from ..jbdata import JBData, JBImage, JBVideo
 from ..jbcd import JBcd
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 class JBDocument:
     def __init__( self ):
@@ -169,7 +173,7 @@ class JBDocument:
     def updateAssets( self, presentation, assets ):
         for aName in assets:
             a = assets[ aName ]
-            #logging.debug( 'a' +str( a ) )
+            logging.debug( 'a' +str( a ) )
             for id in a.ids:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
                 m = re.match( re1, presentation ) 
