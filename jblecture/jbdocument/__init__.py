@@ -195,7 +195,7 @@ class JBDocument:
             rpath = str( pathlib.Path(a.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
 
             if a.url is not None:
-                url = '"{a.url}"'
+                url = f'"{a.url}"'
             else:
                 url = "null"
 
