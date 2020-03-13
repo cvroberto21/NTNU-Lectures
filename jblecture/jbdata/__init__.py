@@ -408,7 +408,7 @@ class JBVideo(JBData):
         self.height = height
 
     def readDataFromURL( self, url, localFileName ):
-        logger.debug('Reading video from %s localFileStem %s', str(url), str(localFileName) )
+        logger.debug('Reading video from %s localFileName %s', str(url), str(localFileName) )
 
         stem = pathlib.Path( localFileName ).with_suffix('')
         ydl_opts = {'outtmpl': str(stem) + "." + "%(ext)s" }
