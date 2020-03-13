@@ -75,25 +75,27 @@ class JBData:
 
         self.suffix = suffix
 
+        if lfname:
+            lfname = Path( lfname )
         if data:
             if not lfname:
                 lfname = self.getDefaultFileName()
             with open(lfname, "wb") as f:
                 f.write(data)
-                self.localFileStem = lfname[0:-len(suffix) - 1 ]
+                self.localFileStem = lfname.with_suffix('')
         elif url:
             if not lfname:
                 lfname = self.getDefaultFileName()
             self.data = self.readDataFromURL(url, lfname)
             if (self.data):
                 JBData.sWriteData(lfname, self.data)
-            self.localFileStem = lfname[0:-len(suffix) - 1]
+            self.localFileStem = lfname.with_suffix('')
         elif lfname:
-            if lfname[-len(suffix)-1:] != "." + suffix:
-                lfname = lfname + "." + suffix
+            if lfname.ext != suffix:
+                lfname = lfname.with_suffix('')
             data = JBData.sReadData(  lfname )
             #logger.debug('localFileStem',  lfname )
-            self.localFileStem = lfname[0:-len(suffix)-1]
+            self.localFileStem = lfname.with_suffix('')
         else:
             uploaded = files.upload()
             for fn in uploaded.keys():
