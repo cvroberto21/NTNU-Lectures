@@ -88,12 +88,12 @@ class JBData:
                 lfname = self.getDefaultFileStem()
             self.data = self.readDataFromURL(url, lfname)
             if (self.data):
-                JBData.sWriteData(lfname.with_suffix( suffix ), self.data)
+                JBData.sWriteData(lfname.with_suffix( "." + suffix ), self.data)
             self.localFileStem = lfname.with_suffix('')
         elif lfname:
             if lfname.suffix == suffix:
                 lfname = lfname.with_suffix('')
-            data = JBData.sReadData(  lfname.with_suffix(suffix) )
+            data = JBData.sReadData(  lfname.with_suffix("." + suffix) )
             #logger.debug('localFileStem',  lfname )
             self.localFileStem = lfname
         else:
