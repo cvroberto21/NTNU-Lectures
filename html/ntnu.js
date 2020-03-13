@@ -130,7 +130,7 @@ class JBVideo extends JBData {
         if ( mode == "path" ) {
             newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"" + this.getLocalName() + "\"/></video>";
         } else if ( mode == "url" ) {
-            newContent = "<iframe id=\"vid-" + id + "\" src=\"" + this.url + "\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>/>";
+            newContent = "<iframe id=\"vid-" + id + "\" src=\"" + this.url + "\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>";
         } else if ( mode == "localhost" ) {
             newContent = "<video id=\"vid-" + id + "\" controls> <source src=\"" + "http://localhost:8000/" + this.getLocalName() + "\"/></video>";
         } else if ( mode == "file" ) {
