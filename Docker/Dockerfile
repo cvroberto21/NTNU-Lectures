@@ -33,7 +33,8 @@ RUN python -m pip install pygments \
     google-api-python-client \
     google-auth-oauthlib \
     google-auth-httplib2 \
-    docutils
+    docutils \
+    pyopenssl 
 
 RUN npm install -g canopy \
     scenejs

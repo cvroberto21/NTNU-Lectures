@@ -167,7 +167,6 @@ class JBDocument:
         presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets, 'characters' : chars  } )
         presentation = self.updateAssets( presentation, cfg['ASSETS'] ) 
 
-
         return presentation
 
     def updateAssets( self, presentation, assets ):

@@ -85,7 +85,7 @@ from google.colab import output
 
 class InvokeButton(object):
   def __init__(self, title, callback):
-    self._title = title
+    self._title = titlea
     self._callback = callback
 
   def _repr_html_(self):
