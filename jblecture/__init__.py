@@ -197,7 +197,7 @@ def createEnvironment( params = {} ):
 
     node = platform.node()
 
-    for p in [ "pygments", "youtube-dl", "jinja2", "papermill", "pytexturepacker", "patch", "requests_oauthlib", "PyGithub", "gitpython", "google-api-pthon-client" ]:
+    for p in [ "pygments", "youtube-dl", "jinja2", "papermill", "pytexturepacker", "patch", "requests_oauthlib", "PyGithub", "gitpython" ]:
         try:
             importlib.import_module( p )
         except ModuleNotFoundError:

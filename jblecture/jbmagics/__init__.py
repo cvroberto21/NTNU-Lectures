@@ -17,7 +17,7 @@ from ..jbdocument import JBDocument
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel( logging.WARNING )
+logger.setLevel( logging.DEBUG )
 
 @magics_class
 class JBMagics(Magics):
@@ -270,18 +270,20 @@ class JBMagics(Magics):
             html = html + "</div>" + "\n"
         # print("html", html)
 
+        logger.debug( f"out: {out}" )
         if (out):
+            logger.debug( f"io.stdout {io.stdout}" )
             if io.stdout != "":
-                display( Pretty( io.stdout ) )
-                # # print("Adding output", io.stdout)
-                # h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
-                # h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
-                # h = h + '<pre {s}>\n'.format(s=mystyle)
-                # h = h + io.stdout
-                # h = h + '</pre>\n'
-                # h = h + '</div>\n'
-                # h = h + '</div>\n'
-                # html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
+                # print("Adding output", io.stdout)
+                #display( Pretty( io.stdout ) )
+                h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
+                h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
+                h = h + '<pre {s}>\n'.format(s=mystyle)
+                h = h + io.stdout
+                h = h + '</pre>\n'
+                h = h + '</div>\n'
+                h = h + '</div>\n'
+                html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
 
         for o in io.outputs:
             logger.debug('Output ' + str(o) )
@@ -317,7 +319,7 @@ class JBMagics(Magics):
                     'displayMath': [['$$', '$$'], ['\\[', '\\]']],
                     'processEscapes': true,
                     'processEnvironments': true,
-                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code'],
+                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
                     'displayAlign': 'center',
                 },
                 'HTML-CSS': {

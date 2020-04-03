@@ -81,27 +81,6 @@ GDrive = None
 
 import IPython
 import uuid
-from google.colab import output
-
-class InvokeButton(object):
-  def __init__(self, title, callback):
-    self._title = titlea
-    self._callback = callback
-
-  def _repr_html_(self):
-    callback_id = 'button-' + str(uuid.uuid4())
-    output.register_callback(callback_id, self._callback)
-
-    template = """<button id="{callback_id}" style="height:3cm;">{title}</button>
-        <script>
-          document.querySelector("#{callback_id}").onclick = (e) => {{
-            //IPython.notebook.execute_cells_after()
-            google.colab.kernel.invokeFunction('{callback_id}', [], {{}})
-            e.preventDefault();
-          }};
-        </script>"""
-    html = template.format(title=self._title, callback_id=callback_id)
-    return html
 
 def createRevealJSAndDownload():
     logger.info('Create reveal.js and download it')
@@ -128,6 +107,29 @@ def finalize():
 #     logging.warning("Github integration disabled")
 
 # This must come last
-InvokeButton('Create and Download Reveal.js Slideshow', createRevealJSAndDownload )
+
+# class InvokeButton(object):
+
+#     def __init__(self, title, callback):
+#         self._title = titlea
+#         self._callback = callback
+
+#     def _repr_html_(self):
+#         from google.colab import output
+#         callback_id = 'button-' + str(uuid.uuid4())
+#         output.register_callback(callback_id, self._callback)
+
+#         template = """<button id="{callback_id}" style="height:3cm;">{title}</button>
+#             <script>
+#             document.querySelector("#{callback_id}").onclick = (e) => {{
+#                 //IPython.notebook.execute_cells_after()
+#                 google.colab.kernel.invokeFunction('{callback_id}', [], {{}})
+#                 e.preventDefault();
+#             }};
+#             </script>"""
+#         html = template.format(title=self._title, callback_id=callback_id)
+#         return html
+
+# InvokeButton('Create and Download Reveal.js Slideshow', createRevealJSAndDownload )
 
 
