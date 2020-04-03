@@ -32,7 +32,7 @@ def gDriveUpload( dir, file ):
 
 def installModules( ):
     from ..jbgithub import runCommand
-    for p in [ "PyDrive", "google-colab", "portpicker", "google-api-python-client", "google-auth-oauthlib", "google-auth-httplib2" ]:
+    for p in [ "PyDrive", "portpicker" ]:
         try:
             importlib.import_module( p )
         except ModuleNotFoundError:
