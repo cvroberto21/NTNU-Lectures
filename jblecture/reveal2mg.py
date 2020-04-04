@@ -10,6 +10,10 @@ from distutils.dir_util import copy_tree
 import os
 import subprocess
 import shutil 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 try:
     GIT_CMD
@@ -39,6 +43,7 @@ class Slide:
         self.id = id
         self.html = str( html )
         self.dialog = str( dialog )
+        self.renpyStyle = ""
         self.children = []
         self.next = None
 
@@ -60,18 +65,18 @@ class MGDocParser():
     def parseIndex0( self, root, soup ):
         prev = None
         for slide in soup.find_all("section"):
-            print('Found slide', slide['id'] )
+            logging.info('Found slide '+ str( slide['id'] ) )
 
             html = []
             dialog = []
             for c in slide.find_all( recursive = False ):
-                print("Soup c", c.name)
+                logging.info("Soup c " + str( c.name ) )
                 if c.name != "aside":
                     html.append( str(c) )
                 else:
                     dialog.extend( self.parseRenpy( c.get_text() ) )
-            print('HTML', html)
-            print('dialog', dialog)
+            logging.debug('HTML ' + str( html ) )
+            logging.debug('dialog ' + str( dialog ) )
             sl = Slide( slide['id'], "\n".join( html ), "\n".join(dialog) )
             if prev:
                 prev.next = sl.id
@@ -101,7 +106,7 @@ class MGDocParser():
         for c in node.children:
             self.printTree( c, level + 1 )
 
-    def parseRenpyLine( line ):
+    def parseRenpyLine( self, line ):
         pass
 
     def parseRenpy(self, dialog ):
@@ -109,7 +114,7 @@ class MGDocParser():
         for d in dialog.splitlines():
             if not re.match(r'^\s*$', d):
                 #d = d.replace('"', '\\"').lstrip().rstrip()
-                print('d=', d)
+                logging.debug('d=' + str(d) )
                 line = ""
                 if d:
                     #line = line + '"'
@@ -118,18 +123,23 @@ class MGDocParser():
                     #line = line + ','
                 if ( line ):
                     out = out + line + '\n'
-            print('**out', out )
-        return [ f for f in filter(lambda x: not re.match(r'^\s*$', x), out.splitlines() ) ]
+            logging.debug('**out ' + str( out ) )
+        return [ f for f in filter(lambda x: not re.match( r'^\s*$', x), out.splitlines() ) ]
     
     def dialogToStr(self, dialog ):
+        pre = ""
         s = ""
+
         for l in dialog:
-            s = s + "'"
-            s = s + l 
-            s = s + "'"
-            s = s + ","
-            s = s + "\n"
-        return s
+            m = re.match( r"^\s*//\s*args\s*=\s*(?P<args>.*)$", l)
+            if m:
+                logger.debug( f'Found argument comments ' + m.group( 'args' ) )
+                pre = pre + m.group('args') + ''
+            else:
+                s = s + "'"
+                s = s + l 
+                s = s + "',\n"
+        return pre, s
 
     def copyAssets(self, mgRoot ):
         copy_tree( str( self.revealRoot / "assets" ), str( mgRoot / "assets" ) )
@@ -139,16 +149,26 @@ class MGDocParser():
             index = f.readlines()
 
         for i,line in enumerate( index ):
-            if re.match( '\s*<link rel="stylesheet" href="./style/main.css">\s*', line ):
-                print("Inserting stylesheets at index", i)
+            if re.match( r'\s*<link rel="stylesheet" href="./style/main.css">\s*', line ):
+                logging.debug( "Inserting stylesheets at index " +  str(i) )
                 for s in self.styles:
                     index.insert( i+1, '        <link rel="stylesheet" href="{href}">\n'.format(href=s['href']))
 
         for i,line in enumerate( index ):
-            if re.match( '\s*<script src="./js/main.js"></script>\s*', line ):
-                print("Inserting scenes at index", i)
-                for s in self.slides:
-                    index.insert( i+1, '        <script src="./scenes/{d}.js"></script>\n'.format(d=s.id))
+            if re.match( r'\s*<script src="./js/main.js"></script>\s*', line ):
+                logging.debug( "Inserting scenes at index "  +  str(i) )
+                out = i + 1
+                for j,s in enumerate( self.slides ):
+                    index.insert( out + j, '        <script src="./scenes/{d}.js"></script>\n'.format(d=s.id))
+
+        for i,line in enumerate( index ):
+            if re.match( r'\s*</head>\s*', line ):
+                logging.debug("Inserting mathjax libraries at index" + str(i) )
+                index.insert( i, """
+                <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+                <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+                    """)
+                break
 
         with open( fname, "w" ) as f:
             f.writelines( index )
@@ -174,7 +194,7 @@ class MGDocParser():
 
             while len(stack) > 0:
                 n = stack.pop()
-                print('Slide', n)
+                #print('Slide', n)
                 if n.dialog or n.html:
                     fname = n.id + ".js"
                     if n.html is not None:
@@ -182,9 +202,9 @@ class MGDocParser():
                     else:
                         html = ""
                     if n.dialog:
-                        dialog = self.dialogToStr( n.dialog.splitlines() )
+                        args, dialog = self.dialogToStr( n.dialog.splitlines() )
                     else:
-                        dialog = self.dialogToStr( [ "pause" ] )
+                        args, dialog = self.dialogToStr( [ "pause" ] )
                     print("DIA", type(n.dialog), n.dialog, dialog )
 
                     if n.next:
@@ -206,11 +226,11 @@ monogatari.asset('scenes', 'scene-{id}',
 );
 
 monogatari.script()["{id}"] = [ 
-    "show scene scene-{id}",
-    {dialog}
-    "jump {next}"
+'show scene scene-{id} {args}',
+{dialog}
+'jump {next}'
 ];
-                        """.format( dialog=dialog, html=html, id=n.id, next=nxt )
+                        """.format( dialog=dialog, html=html, id=n.id, next=nxt, args=args )
                         f.write( s )
                         
                         sceneFiles.append( slideDir / fname )
@@ -247,7 +267,8 @@ def updateGit( url, dirname, branch,  root ):
             else:
                 bs = ""
             if not p.is_dir():
-                print("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', GIT_CMD)
+                logger.debug( "cloning {0} from url {1} root {2}".format( dirname, url, root ) )
+                logger.debug( 'git command' + GIT_CMD )
                     
                 cmd = GIT_CMD + " clone " + bs + " " + url + " " + dirname 
                 os.system( cmd )

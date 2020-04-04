@@ -14,6 +14,10 @@ import re
 
 from ..jbdocument import JBDocument
 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 @magics_class
 class JBMagics(Magics):
@@ -266,23 +270,25 @@ class JBMagics(Magics):
             html = html + "</div>" + "\n"
         # print("html", html)
 
+        logger.debug( f"out: {out}" )
         if (out):
+            logger.debug( f"io.stdout {io.stdout}" )
             if io.stdout != "":
-                display( Pretty( io.stdout ) )
-                # # print("Adding output", io.stdout)
-                # h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
-                # h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
-                # h = h + '<pre {s}>\n'.format(s=mystyle)
-                # h = h + io.stdout
-                # h = h + '</pre>\n'
-                # h = h + '</div>\n'
-                # h = h + '</div>\n'
-                # html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
+                # print("Adding output", io.stdout)
+                #display( Pretty( io.stdout ) )
+                h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
+                h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
+                h = h + '<pre {s}>\n'.format(s=mystyle)
+                h = h + io.stdout
+                h = h + '</pre>\n'
+                h = h + '</div>\n'
+                h = h + '</div>\n'
+                html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
 
         for o in io.outputs:
-            # print('Output', o)
+            logger.debug('Output ' + str(o) )
             h = self.createHTMLRepr(o)
-            # print('SLIDE: h', h)
+            logger.debug('SLIDE: h' + str(h) )
             if (h is not None):
                 html = html + "\n" + self.embedCellHTML(h, mystyle, 'jb-output-code', '') + "\n"
 
@@ -313,7 +319,7 @@ class JBMagics(Magics):
                     'displayMath': [['$$', '$$'], ['\\[', '\\]']],
                     'processEscapes': true,
                     'processEnvironments': true,
-                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code'],
+                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
                     'displayAlign': 'center',
                 },
                 'HTML-CSS': {
@@ -349,20 +355,26 @@ class JBMagics(Magics):
     @magic_arguments.argument('--id', type=str, default='',
                               help="Select slide id. Use current slide if unspecified."
                               )
-    @magic_arguments.argument('--label', type=str, default='',
-                              help="Select start label for renpy script of this slide"
+    @magic_arguments.argument('--style', type=str, default='',
+                              help="Additional style applied to the scene"
                               )
     @cell_magic
     def renpy(self, line, cell):
         args = magic_arguments.parse_argstring(self.renpy, line)
-        RENPY_INDENT = 4
-        it = ""
-        if args.label:
-            it = it + "\n" + "label" + " " + args.label + ":"
-            indent = 2 * RENPY_INDENT
+        
+        if (args.style):
+            if args.style[0] == '"' or args.style[0] == "'":
+                args.style = args.style[1:]
+            if args.style[-1] == '"' or args.style[-1] == "'":
+                args.style = args.style[0:-1]
+
+            myStyle = '"{s}"'.format(s=args.style)
         else:
-            indent = RENPY_INDENT
-        cellText = "\n".join([" " * indent + c if (len(c) > 0) else "\n" for c in cell.splitlines()])
+            myStyle = ""
+
+        it = ""
+
+        cellText = "\n".join([ c if (len(c) > 0) else "\n" for c in cell.splitlines()])
         it = it + cellText + "\n"
 
         # print(self.shell.user_ns['test'])
@@ -371,10 +383,10 @@ class JBMagics(Magics):
         display(Pretty(rp))
         cs = self.doc.getCurrentSlide()
         if (cs):
-            # print("*** Adding renpy to slide ", cs.id )
+            logger.debug( f"*** Adding renpy to slide {cs.id}" )
             # print(rp)
 
-            cs.addRenpy(rp)
+            cs.addRenpy( rp, myStyle )
 
 def createEnvironment( mycfg ):
     global cfg

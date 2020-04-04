@@ -52,31 +52,33 @@
                 ]
             });
 		
-            // MathJax.Hub.Config({
-            //             // pass other options into `MathJax.Hub.Config()`
-            //     'tex2jax': {
-            //         'inlineMath': [['$', '$'], ['\\(', '\\)']],
-            //         'displayMath': [['$$', '$$'], ['\\[', '\\]']],
-            //         'processEscapes': true,
-            //         'processEnvironments': true,
-            //         'skipTags': ['script', 'noscript', 'style', 'textarea', 'code'],
-            //         'displayAlign': 'center',
-            //     },
-            //     'HTML-CSS': {
-            //         'styles': {'.MathJax_Display': {'margin': 0}},
-            //         'linebreaks': {'automatic': true},
-            //         // Disable to prevent OTF font loading, which aren't part of our
-            //         // distribution.
-            //         'imageFont': null,
-            //     },
-            //     'messageStyle': 'none',
-            //     'TeX': { 'Macros': 'macros' }	    
-            // });
-            // mathjax.Hub.Configured();
+            mathjax.Hub.Config({
+                'tex2jax': {
+                    'inlineMath': [['$', '$'], ['\\(', '\\)']],
+                    'displayMath': [['$$', '$$'], ['\\[', '\\]']],
+                    'processEscapes': true,
+                    'processEnvironments': true,
+                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
+                    'displayAlign': 'center',
+                },
+                'HTML-CSS': {
+                    'styles': {'.MathJax_Display': {'margin': 0}},
+                    'linebreaks': {'automatic': true},
+                    // Disable to prevent OTF font loading, which aren't part of our
+                    // distribution.
+                    'imageFont': null,
+                },
+                'messageStyle': 'none'
+            });
+            mathjax.Hub.Configured();
+ 
         </script>
         <script>
             {{assets}}
-            convertURLs(assetInstances, "path");
+            convertURLs(assetInstances, "smart-path");
+        </script>
+        <script>
+            {{characters}}
         </script>
     </body>
 </html>

@@ -4,6 +4,10 @@ import os
 import sys
 import platform
 from importlib import reload 
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 try:
     GIT_CMD
@@ -35,52 +39,24 @@ def updateGit( url, dirname, branch,  root ):
                 cmd = GIT_CMD + " clone " + bs + " " + url + " " + dirname 
                 os.system( cmd )
             else:
-                print("git directory exists")
+                logger.info("git directory exists")
 
             with cd( dirname ):
-                print("Executing git pull")
+                logger.info("Executing git pull")
                 o = None
                 try:
                     o = subprocess.check_output(GIT_CMD + " pull", stderr=subprocess.STDOUT, shell=True)
                 except subprocess.CalledProcessError:
                     pass
                 if ( o ):
-                    print( 'git pull:' + o.decode('utf-8') )
+                    logger.info( 'git pull:' + o.decode('utf-8') )
 
 updateGit('https://github.com/cvroberto21/NTNU-Lectures.git', 'NTNU-Lectures', 'mg', '.')
-
-def gDriveLogin():
-    from pydrive.auth import GoogleAuth
-    from pydrive.drive import GoogleDrive
-    from google.colab import auth
-    from oauth2client.client import GoogleCredentials
-    global GDrive
-
-    # 1. Authenticate and create the PyDrive client.
-    auth.authenticate_user()
-    gauth = GoogleAuth()
-    gauth.credentials = GoogleCredentials.get_application_default()
-    drive = GoogleDrive(gauth)
-
-    GDrive = drive
-    return drive
-
-def gDriveUpload( dir, file ):
-    global GDrive
-
-    if (not GDrive):
-        gDriveLogin()
-    # 2. Create & upload a file file.
-    uploaded = drive.CreateFile( file )
-    uploaded.SetContentFile( dir / file )
-    uploaded.Upload()
-    print('Uploaded file with ID {}'.format(uploaded.get('id')))
-
 
 d = str( pathlib.Path( pathlib.Path('.') / 'NTNU-Lectures' ).resolve() )
 if d not in sys.path:    
     sys.path.append(  d )
-print('System Path', sys.path)
+logger.debug('System Path %s', sys.path)
 
 import jblecture
 
@@ -92,6 +68,7 @@ import jblecture
 jblecture.load_ipython_extension( get_ipython() )
 
 from jblecture import addJBImage, addJBVideo, addJBData, addJBFigure
+from jblecture import addJBCharacter
 from jblecture import createTable
 from jblecture import instTemplate
 from jblecture import _a
@@ -104,30 +81,9 @@ GDrive = None
 
 import IPython
 import uuid
-from google.colab import output
-
-class InvokeButton(object):
-  def __init__(self, title, callback):
-    self._title = title
-    self._callback = callback
-
-  def _repr_html_(self):
-    callback_id = 'button-' + str(uuid.uuid4())
-    output.register_callback(callback_id, self._callback)
-
-    template = """<button id="{callback_id}" style="height:3cm;">{title}</button>
-        <script>
-          document.querySelector("#{callback_id}").onclick = (e) => {{
-            //IPython.notebook.execute_cells_after()
-            google.colab.kernel.invokeFunction('{callback_id}', [], {{}})
-            e.preventDefault();
-          }};
-        </script>"""
-    html = template.format(title=self._title, callback_id=callback_id)
-    return html
 
 def createRevealJSAndDownload():
-    print('Create reveal.js and download it')
+    logger.info('Create reveal.js and download it')
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
     downloadDir( cfg['ROOT_DIR'] / "{title}_reveal.zip".format( title=title ), "reveal.js", cfg['ROOT_DIR'] )
 
@@ -135,19 +91,45 @@ def finalize():
     cfg['TITLE'] = title
     
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
+    
     if jblecture.jbgithub.createGitHub( cfg['TITLE'], cfg['ROOT_DIR']):
-        print("Successful upload of presentation")
+        logger.debug("Successful upload of presentation")
         print("You can access the presentation at " + cfg['GITHUB_PAGES_URL'] )
     else:
-        print("Upload of presentation failed")
+        logger.warning("Upload of presentation failed")
+
+# logging.getLogger().setLevel(logging.WARNING)
 
 # jblecture.jbgithub.login( jblecture.jbgithub.readGithubToken() )
 # if ( cfg['GITHUB'] ):
-#     print("Successful login to github")
+#     logging.info("Successful login to github")
 # else:
-#     print("Github integration disabled")
+#     logging.warning("Github integration disabled")
 
 # This must come last
-InvokeButton('Create and Download Reveal.js Slideshow', createRevealJSAndDownload )
+
+# class InvokeButton(object):
+
+#     def __init__(self, title, callback):
+#         self._title = titlea
+#         self._callback = callback
+
+#     def _repr_html_(self):
+#         from google.colab import output
+#         callback_id = 'button-' + str(uuid.uuid4())
+#         output.register_callback(callback_id, self._callback)
+
+#         template = """<button id="{callback_id}" style="height:3cm;">{title}</button>
+#             <script>
+#             document.querySelector("#{callback_id}").onclick = (e) => {{
+#                 //IPython.notebook.execute_cells_after()
+#                 google.colab.kernel.invokeFunction('{callback_id}', [], {{}})
+#                 e.preventDefault();
+#             }};
+#             </script>"""
+#         html = template.format(title=self._title, callback_id=callback_id)
+#         return html
+
+# InvokeButton('Create and Download Reveal.js Slideshow', createRevealJSAndDownload )
 
 

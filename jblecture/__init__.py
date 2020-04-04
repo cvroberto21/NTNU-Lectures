@@ -13,8 +13,12 @@ import sys
 import zipfile
 from distutils.dir_util import copy_tree
 import textwrap
+import logging
 
 from .jbcd import JBcd
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 defaults = {}
 defaults['TITLE'] = '{title}'
@@ -43,14 +47,18 @@ defaults['RENPY_VIDEOS_DIR'] = defaults['RENPY_ASSETS_DIR'] / "videos"
 defaults['MG_GAME_DIR'] = defaults['ROOT_DIR'] / "Monogatari"
 defaults['MG_ASSETS_DIR'] = defaults['MG_GAME_DIR'] / "assets"
 defaults['MG_IMAGES_DIR'] = defaults['MG_ASSETS_DIR'] / "images"
-defaults['MG_SOUNDS_DIR'] = defaults['MG_ASSETS_DIR'] / "sound"
-defaults['MG_VIDEOS_DIR'] = defaults['MG_ASSETS_DIR'] / "video"
+defaults['MG_SOUNDS_DIR'] = defaults['MG_ASSETS_DIR'] / "sounds"
+defaults['MG_VIDEOS_DIR'] = defaults['MG_ASSETS_DIR'] / "videos"
 
 defaults['GIT_CMD'] = 'git'
 
 defaults['GOOGLE_COLAB'] = False
 
 defaults['HTTP_PORT'] = None
+
+defaults['CHARACTERS'] = dict()
+
+cfg = {}
 
 try:
     from google.colab import files
@@ -79,10 +87,10 @@ defaults['REVEAL_SLIDE_TEMPLATE'] = """
 """
 
 defaults['REVEAL_SLIDE_FOOTER'] = """
-<div class="jb-footer-left">
+<div class="jb-footer-left plain">
     {{ cfg['ASSETS']['logo']( cls="jb-footer-left-img plain" ) }}
 </div>
-<div class="jb-footer-right">
+<div class="jb-footer-right plain">
     {{ cfg['ASSETS']['robbi']( cls="jb-footer-right-img plain" ) }}
 </div>
 """
@@ -131,7 +139,8 @@ def updateGit( cfg, url, dirname, branch,  root ):
     with JBcd( root ):
         p = pathlib.Path( dirname )
         if not p.is_dir():
-            print("cloning {0} from url {1} root {2}".format( dirname, url, root ), 'git command', cfg['GIT_CMD'])
+            logger.debug("cloning {0} from url {1} root {2}".format( dirname, url, root ) )
+            logger.debug( 'git command ' + cfg['GIT_CMD'] )
             if ( branch ):
                 bs = " --branch " + branch
             else:
@@ -140,23 +149,23 @@ def updateGit( cfg, url, dirname, branch,  root ):
             cmd = cfg['GIT_CMD'] + " clone " + bs + " " + url + " " + dirname 
             os.system( cmd )
         else:
-            print("git directory exists")
+            logger.info("git directory exists")
 
         with JBcd( dirname ):
-            print("Executing git pull")
+            logger.info("Executing git pull")
             o = None
             try:
                 o = subprocess.check_output(cfg['GIT_CMD'] + " pull", stderr=subprocess.STDOUT, shell=True)
             except subprocess.CalledProcessError:
                 pass
             if ( o ):
-                print( 'git pull:' + o.decode('utf-8') )
+                logger.debug( 'git pull:' + o.decode('utf-8') )
 
 def loadModules( cfg ):
-    print('Loading Modules', cfg['MODULE_ROOT'])
+    logger.info('Loading Modules' + str( cfg['MODULE_ROOT'] ) )
     if cfg['MODULE_ROOT'] not in sys.path:
         sys.path.append( str( cfg['MODULE_ROOT']  ) )
-    print('sys.path', sys.path )    
+    logger.debug('sys.path %s', sys.path )    
 
     from .jbcd import JBcd
 
@@ -175,21 +184,24 @@ def loadModules( cfg ):
     from .jbgithub import createEnvironment, login, getRepositories
     cfg = jbgithub.createEnvironment( cfg )
 
-    print('Loading of modules finished')
+    from .jbgoogle import createEnvironment
+    cfg = jbgoogle.createEnvironment( cfg )
+    
+    logger.info('Loading of modules finished')
     return cfg
 
 def createEnvironment( params = {} ):
     cfg = { **defaults, **params }
-    print('Title', cfg['TITLE'] )
+    logger.debug('Title ' + cfg['TITLE'] )
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
 
     node = platform.node()
 
-    for p in [ "pygments", "youtube-dl", "jinja2", "PyDrive", "google-colab", "papermill", "pytexturepacker", "patch", "requests_oauthlib", "PyGithub", "gitpython", "portpicker" ]:
+    for p in [ "pygments", "youtube-dl", "jinja2", "papermill", "pytexturepacker", "patch", "requests_oauthlib", "PyGithub", "gitpython" ]:
         try:
             importlib.import_module( p )
         except ModuleNotFoundError:
-            print('Using pip to install missing dependency', p)
+            logger.debug('Using pip to install missing dependency ' +  p )
             os.system("python -m pip" + " install " + p )
 
     cfg = loadModules( cfg )
@@ -199,14 +211,14 @@ def createEnvironment( params = {} ):
     # 'decktape',
     for pkg in []: #[  'scenejs' ]:            
         with JBcd( cfg['REVEAL_DIR']  ):
-            print( f"Executing npm install {pkg}" )
+            logger.info( f"Executing npm install {pkg}" )
             o = None
             try:
                 o = subprocess.check_output( f"npm install {pkg}", stderr=subprocess.STDOUT, shell = True)
             except subprocess.CalledProcessError:
                 pass
             if ( o ):    
-                print( f'npm install {pkg}:' + o.decode('utf-8') )
+                logger.info( f'npm install {pkg}:' + o.decode('utf-8') )
 
     for d in [ cfg['REVEAL_IMAGES_DIR'], cfg['REVEAL_VIDEOS_DIR'], cfg['REVEAL_SOUNDS_DIR'] ]:
         d.mkdir( parents = True, exist_ok=True )
@@ -286,7 +298,7 @@ def fetchRenpyData( cfg ):
     src = cfg['ORIG_ROOT'] / 'Lecture-VN' / 'Resources' / 'templateProject' / 'game'
     cfg['RENPY_GAME_DIR'].mkdir(parents = True, exist_ok = True )
     with JBcd( cfg['RENPY_GAME_DIR'] ):
-        print("Creating renpy directory in " + str( cfg['RENPY_GAME_DIR'] ) )
+        logger.info("Creating renpy directory in " + str( cfg['RENPY_GAME_DIR'] ) )
         for d in [ cfg['RENPY_IMAGES_DIR'], cfg['RENPY_IMAGES_DIR'] / "slides", cfg['RENPY_SOUNDS_DIR'], cfg['RENPY_VIDEOS_DIR'], "renpy/game/tl" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
     
@@ -331,6 +343,15 @@ def addJBData( name, url=None, data=None, localFileStem=None, suffix="dat" ):
     cfg['ASSETS'][dat.name] = dat
     return dat
 
+def addJBCharacter( name, data = None ):
+    if data:
+        cfg['CHARACTERS'][name] = data
+        ret = data
+    else:
+        ret = cfg['CHARACTERS'][name]
+        del cfg['CHARACTERS'][name]
+    return ret
+    
 def addJBFigure( name, width, height, fig, suffix = "svg" ):
     if suffix == "svg":
         img = createSVGImageFromFigure( fig )
@@ -451,3 +472,45 @@ def createBase64VideoFromAnimation( anim ):
     aniFile.seek(0)  # rewind to beginning of file
     a = aniFile.getvalue()
     return base64.b64encode( a.decode('utf-8') )
+
+def extract(source=None):
+    """Copies the variables of the caller up to iPython. Useful for debugging.
+
+    .. code-block:: python
+
+        def f():
+            x = 'hello world'
+            extract()
+
+        f() # raises an error
+
+        print(x) # prints 'hello world'
+
+    """
+    import inspect
+    import ctypes 
+
+    if source is None:
+        frames = inspect.stack()
+        caller = frames[1].frame
+        name, ls, gs = caller.f_code.co_name, caller.f_locals, caller.f_globals
+    elif hasattr(source, '__func__'):
+        func = source.__func__
+        name, ls, gs = func.__qualname__, (func.__closure__ or {}), func.__globals__
+    elif hasattr(source, '__init__'):
+        func = source.__init__.__func__
+        name, ls, gs = func.__qualname__, (func.__closure__ or {}), func.__globals__
+    else:
+        raise ValueError(f'Don\'t support source {source}')
+
+    ipython = [f for f in inspect.stack() if f.filename.startswith('<ipython-input')][-1].frame
+
+    ipython.f_locals.update({k: v for k, v in gs.items() if k[:2] != '__'})
+    ipython.f_locals.update({k: v for k, v in ls.items() if k[:2] != '__'})
+
+    # Magic call to make the updates to f_locals 'stick'.
+    # More info: http://pydev.blogspot.co.uk/2014/02/changing-locals-of-frame-frameflocals.html
+    ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(ipython), ctypes.c_int(0))
+
+    message = 'Copied {}\'s variables to {}'.format(name, ipython.f_code.co_name)
+    raise RuntimeError(message)

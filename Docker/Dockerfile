@@ -1,6 +1,43 @@
 FROM continuumio/anaconda3
-RUN apt update && apt --fix-missing --yes dist-upgrade; \ 
+
+LABEL version="1.5" maintainer="Marcella Schutz <abthil023@protonmail.com>"
+
+RUN mkdir /work
+COPY start_lab.sh start_notebook.sh run-jupyter.py run-npm.py /work/
+
+ENV PATH="${PATH}:/work"
+
+RUN chmod a+x /work/*; \
  adduser conda --system; \
+ apt update && apt --fix-missing --yes dist-upgrade; \
  apt install -y npm; \
- /opt/conda/bin/conda upgrade --yes conda; \ 
- /opt/conda/bin/conda upgrade --yes anaconda; 
+ apt install -y ffmpeg; \
+ apt install -y vim;
+ 
+ RUN /opt/conda/bin/conda upgrade --yes conda; /opt/conda/bin/conda upgrade --yes anaconda; 
+
+# RUN /opt/conda/bin/conda install jupyterlab --quiet --yes;
+
+RUN python -m pip install pygments \
+    youtube-dl \
+    jinja2 \
+#    google-colab \
+    papermill \
+    pytexturepacker \
+    patch \
+    requests_oauthlib \ 
+    PyGithub \
+    gitpython \
+    PyDrive \
+    portpicker \
+    google-api-python-client \
+    google-auth-oauthlib \
+    google-auth-httplib2 \
+    docutils \
+    pyopenssl 
+
+RUN npm install -g canopy \
+    scenejs
+
+
+

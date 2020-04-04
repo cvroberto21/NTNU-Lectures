@@ -3,15 +3,20 @@ from jinja2 import Template
 import re
 import pathlib
 import subprocess
+import logging
+import json
+import logging
 
 from ..jbslide import JBSlide
 from ..jbdata import JBData, JBImage, JBVideo
 from ..jbcd import JBcd
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
+
 class JBDocument:
     def __init__( self ):
         self.slides = []
-        self.renpy = []
       
         self.current = ''
         self.parent = ''
@@ -19,6 +24,10 @@ class JBDocument:
         self.slideCount = 1
         self.slideFragmentCount = 1
 
+        self.header = ""
+        self.footer = ""
+        self.background = ""
+        
         # self.user_ns = {}
         
         # self.setTheme( theme )
@@ -62,16 +71,17 @@ class JBDocument:
         return current 
       
     def instTemplate( self, text, vars ):
+        #print('jbdocument CFG', hex(id(cfg)))
         d = { ** cfg['user_ns'], **vars }
         return JBDocument.sInstTemplate( text, d )
         
     def findSlideIndex( self, id ):
-        #print('Looking for', id)
+        #logging.debug('Looking for', id)
         try:
             ind = next(i for i,v in enumerate( self.slides ) if v.id == id )
         except StopIteration:
             ind = -1
-        #print('returning', ind )
+        #logging.debug('returning', ind )
         return ind
 
     def addSlide( self, id, slideHTML, background = None, header = None, footer = None ):
@@ -111,7 +121,7 @@ class JBDocument:
         htmltxt = '\n<!-- Header -->\n' + header + '\n<!-- Background -->\n' + background + '\n<!-- Slide -->\n' + slideHTML + '\n<!-- Footer -->\n' + footer
         htmltxt = self.instTemplate( htmltxt, {} )
         #sl = JBSlide( id, header + '\n' + background + '\n' + slideHTML + '\n' + footer, renpy = '', left='', right='', up='', down='' )
-        sl = JBSlide( id, htmltxt, renpy = '', left='', right='', up='', down='' )
+        sl = JBSlide( id, htmltxt, renpyStyle='', renpy = '', left='', right='', up='', down='' )
         
         if ( self.current != '' ):
             c = self.findSlideIndex( self.current )
@@ -148,28 +158,38 @@ class JBDocument:
             startId = self.slides[0].id
         slides = self.createSlides( startId )
         assets = self.createAssets( cfg['ASSETS'], cfg['REVEAL_DIR'] )
-        print("*** Assets ***")
-        print(assets)
-        print("*** Assets ***")
-        presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets } )
-        presentation = self.updateAssets( presentation, cfg['ASSETS'] )        
+        logging.debug("*** Assets ***")
+        logging.debug(str(assets) )
+        logging.debug("*** Assets ***")
+
+        chars = self.createCharacters( cfg['CHARACTERS'] ) 
+        
+        presentation = self.instTemplate( cfg['REVEAL_PRESENTATION_TEMPLATE'], { 'slides': slides, 'assets': assets, 'characters' : chars  } )
+        presentation = self.updateAssets( presentation, cfg['ASSETS'] ) 
+
         return presentation
 
     def updateAssets( self, presentation, assets ):
         for aName in assets:
             a = assets[ aName ]
-            #print( 'a', a )
+            logging.debug( 'a' +str( a ) )
             for id in a.ids:
                 re1 = re.compile(r'<span\s+id\s*=\s*"' + id + r'"\s*(?P<fmt>[^>]*?)\s*>(?P<data>.*?)</span>', re.DOTALL)
+                m = re.match( re1, presentation ) 
+                if m:
+                    s = m.span[0]
+                    e = m.span[1]
+                    logger.debug( "updateAsset replacing presentation component ***%s***", presentation[s:e] )
                 presentation = re.sub( 
                     re1, 
-                    r'<span id="{' + id + r'" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + r'</span>', 
+                    r'<span id="' + id + r'" \g<fmt>>' + a.__repr_html_path__(None, None, id=id) + r'</span>', 
                     presentation 
                 )
         return presentation        
 
     def createAssets( self, assets, rdir ):
-        s = "var assets = {"
+        s = "<!-- Assets -->\n"
+        s = s + "var assets = {"
         inst = "var assetInstances = {"
 
         ia = 0
@@ -182,6 +202,11 @@ class JBDocument:
             s = s + f'"{a.name}" : '
             rpath = str( pathlib.Path(a.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
 
+            if a.url is not None:
+                url = f'"{a.url}"'
+            else:
+                url = "null"
+
             if ( a.atype == JBData.JBIMAGE_PNG ) or ( a.atype == JBData.JBIMAGE_SVG ) or ( a.atype == JBData.JBIMAGE_JPG ):
                 if a.atype == JBData.JBIMAGE_PNG:
                     suffix = "png"
@@ -192,9 +217,9 @@ class JBDocument:
                 else:
                     raise Exception("Unknown JBImage Type")
 
-                s = s + f'new JBImage( "{a.name}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }", "{suffix}" )'
+                s = s + f'new JBImage( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", {url}, null, "{ rpath }", "{suffix}" )'
             elif ( a.atype == JBData.JBVIDEO ):
-                s = s + f'new JBVideo( "{a.name}", "{a.width}", "{a.height}", "{a.url}", null, "{ rpath }" )'
+                s = s + f'new JBVideo( "{a.name}", "{a.getSize()}", "{a.width}", "{a.height}", {url}, null, "{ rpath }" )'
 
             for id in a.ids:
                 if iinst > 0:
@@ -207,29 +232,43 @@ class JBDocument:
         s = s + " \n};\n"
         inst = inst + "\n};\n"
 
-        return s + inst
+        return s + inst + "<!-- End of Assets -->\n"
+
+    def createCharacters( self, characters ):
+        s = "<!-- Characters -->\n"
+        s = s + 'var characters =\n'
+        s = s + json.dumps( characters, sort_keys=True, indent=4)
+        s = s  + ";\n"
+        s = s + "<!-- End of Characters -->\n"
+        return s
+
+    def writeCharacters( self, chars, fname ):
+        with open( fname, "w" ) as f:
+            f.write( chars )
 
     def createRevealDownload( self, dir, fname = 'index.html' ):
+        logging.info("Starting to create reveal slideshow")
         html = self.createRevealSlideShow()
         with open( pathlib.Path( dir ).joinpath( fname ), "w" ) as f:
             f.write( html )
-        self.npmInstall( dir )
+        #self.npmInstall( dir )
+        logging.info("Finished creating reveal slideshow")
 
     def npmInstall( self, dir ):
         with JBcd( dir ):
-            print("Executing npm install")
+            logging.debug("Executing npm install")
             o = None
             try:
                 o = subprocess.check_output("npm install", stderr=subprocess.STDOUT, shell = True)
             except subprocess.CalledProcessError:
                 pass
             if ( o ):    
-                print( 'npm install:' + o.decode('utf-8') )
+                logging.debug( 'npm install:' + o.decode('utf-8') )
     
-    def createSlideImages(self, rdir ):
-        for s in self.slides:
-            img = s.createJBImage( self.cssSlides )
-            img.writeData( rdir )
+    # def createSlideImages(self, rdir ):
+    #     for s in self.slides:
+    #         img = s.createJBImage( self.cssSlides )
+    #         img.writeData( rdir )
     
     def createBackgroundsFile( self, rdir ):
         with open( pathlib.Path( rdir ).joinpath( "backgrounds.rpy" ), "w" ) as f:
@@ -253,10 +292,10 @@ class JBDocument:
         while ( currentIdx >= 0 ) and ( currentIdx < len( self.slides) ):
             s = self.slides[ currentIdx ]
             if ( s.renpy ):
-                print('Slide', s.id, 'has renpy', s.renpy )
+                logging.info('Slide ' + str(s.id) + ' has renpy ' + str( s.renpy ) )
             rpyScript = self.instTemplate( cfg['RenpyScriptTemplate'], { 'label': s.id, 'transition': cfg['RenpyTransition'], 'id': s.id, 'renpy': s.renpy, 'right': s.right } )
             sp = pathlib.Path( rdir ) / f"{s.id}.rpy"
-            print("Writing renpy script", str(sp) )
+            logging.debug("Writing renpy script %s", str(sp) )
             with sp.open( "w" ) as f:
                 f.write( rpyScript )
 
@@ -275,5 +314,7 @@ cfg = {}
 
 def createEnvironment( mycfg ):
     global cfg
+    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    #print('jbdocument', hex(id(cfg)))
     return cfg

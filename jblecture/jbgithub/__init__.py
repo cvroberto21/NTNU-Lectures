@@ -1,5 +1,4 @@
 from github import Github, GitAuthor, GithubException
-import os
 import getpass
 import pathlib
 from ..jbcd import JBcd
@@ -13,8 +12,10 @@ cfg = {}
 
 def createEnvironment( mycfg ):
     global cfg
+    print('jbgithub', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     cfg['GITHUB'] = None
+    print('jbgithub', hex(id(cfg)))
     return cfg
 
 
@@ -79,11 +80,12 @@ def runCommand( cmd, secure = False ):
 =======
     
     if not secure:
-        myStdOut = subprocess.STDOUT
-        myStdErr = subprocess.STDERR
+        myStdOut = None
+        myStdErr = None
     else:
         myStdOut = subprocess.DEVNULL
         myStdErr = subprocess.DEVNULL
+        
     try:
         o = subprocess.call( cmd, stdout=myStdOut, stderr=myStdErr, shell=True)
 >>>>>>> mg
@@ -105,6 +107,15 @@ def modUrl( url, tok ):
     else:
         raise(Exception("Invalid URL Format"))
     return n
+
+def installLFS( tdir=pathlib.Path("/tmp") ):
+    with JBcd( tdir ):
+        runCommand( "wget -O /tmp/lfs.tgz https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz", True )
+        runCommand( "tar -xzpvf /tmp/lfs.tgz", True )
+        runCommand( "sudo ./install.sh", True )
+
+
+MAX_GITHUB_FILE_SIZE=(25 * 2**20)
 
 def createGitHub( title, root = None):
     title = createRepoTitle( title )
@@ -151,6 +162,7 @@ def createGitHub( title, root = None):
             runCommand( cfg['GIT_CMD'] + " clone " + '"' + repo.clone_url + '"' + " " + str(p), True )
 
         with JBcd( p ):
+            
             if ( not findBranchByName(repo, "gh-pages") ):
                 print("Creating branch gh-pages")
                 runCommand( cfg['GIT_CMD'] + " branch gh-pages", True )
@@ -164,11 +176,26 @@ def createGitHub( title, root = None):
         
     with JBcd(p):
         shutil.copyfile( cfg['REVEAL_DIR'] / 'index.html', 'index.html' )
-        for d in ["css", "js", "assets", "plugin", "lib" ]:
+        runCommand( cfg['GIT_CMD'] + " add index.html", True )
+        shutil.copyfile( cfg['REVEAL_DIR'] / 'package.json', 'packages.json' )
+        runCommand( cfg['GIT_CMD'] + " add packages.json", True )
+        for d in ["css", "js", "plugin", "lib" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
             distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
-        runCommand( cfg['GIT_CMD'] + " add .", True )
-        runCommand( cfg['GIT_CMD'] + " commit -m \"Commit\"", True )
+            runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
+        for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
+            pathlib.Path(d).mkdir( parents = True, exist_ok = True )
+
+        for aName in cfg['ASSETS']:
+            a = cfg['ASSETS'][aName]
+            print('Asset', aName, 'Size', a.getSize(), 'Name', a.getLocalName() )
+            if a.getSize() <= MAX_GITHUB_FILE_SIZE:
+                print("Copying asset", aName, a.getLocalName() )
+                rpath = pathlib.Path(a.getLocalName() ).relative_to(cfg['REVEAL_DIR'])
+                shutil.copyfile( a.getLocalName(), str( rpath ) )
+                runCommand( cfg['GIT_CMD'] + " add " + str(rpath), False )
+                          
+        runCommand( cfg['GIT_CMD'] + " commit -a -m \"Commit\"", True )
 
     with JBcd(p):
         runCommand( cfg['GIT_CMD'] + " push", True )

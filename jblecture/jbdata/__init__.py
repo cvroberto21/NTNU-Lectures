@@ -4,6 +4,10 @@ import base64
 import youtube_dl
 import uuid
 import functools
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 cfg = {}
 
@@ -11,7 +15,7 @@ def genId( func ):
     @functools.wraps( func )
     def wrapperGenId( *args, **kwargs ):
         self = args[0]
-        #print('args', args, 'kwargs', kwargs )
+        #logger.debug('args %s kwargs %s', args, kwargs )
         id = None
         if 'id' in kwargs:
             id = kwargs['id']
@@ -40,7 +44,7 @@ class JBData:
 
     @staticmethod
     def sReadData( fname ):
-        #print('JBData.sReadData', 'Reading file', fname)
+        #logger.debug('JBData.sReadData', 'Reading file', fname)
         with open( fname, "rb") as f:
             data = f.read()
         return data
@@ -52,7 +56,12 @@ class JBData:
 
     def getDefaultFileName(self):
         p = cfg['ROOT_DIR'] / 'reveal.js' / 'assets' / "{name}.{suffix}".format(name=self.name, suffix=self.suffix)
-        return str(  p.expanduser().resolve() )
+        return p.expanduser().resolve()
+
+    def getDefaultFileNameStem( self ):
+        p = self.getDefaultFileName()
+        return p.with_suffix( '' )
+
 
     def __init__(self, name, url=None, data=None, lfname=None, atype = JBDATA, suffix="dat"):
         self.url = url
@@ -66,25 +75,27 @@ class JBData:
 
         self.suffix = suffix
 
+        if lfname:
+            lfname = pathlib.Path( lfname )
         if data:
             if not lfname:
                 lfname = self.getDefaultFileName()
             with open(lfname, "wb") as f:
                 f.write(data)
-                self.localFileStem = lfname[0:-len(suffix) - 1 ]
+                self.localFileStem = lfname.with_suffix('')
         elif url:
             if not lfname:
-                lfname = self.getDefaultFileName()
+                lfname = self.getDefaultFileNameStem()
             self.data = self.readDataFromURL(url, lfname)
             if (self.data):
-                JBData.sWriteData(lfname, self.data)
-            self.localFileStem = lfname[0:-len(suffix) - 1]
+                JBData.sWriteData(lfname.with_suffix( "." + suffix ), self.data)
+            self.localFileStem = lfname.with_suffix('')
         elif lfname:
-            if lfname[-len(suffix)-1:] != "." + suffix:
-                lfname = lfname + "." + suffix
-            data = JBData.sReadData(  lfname )
-            #print('localFileStem',  lfname )
-            self.localFileStem = lfname[0:-len(suffix)-1]
+            if lfname.suffix == suffix:
+                lfname = lfname.with_suffix('')
+            data = JBData.sReadData(  lfname.with_suffix("." + suffix) )
+            #logger.debug('localFileStem',  lfname )
+            self.localFileStem = lfname
         else:
             uploaded = files.upload()
             for fn in uploaded.keys():
@@ -94,7 +105,7 @@ class JBData:
         self.clearCache()
 
     def readDataFromURL(self, url, tmpFile):
-        # print('JBData.readDataFromURL', url )
+        # logger.debug('JBData.readDataFromURL', url )
         return JBData.sReadDataFromURL(url)
 
     def writeData(self, rdir):
@@ -175,6 +186,11 @@ class JBData:
             s = self.__repr_html_path__( cls, style, id=id )
         elif mode == "file":
             s = self.__repr_html_file__( cls, style, id=id )
+        elif mode == "smart-path":
+            if self.getSize() <= MAX_PATH_SIZE:
+                s = self.__repr_html_path__( cls, style, id=id )
+            else:
+                s = self.__repr_html_url__( cls, style, id=id )
         else:
             raise Exception( f"JBData - unknown mode {mode}" )
 
@@ -191,13 +207,20 @@ class JBData:
         return JBData.sGenerateId()
 
     def getLocalName( self ):
-        return self.localFileStem + "." + self.suffix
+        return self.localFileStem.with_suffix( "." + self.suffix )
     
     def encodeMIME( self, tag ):
         s = ""
         s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
         return s
+    
+    @staticmethod
+    def sGetSize( fname ):
+        p = pathlib.Path( fname )
+        return p.stat().st_size
 
+    def getSize( self ):
+        return JBData.sGetSize( self.getLocalName() )
 
 class JBImage(JBData): 
     def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix=None):
@@ -231,7 +254,7 @@ class JBImage(JBData):
         elif suffix == "jpg" or suffix == "jpeg":
             atype = JBData.JBIMAGE_JPG
         else:
-            #print('name', name, 'localFileStem', localFileStem, 'suffix', suffix)
+            #logger.debug('name', name, 'localFileStem', localFileStem, 'suffix', suffix)
             raise Exception("Unknown JBImage data type: " + suffix )
         super(JBImage, self).__init__(name, url, data, localFileStem, atype=atype, suffix=suffix)
         self.width = width
@@ -252,7 +275,6 @@ class JBImage(JBData):
         cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         if self.atype == JBData.JBIMAGE_SVG:
-#            s = '<span id="{id}"><object type="image/svg+xml" id="img-{id}" {width} {height}  {style} data="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
             s = '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
         else:
             s = '<span id="{id}"><img id="img-{id}" {width} {height} {style} src="{src}"/></span>\n'.format( id=id, width=w, height=h, style=cs, src=rpath + "." + self.suffix )
@@ -309,12 +331,12 @@ class JBImage(JBData):
 
     def getDefaultFileName(self):
         p = cfg['REVEAL_IMAGES_DIR'] /  "{name}.{suffix}".format(name=self.name, suffix=self.suffix)        
-        return str(  p.expanduser().resolve() )
+        return p.expanduser().resolve()
 
     @staticmethod
     def sCreateWidthString( width ):
         if width > 0:
-            w = "width={0}".format(width)
+            w = 'width="{0}"'.format(width)
         else:
             w = ""
         return w
@@ -325,7 +347,7 @@ class JBImage(JBData):
     @staticmethod
     def sCreateHeightString( height ):
         if height > 0:
-            h = "height={0}".format(height)
+            h = 'height="{0}"'.format(height)
         else:
             h = ""
         return h
@@ -336,7 +358,7 @@ class JBImage(JBData):
     # Modes are None/"auto", "url", "localhost", "path", "inline", "file"
     
     def __repr_html__(self, cls = None, style=None, mode = None, *, id = None ):
-        #print("JBImage.__repr_html__", 'mode', mode )
+        #logger.debug("JBImage.__repr_html__", 'mode', mode )
         if ( mode is None ) or ( mode == "auto" ) or ( mode == "" ):
             if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFileStem ):
                 mode = "localhost"
@@ -358,6 +380,11 @@ class JBImage(JBData):
             s = self.__repr_html_inline__( cls, style, id=id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id=id )
+        elif mode == "smart-path":
+            if self.getSize() <= MAX_PATH_SIZE:
+                s = self.__repr_html_path__( cls, style, id=id )
+            else:
+                s = self.__repr_html_url__( cls, style, id=id )
         else:
             raise Exception( f"JBImage - unknown mode {mode}" )
         return s
@@ -375,21 +402,25 @@ class JBImage(JBData):
     #     return newContent
 
 class JBVideo(JBData):
-    def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix="webm"):
+    def __init__(self, name, width, height, url=None, data=None, localFileStem=None, suffix="mp4"):
         super(JBVideo, self).__init__(name, url, data, localFileStem, atype=JBData.JBVIDEO, suffix=suffix)
         self.width = width
         self.height = height
 
-    def readDataFromURL( self, url, localFileStem ):
-        print('Reading video from', url)
-        ydl_opts = {'outtmpl': localFileStem }
+    def readDataFromURL( self, url, localFileName ):
+        logger.debug('Reading video from %s localFileName %s', str(url), str(localFileName) )
+
+        stem = pathlib.Path( localFileName ).with_suffix('')
+        ydl_opts = {'outtmpl': str(stem) + "." + "%(ext)s",
+                    'format': 'mp4',
+                     }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        self.localFileStem = localFileStem
+        #self.localFileStem = pathlib.Path( localFileName ).with_suffix('')
 
     def getDefaultFileName(self):
         p = cfg['REVEAL_VIDEOS_DIR'] /  "{name}.{suffix}".format(name=self.name, suffix=self.suffix)
-        return str(  p.expanduser().resolve() )
+        return p.expanduser().resolve()
 
     @genId
     def __repr_html_url__(self, cls = None, style=None, id=None ):
@@ -402,9 +433,18 @@ class JBVideo(JBData):
 
     @genId
     def __repr_html_path__(self, cls = None, style=None, id=None ):
+        if style is not None:
+            st = str( style )
+        else:
+            st = ""
+        
+        if len(st) > 0 and st[-1] != ";":
+            st = st + ";"
+
+        st = st + "pointer-events:all;"
         w = self.createWidthString()
         h = self.createHeightString()
-        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style + ";pointer-select:all")
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", st )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
         return '''<span id="{id}">
            <video id="vid-{id}"  {style} controls>
@@ -424,12 +464,21 @@ class JBVideo(JBData):
     @genId
     def __repr_html_base64__(self, cls = None, style=None, id=None ):
         #style['pointer-select'] = 'all'
+        if style is not None:
+            st = str( style )
+        else:
+            st = ""
+        
+        if len(st) > 0 and st[-1] != ";":
+            st = st + ";"
+
+        st = st + "pointer-events:all;"
         w = self.createWidthString()
         h = self.createHeightString()
-        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", style + ";pointer-select:all" )
+        cs = self.createStyleString( "class", cls ) + " " + self.createStyleString( "style", st  )
         mime = self.encodeMIME( )
         rpath = str( pathlib.Path(self.localFileStem).relative_to(cfg['REVEAL_DIR'] ) )
-        return '''<span id="{id}">
+        return '''<span id="{id} {style}">
            <video id="vid-{id}"  {style} controls>
            <source src="{src}"/>
            </span>\n'''.format(id=id, width=w, height=h, src=mime, style=cs )
@@ -440,7 +489,7 @@ class JBVideo(JBData):
     def createWidthString( self ):
         return JBImage.sCreateWidthString( self.width )
 
-    # Modes are None/"auto", "url", "localhost", "path", "file", "inline?"
+    # Modes are None/"auto", "url", "localhost", "path", "file", "inline?" "smart-path"
     def __repr_html__(self, cls = None, style=None, mode = None, *, id = None ):
         if (mode is None) or (mode == "auto") or ( mode == ""):
             if ( ('HTTPD' in cfg) and ( cfg['HTTPD'] ) and self.localFileStem ):
@@ -463,6 +512,11 @@ class JBVideo(JBData):
             s = self.__repr_html_base64__(cls, style, id = id )
         elif mode == "file":
             s = self.__repr_html_file__(cls, style, id = id )
+        elif mode == "smart-path":
+            if self.getSize() <= MAX_PATH_SIZE:
+                s = self.__repr_html_path__( cls, style, id=id )
+            else:
+                s = self.__repr_html_url__( cls, style, id=id )
         else:
             raise Exception("JBVideo unknown mode", mode )
 
@@ -475,6 +529,8 @@ class JBVideo(JBData):
             tag = "data:video/ogg;"
         elif self.suffix == "webm":
             tag = "data:video/webm;"
+        elif self.suffix == "mkv":
+            tag = "data:video/mkv;"
 
         s = ""
         s = s + tag + "base64, " + JBData.getBase64Data( str(self.localFileStem) + "." + self.suffix )
@@ -482,5 +538,7 @@ class JBVideo(JBData):
 
 def createEnvironment( mycfg ):
     global cfg
+    #print('jbdata', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    #print('jbdata', hex(id(cfg)))
     return cfg
