@@ -41,14 +41,14 @@
                     mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
                     config: 'TeX-AMS_HTML-full',  // See http://docs.mathjax.org/en/latest/config-files.html
                     tex2jax: {
-                    inlineMath: [['$', '$'], ['\(', '\)']],
-                    displayMath: [['$$', '$$'], ['\[', '\]']],
-                    processEscapes: true,
-                    processEnvironments: true,
-                    skipTags: ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
-                    displayAlign: 'center',
-                }                },
-
+                        inlineMath: [['$', '$'], ['\(', '\)']],
+                        displayMath: [['$$', '$$'], ['\[', '\]']],
+                        processEscapes: true,
+                        processEnvironments: true,
+                        skipTags: ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
+                        displayAlign: 'center',
+                    }                
+                },
                 dependencies: [
                     { src: 'plugin/markdown/marked.js' },
                     { src: 'plugin/markdown/markdown.js' },
@@ -57,14 +57,8 @@
                     { src: 'plugin/math/math.js', async: true }
                 ]
             });
-		
-            const mathjax = window.MathJax;
-            mathjax.Hub.Config({
-               ,
-            });
-            mathjax.Hub.Configured();
- 
         </script>
+        
         <script>
             {{assets}}
             convertURLs(assetInstances, "smart-path");
