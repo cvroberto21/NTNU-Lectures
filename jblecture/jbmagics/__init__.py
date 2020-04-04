@@ -309,31 +309,7 @@ class JBMagics(Magics):
         html = ""
 
         html = html + """
-            <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
-            <script>
-                (() => {
-                const mathjax = window.MathJax;
-                mathjax.Hub.Config({
-                'tex2jax': {
-                    'inlineMath': [['$', '$'], ['\(', '\)']],
-                    'displayMath': [['$$', '$$'], ['\[', '\]']],
-                    'processEscapes': true,
-                    'processEnvironments': true,
-                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
-                    'displayAlign': 'center',
-                },
-                'HTML-CSS': {
-                    'styles': {'.MathJax_Display': {'margin': 0}},
-                    'linebreaks': {'automatic': true},
-                    // Disable to prevent OTF font loading, which aren't part of our
-                    // distribution.
-                    'imageFont': null,
-                },
-                'messageStyle': 'none'
-                });
-                mathjax.Hub.Configured();
-            })();
-            </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full"></script>
             """
 
         html = html + '<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>'
