@@ -14,9 +14,8 @@ RUN chmod a+x /work/*; \
  apt install -y ffmpeg; \
  apt install -y vim;
  
- RUN /opt/conda/bin/conda upgrade --yes conda; /opt/conda/bin/conda upgrade --yes anaconda; 
-
-# RUN /opt/conda/bin/conda install jupyterlab --quiet --yes;
+RUN /opt/conda/bin/conda upgrade --yes conda; /opt/conda/bin/conda upgrade --yes anaconda; \ 
+    /opt/conda/bin/conda install python-graphviz --quiet --yes;
 
 RUN python -m pip install pygments \
     youtube-dl \

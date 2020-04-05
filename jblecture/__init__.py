@@ -364,6 +364,24 @@ def addJBFigure( name, width, height, fig, suffix = "svg" ):
 
     return f
 
+def addJBGraph( name, width, height, g, suffix = "svg" ):
+    if suffix == "svg":
+        g.format = "svg"
+        img = g.pipe().decode('utf-8')
+        g.format = saveFormat
+        f = addJBImage( name, width, height, data = img.encode('utf-8'), suffix = "svg" )
+    elif suffix == "png":
+        saveFormat = g.format
+        g.format('png')
+        img = g.pipe().decode('utf-8')
+        g.format = saveFormat
+        f = addJBImage( name, width, height, data = img, suffix = "png" )
+    else:
+        raise Exception( "addJBFigure unknown suffix " + suffix )
+
+    return f
+
+
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
