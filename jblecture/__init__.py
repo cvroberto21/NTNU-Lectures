@@ -373,7 +373,7 @@ def addJBGraph( name, width, height, g, suffix = "svg" ):
     elif suffix == "png":
         saveFormat = g.format
         g.format('png')
-        img = g.pipe().decode('utf-8')
+        img = g.pipe()
         g.format = saveFormat
         f = addJBImage( name, width, height, data = img, suffix = "png" )
     else:
