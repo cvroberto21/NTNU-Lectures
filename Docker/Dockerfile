@@ -12,7 +12,8 @@ RUN chmod a+x /work/*; \
  apt update && apt --fix-missing --yes dist-upgrade; \
  apt install -y npm; \
  apt install -y ffmpeg; \
- apt install -y vim;
+ apt install -y vim; \
+ apt install -y graphviz
  
 RUN /opt/conda/bin/conda upgrade --yes conda; /opt/conda/bin/conda upgrade --yes anaconda; \ 
     /opt/conda/bin/conda install python-graphviz --quiet --yes;

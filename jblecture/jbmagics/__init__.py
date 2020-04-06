@@ -17,7 +17,7 @@ from ..jbdocument import JBDocument
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel( logging.DEBUG )
+logger.setLevel( logging.WARNING )
 
 @magics_class
 class JBMagics(Magics):
