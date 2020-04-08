@@ -489,7 +489,7 @@ def createSVGImageFromFigure( fig ):
 def createBase64VideoFromAnimation( anim ):
     fp, fname = tempfile.mkstemp( suffix=".mp4", prefix="animation" ) 
     anim.save( fname )
-    with open( fname, "b" ) as f:
+    with open( fname, "rb" ) as f:
         data = f.read()
     return base64.b64encode( data )
 
