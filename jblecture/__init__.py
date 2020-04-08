@@ -15,6 +15,7 @@ from distutils.dir_util import copy_tree
 import textwrap
 import logging
 import tempfile
+import base64 
 
 from .jbcd import JBcd
 
