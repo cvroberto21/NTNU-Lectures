@@ -14,6 +14,7 @@ import zipfile
 from distutils.dir_util import copy_tree
 import textwrap
 import logging
+import tempfile
 
 from .jbcd import JBcd
 
@@ -381,9 +382,9 @@ def addJBGraph( name, width, height, g, suffix = "svg" ):
     return f
 
 def addJBAnimation( name, width, height, anim, suffix="mp4"):
-    a = createBase64VideoFromAnimation( anim )
-    addJBVideo( name, width, height, data=a, suffix=suffix )
-    
+    d = createBase64VideoFromAnimation( anim )
+    addJBVideo( name, width, height, data=d, suffix=suffix )
+
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
@@ -486,12 +487,11 @@ def createSVGImageFromFigure( fig ):
     return image
 
 def createBase64VideoFromAnimation( anim ):
-    from io import BytesIO
-    aniFile = BytesIO()
-    anim.save( aniFile )
-    aniFile.seek(0)  # rewind to beginning of file
-    a = aniFile.getvalue()
-    return base64.b64encode( a.decode('utf-8') )
+    fp, fname = tempfile.mkstemp( suffix=".mp4", prefix="animation" ) 
+    anim.save( fname )
+    with open( fname, "b" ) as f:
+        data = f.read()
+    return base64.b64encode( data )
 
 def extract(source=None):
     """Copies the variables of the caller up to iPython. Useful for debugging.
