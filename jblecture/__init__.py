@@ -361,7 +361,6 @@ def addJBFigure( name, width, height, fig, suffix = "svg" ):
         f = addJBImage( name, width, height, data = img, suffix = "png" )
     else:
         raise Exception( "addJBFigure unknown suffix " + suffix )
-
     return f
 
 def addJBGraph( name, width, height, g, suffix = "svg" ):
@@ -381,7 +380,10 @@ def addJBGraph( name, width, height, g, suffix = "svg" ):
 
     return f
 
-
+def addJBAnimation( name, width, height, anim, suffix="mp4"):
+    a = createBase64VideoFromAnimation( anim )
+    addJBVideo( name, width, height, data=a, suffix=suffix )
+    
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
