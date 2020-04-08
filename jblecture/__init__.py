@@ -384,8 +384,9 @@ def addJBGraph( name, width, height, g, suffix = "svg" ):
 
 def addJBAnimation( name, width, height, anim, suffix="mp4"):
     d = createBase64VideoFromAnimation( anim )
-    addJBVideo( name, width, height, data=d, suffix=suffix )
-
+    v = addJBVideo( name, width, height, data=d, suffix=suffix )
+    return v
+    
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
