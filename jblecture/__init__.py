@@ -383,8 +383,8 @@ def addJBGraph( name, width, height, g, suffix = "svg" ):
     return f
 
 def addJBAnimation( name, width, height, anim, suffix="mp4"):
-    aName = cfg['REVEAL_VIDEOS_DIR'] / ( name + "." + suffix )
-    anim.save( aName )
+    aName = cfg['REVEAL_VIDEOS_DIR'] / name 
+    anim.save( str(aName) + "." + suffix )
     v = addJBVideo( name, width, height, localFileStem=aName, suffix=suffix )
     return v
 
