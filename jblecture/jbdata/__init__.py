@@ -94,7 +94,7 @@ class JBData:
             if lfname.suffix == suffix:
                 lfname = lfname.with_suffix('')
             data = JBData.sReadData(  lfname.with_suffix("." + suffix) )
-            #logger.debug('localFileStem',  lfname )
+            logger.debug( f'localFileStem: {lfname} suffix: {suffix}' )
             self.localFileStem = lfname
         else:
             uploaded = files.upload()

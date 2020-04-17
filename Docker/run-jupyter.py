@@ -77,11 +77,11 @@ def main( argv = None ):
         argv = sys.argv[1:]
     parser = argparse.ArgumentParser( description="Start a docker image with the current directory mounted as /data")
     parser.add_argument("--data_dir", "-d", default=".")
-    parser.add_argument("--container", default="node-opencv")
+    parser.add_argument("--container", default="abthil023/ntnu-lectures")
     parser.add_argument("--client_dir", "-c", default="/data")
     parser.add_argument("--port", "-p", default=8888)
     parser.add_argument("--client_port", default=8888)
-    parser.add_argument("commands", nargs="*", default=[ "/bin/bash" ])
+    parser.add_argument("commands", nargs="*", default=[ "lab" ])
     parser.add_argument("--local", action="store_true", default=False)
     parser.add_argument("--kill", action="store_true", default=False)
 
@@ -151,5 +151,4 @@ def main( argv = None ):
 
 if __name__ == "__main__":
     main()
-
 
