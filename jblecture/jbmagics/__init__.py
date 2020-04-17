@@ -362,7 +362,23 @@ class JBMagics(Magics):
             logger.debug( f"*** Adding renpy to slide {cs.id}" )
             # print(rp)
 
-            cs.addRenpy( rp, myStyle )
+            cs.addRenpy( f"label {cs.id}:\n" + rp, myStyle )
+
+    @magic_arguments.argument('--name', type=str, default='unknown',
+                              help="Name of the character"
+                              )
+    @magic_arguments.argument('--color', type=str, default='#802020',
+                              help="Color of the name"
+                              )
+    
+    @cell_magic
+    def character(self, line, cell ):
+        cellText = "\n".join([ c if (len(c) > 0) else "\n" for c in cell.splitlines()])
+        it = it + cellText + "\n"
+
+        # print(self.shell.user_ns['test'])
+        # print(s)
+        rp = self.instTemplate(it, {})
 
 def createEnvironment( mycfg ):
     global cfg

@@ -189,6 +189,9 @@ def loadModules( cfg ):
     from .jbgoogle import createEnvironment
     cfg = jbgoogle.createEnvironment( cfg )
     
+    from .jbcharacter import createEnvironment
+    cfg = jbgoogle.createEnvironment( cfg )
+
     logger.info('Loading of modules finished')
     return cfg
 
@@ -387,6 +390,7 @@ def addJBAnimation( name, width, height, anim, suffix="mp4"):
     v = addJBVideo( name, width, height, localFileStem=aName, suffix=suffix )
     return v
 
+def addCharacter( name, width, height, )
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
