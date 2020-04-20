@@ -16,6 +16,17 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+def createEnvironment( mycfg ):
+    global cfg
+    defaults = {}
+    defaults['ROOT_DIR'] = pathlib.Path( "/data/test" )
+    defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
+    defaults['GIT_CMD'] = "git"
+
+    mycfg = { **defaults, **mycfg }
+    cfg = mycfg
+    return cfg
+
 class JBcd:
     """Context manager for changing the current working directory"""
     def __init__(self, newPath):
@@ -28,15 +39,6 @@ class JBcd:
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
 
-def createEnvironment( mycfg ):
-    global cfg
-    defaults['ROOT_DIR'] = pathlib.Path( "/data/test" )
-    defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
-    defaults['GIT_CMD'] = "git"
-
-    mycfg = { **defaults, **mycfg }
-    cfg = mycfg
-    return cfg
 
 def updateGit( cfg, url, dirname, branch,  root ):
     with JBcd( root ):
