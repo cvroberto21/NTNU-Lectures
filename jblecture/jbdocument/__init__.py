@@ -72,7 +72,7 @@ class JBDocument:
       
     def instTemplate( self, text, vars ):
         #print('jbdocument CFG', hex(id(cfg)))
-        if cfg['user_ns']:
+        if 'user_ns' in cfg:
             d = { ** cfg['user_ns'], **vars }
         return JBDocument.sInstTemplate( text, d )
         
