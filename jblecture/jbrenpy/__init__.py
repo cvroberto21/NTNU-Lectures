@@ -28,12 +28,6 @@ class JBcd:
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
 
-if __name__ != "__main__":
-    defaults = {}
-
-    defaults['CHARACTER_DIR'] = defaults['ROOT_DIR'] / "Characters"
-
-
 def createEnvironment( mycfg ):
     global cfg
     mycfg = { **defaults, **mycfg }
