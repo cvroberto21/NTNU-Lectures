@@ -72,11 +72,8 @@ class JBDocument:
       
     def instTemplate( self, text, vars ):
         #print('jbdocument CFG', hex(id(cfg)))
-        if 'user_ns' in cfg:
-            d = { ** cfg['user_ns'], **vars }
-        else:
-            d = { **vars }
-            
+        print('jbl: instTemplate: ', cfg)
+        d = { ** cfg['user_ns'], **vars }
         return JBDocument.sInstTemplate( text, d )
         
     def findSlideIndex( self, id ):
