@@ -390,7 +390,9 @@ def addJBAnimation( name, width, height, anim, suffix="mp4"):
     v = addJBVideo( name, width, height, localFileStem=aName, suffix=suffix )
     return v
 
-def addCharacter( name, width, height, )
+def addCharacter( name, width, height, ):
+    pass
+
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
