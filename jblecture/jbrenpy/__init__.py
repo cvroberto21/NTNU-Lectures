@@ -23,8 +23,10 @@ def createEnvironment( mycfg ):
     defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
     defaults['GIT_CMD'] = "git"
 
-    mycfg = { **defaults, **mycfg }
     cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
     return cfg
 
 class JBcd:
