@@ -329,6 +329,7 @@ def load_ipython_extension(ipython):
     global cfg
     cfg = createEnvironment( {} )
     magics = jbmagics.JBMagics( ipython, cfg['doc'] )
+    print("*** Setting cfg['user_ns']")
     cfg['user_ns'] = magics.shell.user_ns
     ipython.register_magics(magics)
 
