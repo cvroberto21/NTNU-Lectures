@@ -195,7 +195,7 @@ def loadModules( cfg ):
     logger.info('Loading of modules finished')
     return cfg
 
-def createEnvironment( params = {} ):
+def createEnvironment( params ):
     cfg = { **defaults, **params }
     logger.debug('Title ' + cfg['TITLE'] )
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
