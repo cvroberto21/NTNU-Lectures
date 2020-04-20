@@ -190,7 +190,7 @@ def loadModules( cfg ):
     cfg = jbgoogle.createEnvironment( cfg )
     
     from .jbrenpy import createEnvironment
-    cfg = jbgoogle.createEnvironment( cfg )
+    cfg = jbrenpy.createEnvironment( cfg )
 
     logger.info('Loading of modules finished')
     return cfg
