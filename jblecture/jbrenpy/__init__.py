@@ -30,6 +30,10 @@ class JBcd:
 
 def createEnvironment( mycfg ):
     global cfg
+    defaults['ROOT_DIR'] = pathlib.Path( "/data/test" )
+    defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
+    defaults['GIT_CMD'] = "git"
+
     mycfg = { **defaults, **mycfg }
     cfg = mycfg
     return cfg
