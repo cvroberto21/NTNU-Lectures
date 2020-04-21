@@ -12,10 +12,10 @@ cfg = {}
 
 def createEnvironment( mycfg ):
     global cfg
-    print('jbgithub', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbgithub', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     cfg['GITHUB'] = None
-    print('jbgithub', hex(id(cfg)))
+    #print('jbgithub', hex(id(cfg)))
     return cfg
 
 

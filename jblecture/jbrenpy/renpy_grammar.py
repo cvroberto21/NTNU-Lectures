@@ -17,27 +17,28 @@ class RenpyScript:
 
     def __init__(self):
         self.dialog = []
-        self.currSpeaker = "Unknown"
-        self.speakers = []
+        self.currSpeaker = "narrator"
+        self.speakers = {}
         self.labels = []
 
-    def rememberSpeaker(self, t):
-        speaker = t
-        self.currSpeaker = speaker
-        logger.debug( f"setting current speaker {speaker}" )
+    def setCurrSpeaker(self, speaker):
+        if speaker in self.speakers:
+            self.currSpeaker = self.speakers[speaker]
+            logger.debug( f"Setting current speaker {speaker}" )
+            ret = self.currSpeaker
+        else:
+            logger.warning( f"Unknown speaker {speaker}" )
+            ret = None
 
-    def addSpeech( self, tokens ):
-        ind = 0
-        if ( len(tokens) > 1 ):
-            self.rememberSpeaker( tokens[0] )
-            ind = 1
-        logging.debug( f"addSpeech {self.currSpeaker} {tokens[ind]}" )
-        self.dialog.append( [ RenpyScript.Commands.Speech, self.currSpeaker', tokens[ind] ] )
-    
+    def addSpeech( self, speech ):
+        self.dialog.append( speech )
+
     def addComment( self, tokens ):
         self.dialog.append( [ RenpyScript.Commands.Comment, tokens[0].lstrip().rstrip() ] )
         logging.debug( f"addComment {tokens[0].lstrip().rstrip()}" )
         
+    def addSpeaker( self, name ):
+        self.speakers[name] = { "name" : name }
 
 class RenpyGrammar:
     def __init__(self, rscript):
@@ -47,8 +48,15 @@ class RenpyGrammar:
             lbracket,
             rbracket,
             dot,
-            hash
-        ) = map(pyp.Literal, r":().#")
+            hash,
+            comma
+        ) = map(pyp.Literal, r":().#,")
+
+        self.kwList = """
+        label jump with at show pause scene window hide speak blank
+        call if image init menu python javascript return set while onlayer 
+        //
+        """.lower().split()
 
         #keywords
         (
@@ -73,47 +81,89 @@ class RenpyGrammar:
             return_,
             set_,
             while_,
+            onlayer,
             lComm
-        ) = map( pyp.CaselessKeyword, """
-        label jump with at show pause scene window hide speak blank
-        call if image init menu python javascript return set while //
-        """.split() )
+        ) = map( pyp.CaselessKeyword, self.kwList )
 
         #lComm = pyp.Keyword( '//' )
 
         lf = pyp.Suppress( pyp.lineEnd )
         ignoreWhitespaces = pyp.Suppress( pyp.ZeroOrMore( pyp.White( ' \t' ) ) )
 
-        name = pyp.Word( pyp.alphas, pyp.alphanums + "_").setName("name")
+        name = pyp.Word( pyp.alphas, pyp.alphanums + "_", min=1).setName("name")
+        name.setParseAction( grammarRejectKeywords )
+
         string_ = (  pyp.QuotedString('"""', endQuoteChar='"""', multiline = True ) 
                     | pyp.QuotedString("'''", endQuoteChar="'''", multiline = True) 
                     | pyp.QuotedString("`", endQuoteChar="`", multiline = True)  
-                    | pyp.QuotedString('"') 
-                    | pyp.QuotedString("'") 
-                    )
+                    | pyp.QuotedString('"', endQuoteChar='"', multiline=False) 
+                    | pyp.QuotedString("'", endQuoteChar="'", multiline=False) 
+                    ).setName('string')
+        string_.setDebug(True)
 
-        simpleExpression = ( name ^ string_ ^ ( lbracket + name + rbracket ) ) + pyp.Optional( ( dot +  name ) ^ ( lbracket + pyp.Optional(name ^ string_) + rbracket ) )
+        speakerFunc = pyp.Combine( lbracket + ignoreWhitespaces + name + ignoreWhitespaces + rbracket )
+        simpleExpression = ( name ^ string_ ^ speakerFunc ) + pyp.Optional( pyp.Combine( dot +  name ) ^ pyp.Combine( lbracket + pyp.Optional(name ^ string_) + rbracket ) )
 
         speaker = simpleExpression
-        speaker.setParseAction( rscript.rememberSpeaker )
+        speaker.setParseAction( grammarRejectKeywords )
+        #speaker.setParseAction( grammarSetCurrentSpeaker )
 
-        labelId = pyp.Word( pyp.alphas, pyp.alphanums + "_").setName("id")
+        labelId = pyp.Word( pyp.alphas, pyp.alphanums + "_").setName("label")
+        label.setParseAction( grammarRejectKeywords )
         labelStmt = label + labelId + colon + lf
 
         jumpStmt = jump + labelId
 
-        commentStmt = pyp.Suppress( ( lComm ^ hash ) + ignoreWhitespaces ) + pyp.restOfLine + lf
+        commentStmt = pyp.Suppress( lComm ^ hash ) + pyp.restOfLine + lf
         commentStmt.setParseAction( rscript.addComment )
 
-        sayStmt = ( string_ ^ ( pyp.Optional(speaker) + string_ ) ) + lf # + pyp.Optional( pyp.Suppress( with_ ) + simpleExpression ) + lf
-        sayStmt.setParseAction( rscript.addSpeech ) 
+        sayStmt = pyp.Optional( speaker ) + string_ + lf # + pyp.Optional( pyp.Suppress( with_ ) + simpleExpression ) + lf
+        sayStmt.setParseAction( grammarAddSpeech ) 
 
-        statement = sayStmt ^ commentStmt ^ labelStmt ^ jumpStmt
-        self.grammar = pyp.OneOrMore( statement )
+        tagList = pyp.OneOrMore( ~pyp.StringEnd() + name + pyp.Suppress( pyp.Optional( comma ) ) )
+        atStmt = at + tagList
+
+        withStmt = with_ + tagList
+
+        imageSpec = name + tagList + pyp.Optional( atStmt ) + pyp.Optional( withStmt )
+
+        showStmt = show + imageSpec + lf
+        showStmt.setParseAction( grammarShowImage )
+
+        statement = commentStmt ^ labelStmt ^ jumpStmt ^ showStmt ^ sayStmt
+        self.grammar = pyp.OneOrMore( ( ~pyp.StringEnd() + statement ) ) + pyp.StringEnd()
+
         #self.grammar.setDebug(True)
 
+def grammarAddSpeech( src, locn, tokens ):
+    ind = 0
+    if ( len(tokens) > 1 ):
+        name = tokens[0]
+        if name not in rscript.speakers:
+            raise pyp.ParseException(src,locn,'undefined speaker')
+        else:
+            rscript.setCurrSpeaker( tokens[0] )
+            ind = 1
+    logging.debug( f"grammarAddSpeech {rscript.currSpeaker} {tokens[ind]}" )
+    rscript.addSpeech( [ RenpyScript.Commands.Speech, rscript.currSpeaker, tokens[ind] ] )
+    
+def grammarSetCurrentSpeaker( src, locn, tokens ):
+    rscript.setCurrSpeaker( tokens )
+
+def grammarShowImage( src, locn, tokens ):
+    print("Tokens", locn, tokens )
+    #rscript.addSpeech( [ RenpyScript.Commands.Show ] + tokens )
+
+def grammarRejectKeywords( src, locn, token ):
+    if token[0].lower() in rg.kwList:
+        pyp.ParseException( src, locn, f"keyword {token}" )
+        
 def test( rg, strng ):
     print("test", strng )
+    # print('Start of scanliteral')
+    # for tokens,start,end in rg.grammar.scanString( strng ):
+    #     print( 'scanliteral:', start, end, tokens.asList() )
+    # print('End of scanliteral')
     x = rg.grammar.parseString( strng )
     print( x )
     print("done")
@@ -121,9 +171,17 @@ def test( rg, strng ):
 if __name__ == "__main__":
     
     rscript = RenpyScript()
+    rscript.addSpeaker('jb')
+    rscript.addSpeaker('elsie')
+
     rg = RenpyGrammar( rscript )    
+
+
+    test( rg, "show jb neutral at center with fade")
     test( rg, '"Another line of dialog"\n')
     test( rg, """
+    show elsie
+    show jb happy left_arm at left with fadeIn
     jb `Hello 
     World`
     jb "Another line of dialog"
@@ -136,6 +194,7 @@ if __name__ == "__main__":
     """)
     test( rg, """
 // testing comments
+show jb at center with dissolve
 (jb) "Talk to me later" 
 "dialog continues"
 # Another comment 
@@ -158,4 +217,6 @@ span multiple lines`
 # jb "Hello" "World"
 # jb Hello World
 #     ''')
-    print(rscript.state)
+
+
+    print(rscript.dialog)

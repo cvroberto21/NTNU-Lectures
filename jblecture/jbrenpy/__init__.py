@@ -67,7 +67,7 @@ def updateGit( cfg, url, dirname, branch,  root ):
             if ( o ):
                 logger.debug( 'git pull:' + o.decode('utf-8') )
 
-class Character:
+class JBCharacter:
     def __init__(self, name, width, height, url, color = '#808020' ):
         cdir = pathlib.Path( cfg['CHARACTER_DIR'] )
         cdir.mkdir( parents=True, exist_ok=True )
@@ -133,5 +133,5 @@ if __name__ == "__main__":
     defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
     defaults['GIT_CMD'] = "git"
     createEnvironment( defaults )
-    jb = Character( "profjb", 320, 240, url="https://github.com/cvroberto21/profjb.git" )
+    jb = JBCharacter( "profjb", 320, 240, url="https://github.com/cvroberto21/profjb.git" )
     jb.prepareImages( "/tmp/profJB")

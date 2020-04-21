@@ -351,11 +351,9 @@ def addJBData( name, url=None, data=None, localFileStem=None, suffix="dat" ):
 
 def addJBCharacter( name, data = None ):
     if data:
+        data['name'] = name
         cfg['CHARACTERS'][name] = data
         ret = data
-    else:
-        ret = cfg['CHARACTERS'][name]
-        del cfg['CHARACTERS'][name]
     return ret
     
 def addJBFigure( name, width, height, fig, suffix = "svg" ):
