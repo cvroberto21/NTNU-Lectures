@@ -9,12 +9,14 @@ RUN chmod a+x /work/*;
 ENV PATH="${PATH}:/work"
 
 RUN  \
- adduser conda --system; \
- apt update && apt --fix-missing --yes dist-upgrade; \
- apt install -y npm; \
- apt install -y ffmpeg; \
- apt install -y vim; \
- apt install -y graphviz
+    adduser conda --system; \
+    apt-get update; \
+    apt-get --fix-missing --yes dist-upgrade; \
+    apt-get install -y npm; \
+    apt-get install -y ffmpeg; \
+    apt-get install -y vim; \
+    apt-get install -y graphviz; \
+    apt-get install dos2unix
  
 RUN \ 
     /opt/conda/bin/conda upgrade --yes conda; \
@@ -38,10 +40,19 @@ RUN \
     google-auth-oauthlib \
     google-auth-httplib2 \
     docutils \
-    pyopenssl \
+    pyopenssl
 
-RUN npm install -g canopy \
+RUN npm install -g \
+    canopy \
     scenejs
+
+RUN dos2unix /work/*.sh
+
+RUN \
+    apt-get --purge remove -y dos2unix; \
+    rm -rf /var/lib/apt/lists/*
+
+
 
 
 
