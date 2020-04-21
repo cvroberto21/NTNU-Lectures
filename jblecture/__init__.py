@@ -329,7 +329,7 @@ def load_ipython_extension(ipython):
     global cfg
     cfg = createEnvironment( {} )
     magics = jbmagics.JBMagics( ipython, cfg['doc'] )
-    print("*** Setting cfg['user_ns']")
+    logger.debug( f"setting cfg['user_ns']" )
     cfg['user_ns'] = magics.shell.user_ns
     ipython.register_magics(magics)
 
@@ -394,6 +394,10 @@ def addJBAnimation( name, width, height, anim, suffix="mp4"):
 def addCharacter( name, width, height, ):
     pass
 
+def peval(s):
+  print(s, '=>', eval(s) )
+  
+  
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
