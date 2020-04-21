@@ -30,7 +30,6 @@
         </div>
         </div>
 
-        <script src="lib/js/head.min.js"></script>
         <script src="js/reveal.js"></script>
 
         <script>
@@ -41,8 +40,15 @@
                 math: {
                     mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
                     config: 'TeX-AMS_HTML-full',  // See http://docs.mathjax.org/en/latest/config-files.html
+                    // tex2jax: {
+                    //     inlineMath: [['$', '$'], ['\(', '\)']],
+                    //     displayMath: [['$$', '$$'], ['\[', '\]']],
+                    //     processEscapes: true,
+                    //     processEnvironments: true,
+                    //     skipTags: ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
+                    //     displayAlign: 'center',
+                    // }                
                 },
-
                 dependencies: [
                     { src: 'plugin/markdown/marked.js' },
                     { src: 'plugin/markdown/markdown.js' },
@@ -51,28 +57,8 @@
                     { src: 'plugin/math/math.js', async: true }
                 ]
             });
-		
-            mathjax.Hub.Config({
-                'tex2jax': {
-                    'inlineMath': [['$', '$'], ['\\(', '\\)']],
-                    'displayMath': [['$$', '$$'], ['\\[', '\\]']],
-                    'processEscapes': true,
-                    'processEnvironments': true,
-                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
-                    'displayAlign': 'center',
-                },
-                'HTML-CSS': {
-                    'styles': {'.MathJax_Display': {'margin': 0}},
-                    'linebreaks': {'automatic': true},
-                    // Disable to prevent OTF font loading, which aren't part of our
-                    // distribution.
-                    'imageFont': null,
-                },
-                'messageStyle': 'none'
-            });
-            mathjax.Hub.Configured();
- 
         </script>
+
         <script>
             {{assets}}
             convertURLs(assetInstances, "smart-path");

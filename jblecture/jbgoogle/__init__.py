@@ -40,10 +40,11 @@ def installModules( ):
             runCommand("python -m pip" + " install " + p, False )
 
 def loadModules():
-    from pydrive.auth import GoogleAuth
-    from pydrive.drive import GoogleDrive
+    #from pydrive.auth import GoogleAuth
+    #from pydrive.drive import GoogleDrive
     #from google.colab import auth
     #from oauth2client.client import GoogleCredentials
+    pass
 
 cfg = {}
 def createEnvironment( mycfg = {} ):
@@ -51,7 +52,7 @@ def createEnvironment( mycfg = {} ):
     print('jbgoogle', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     cfg['GDRIVE'] = None
-    print('jbgoogle', hex(id(cfg)))
+    #print('jbgoogle', hex(id(cfg)))
 
     installModules()
     loadModules()

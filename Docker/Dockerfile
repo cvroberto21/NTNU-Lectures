@@ -4,21 +4,27 @@ LABEL version="1.5" maintainer="Marcella Schutz <abthil023@protonmail.com>"
 
 RUN mkdir /work
 COPY start_lab.sh start_notebook.sh run-jupyter.py run-npm.py /work/
+RUN chmod a+x /work/*;
 
 ENV PATH="${PATH}:/work"
 
-RUN chmod a+x /work/*; \
- adduser conda --system; \
- apt update && apt --fix-missing --yes dist-upgrade; \
- apt install -y npm; \
- apt install -y ffmpeg; \
- apt install -y vim;
+RUN  \
+    adduser conda --system; \
+    apt-get update; \
+    apt-get --fix-missing --yes dist-upgrade; \
+    apt-get install -y npm; \
+    apt-get install -y ffmpeg; \
+    apt-get install -y vim; \
+    apt-get install -y graphviz; \
+    apt-get install dos2unix
  
- RUN /opt/conda/bin/conda upgrade --yes conda; /opt/conda/bin/conda upgrade --yes anaconda; 
+RUN \ 
+    /opt/conda/bin/conda upgrade --yes conda; \
+    /opt/conda/bin/conda upgrade --yes anaconda; \ 
+    /opt/conda/bin/conda install python-graphviz --quiet --yes;
 
-# RUN /opt/conda/bin/conda install jupyterlab --quiet --yes;
-
-RUN python -m pip install pygments \
+RUN \
+    python -m pip install pygments \
     youtube-dl \
     jinja2 \
 #    google-colab \
@@ -34,10 +40,19 @@ RUN python -m pip install pygments \
     google-auth-oauthlib \
     google-auth-httplib2 \
     docutils \
-    pyopenssl 
+    pyopenssl
 
-RUN npm install -g canopy \
+RUN npm install -g \
+    canopy \
     scenejs
+
+RUN dos2unix /work/*.sh
+
+RUN \
+    apt-get --purge remove -y dos2unix; \
+    rm -rf /var/lib/apt/lists/*
+
+
 
 
 

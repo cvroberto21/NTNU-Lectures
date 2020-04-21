@@ -14,6 +14,8 @@ import zipfile
 from distutils.dir_util import copy_tree
 import textwrap
 import logging
+import tempfile
+import base64 
 
 from .jbcd import JBcd
 
@@ -187,10 +189,13 @@ def loadModules( cfg ):
     from .jbgoogle import createEnvironment
     cfg = jbgoogle.createEnvironment( cfg )
     
+    from .jbrenpy import createEnvironment
+    cfg = jbrenpy.createEnvironment( cfg )
+
     logger.info('Loading of modules finished')
     return cfg
 
-def createEnvironment( params = {} ):
+def createEnvironment( params ):
     cfg = { **defaults, **params }
     logger.debug('Title ' + cfg['TITLE'] )
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
@@ -324,6 +329,7 @@ def load_ipython_extension(ipython):
     global cfg
     cfg = createEnvironment( {} )
     magics = jbmagics.JBMagics( ipython, cfg['doc'] )
+    logger.debug( f"setting cfg['user_ns']" )
     cfg['user_ns'] = magics.shell.user_ns
     ipython.register_magics(magics)
 
@@ -345,11 +351,9 @@ def addJBData( name, url=None, data=None, localFileStem=None, suffix="dat" ):
 
 def addJBCharacter( name, data = None ):
     if data:
+        data['name'] = name
         cfg['CHARACTERS'][name] = data
         ret = data
-    else:
-        ret = cfg['CHARACTERS'][name]
-        del cfg['CHARACTERS'][name]
     return ret
     
 def addJBFigure( name, width, height, fig, suffix = "svg" ):
@@ -361,9 +365,37 @@ def addJBFigure( name, width, height, fig, suffix = "svg" ):
         f = addJBImage( name, width, height, data = img, suffix = "png" )
     else:
         raise Exception( "addJBFigure unknown suffix " + suffix )
+    return f
+
+def addJBGraph( name, width, height, g, suffix = "svg" ):
+    if suffix == "svg":
+        g.format = "svg"
+        img = g.pipe().decode('utf-8')
+        f = addJBImage( name, width, height, data = img.encode('utf-8'), suffix = "svg" )
+    elif suffix == "png":
+        saveFormat = g.format
+        g.format('png')
+        img = g.pipe()
+        g.format = saveFormat
+        f = addJBImage( name, width, height, data = img, suffix = "png" )
+    else:
+        raise Exception( "addJBFigure unknown suffix " + suffix )
 
     return f
 
+def addJBAnimation( name, width, height, anim, suffix="mp4"):
+    aName = cfg['REVEAL_VIDEOS_DIR'] / name 
+    anim.save( aName.with_suffix( "." + suffix ) )
+    v = addJBVideo( name, width, height, localFileStem=aName, suffix=suffix )
+    return v
+
+def addCharacter( name, width, height, ):
+    pass
+
+def peval(s):
+  print(s, '=>', eval(s) )
+  
+  
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
 cellspacing="2"; border-color: #aaaaaa>
@@ -466,12 +498,11 @@ def createSVGImageFromFigure( fig ):
     return image
 
 def createBase64VideoFromAnimation( anim ):
-    from io import BytesIO
-    aniFile = BytesIO()
-    anim.save( aniFile )
-    aniFile.seek(0)  # rewind to beginning of file
-    a = aniFile.getvalue()
-    return base64.b64encode( a.decode('utf-8') )
+    fp, fname = tempfile.mkstemp( suffix=".mp4", prefix="animation" ) 
+    anim.save( fname )
+    with fp:
+        data = f.read()
+    return base64.b64encode( data )
 
 def extract(source=None):
     """Copies the variables of the caller up to iPython. Useful for debugging.

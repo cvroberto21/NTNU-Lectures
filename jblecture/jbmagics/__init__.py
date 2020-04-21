@@ -17,7 +17,7 @@ from ..jbdocument import JBDocument
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel( logging.DEBUG )
+logger.setLevel( logging.WARNING )
 
 @magics_class
 class JBMagics(Magics):
@@ -309,31 +309,7 @@ class JBMagics(Magics):
         html = ""
 
         html = html + """
-            <script src="https://www.gstatic.com/external_hosted/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full,Safe&delayStartupUntil=configured"></script>
-            <script>
-                (() => {
-                const mathjax = window.MathJax;
-                mathjax.Hub.Config({
-                'tex2jax': {
-                    'inlineMath': [['$', '$'], ['\\(', '\\)']],
-                    'displayMath': [['$$', '$$'], ['\\[', '\\]']],
-                    'processEscapes': true,
-                    'processEnvironments': true,
-                    'skipTags': ['script', 'noscript', 'style', 'textarea', 'code', 'pre'],
-                    'displayAlign': 'center',
-                },
-                'HTML-CSS': {
-                    'styles': {'.MathJax_Display': {'margin': 0}},
-                    'linebreaks': {'automatic': true},
-                    // Disable to prevent OTF font loading, which aren't part of our
-                    // distribution.
-                    'imageFont': null,
-                },
-                'messageStyle': 'none'
-                });
-                mathjax.Hub.Configured();
-            })();
-            </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full"></script>
             """
 
         html = html + '<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>'
@@ -386,7 +362,23 @@ class JBMagics(Magics):
             logger.debug( f"*** Adding renpy to slide {cs.id}" )
             # print(rp)
 
-            cs.addRenpy( rp, myStyle )
+            cs.addRenpy( f"label {cs.id}:\n" + rp, myStyle )
+
+    @magic_arguments.argument('--name', type=str, default='unknown',
+                              help="Name of the character"
+                              )
+    @magic_arguments.argument('--color', type=str, default='#802020',
+                              help="Color of the name"
+                              )
+    
+    @cell_magic
+    def character(self, line, cell ):
+        cellText = "\n".join([ c if (len(c) > 0) else "\n" for c in cell.splitlines()])
+        it = it + cellText + "\n"
+
+        # print(self.shell.user_ns['test'])
+        # print(s)
+        rp = self.instTemplate(it, {})
 
 def createEnvironment( mycfg ):
     global cfg
