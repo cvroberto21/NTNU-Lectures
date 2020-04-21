@@ -4,10 +4,11 @@ LABEL version="1.5" maintainer="Marcella Schutz <abthil023@protonmail.com>"
 
 RUN mkdir /work
 COPY start_lab.sh start_notebook.sh run-jupyter.py run-npm.py /work/
+RUN chmod a+x /work/*;
 
 ENV PATH="${PATH}:/work"
 
-RUN chmod a+x /work/*; \
+RUN  \
  adduser conda --system; \
  apt update && apt --fix-missing --yes dist-upgrade; \
  apt install -y npm; \
@@ -15,10 +16,13 @@ RUN chmod a+x /work/*; \
  apt install -y vim; \
  apt install -y graphviz
  
-RUN /opt/conda/bin/conda upgrade --yes conda; /opt/conda/bin/conda upgrade --yes anaconda; \ 
+RUN \ 
+    /opt/conda/bin/conda upgrade --yes conda; \
+    /opt/conda/bin/conda upgrade --yes anaconda; \ 
     /opt/conda/bin/conda install python-graphviz --quiet --yes;
 
-RUN python -m pip install pygments \
+RUN \
+    python -m pip install pygments \
     youtube-dl \
     jinja2 \
 #    google-colab \
