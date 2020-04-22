@@ -277,7 +277,7 @@ def createDocument( type = None ):
         type = cfg['DOC_TYPE']
     if type == "Lecture":
         doc = jbdocument.JBDocument()
-    elif type == "Exam":
+    elif type == "Examination":
         doc = jbexam.JBExam()
     else:
         raise( f"Unknown documents type {type}" )
