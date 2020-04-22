@@ -163,7 +163,7 @@ def updateGit( cfg, url, dirname, branch,  root ):
             if ( o ):
                 logger.debug( 'git pull:' + o.decode('utf-8') )
 
-def loadModules( cfg ):
+def loadModules( ):
     logger.info('Loading Modules' + str( cfg['MODULE_ROOT'] ) )
     if cfg['MODULE_ROOT'] not in sys.path:
         sys.path.append( str( cfg['MODULE_ROOT']  ) )
@@ -193,9 +193,11 @@ def loadModules( cfg ):
     cfg = jbrenpy.createEnvironment( cfg )
 
     logger.info('Loading of modules finished')
-    return cfg
+
+cfg = {}
 
 def createEnvironment( params ):
+    global cfg
     cfg = { **defaults, **params }
     logger.debug('Title ' + cfg['TITLE'] )
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
@@ -209,9 +211,9 @@ def createEnvironment( params ):
             logger.debug('Using pip to install missing dependency ' +  p )
             os.system("python -m pip" + " install " + p )
 
-    cfg = loadModules( cfg )
+    loadModules( )
 
-    updateGit( cfg, "https://github.com/hakimel/reveal.js.git", "reveal.js", "", cfg['ROOT_DIR'] )
+    updateGit( "https://github.com/hakimel/reveal.js.git", "reveal.js", "", cfg['ROOT_DIR'] )
 
     # 'decktape',
     for pkg in []: #[  'scenejs' ]:            
@@ -228,7 +230,7 @@ def createEnvironment( params ):
     for d in [ cfg['REVEAL_IMAGES_DIR'], cfg['REVEAL_VIDEOS_DIR'], cfg['REVEAL_SOUNDS_DIR'] ]:
         d.mkdir( parents = True, exist_ok=True )
     
-    fetchRenpyData( cfg )
+    fetchRenpyData( )
 
     shutil.copy2( cfg['ORIG_ROOT'] / 'NTNU-Lectures' / 'html' / 'ntnuerc.css' , 
         cfg['REVEAL_THEME_DIR'] / 'ntnuerc.css'  )
@@ -247,7 +249,7 @@ def createEnvironment( params ):
     shutil.copy2(  cfg['ORIG_ROOT'] / 'NTNU-Lectures' / "html" / "ntnu.js", 
         cfg['REVEAL_JS_DIR']  / 'ntnu.js')
     
-    fetchMGData( cfg )
+    fetchMGData( )
 
     cfg['ASSETS'] = {}
 
@@ -262,11 +264,11 @@ def createEnvironment( params ):
             size: {width}px {height}px;
             margin: 0px;
         }}""".format(width=cfg['PAGE_SIZE'][0], height=cfg['PAGE_SIZE'][1])
-    doc = createDocument( cfg )
+    doc = createDocument( )
     cfg['doc'] = doc
     return cfg
 
-def createDocument( cfg ):
+def createDocument( ):
     doc = jbdocument.JBDocument()
     return doc
 
@@ -297,7 +299,7 @@ def downloadDir( zFile, dir, root = None  ):
         print("Downloading file", zFile )
         files.download( zFile )
 
-def fetchRenpyData( cfg ):
+def fetchRenpyData( ):
 #    os.system("sudo apt install renpy") 
     updateGit( cfg, "https://github.com/guichristmann/Lecture-VN.git", "Lecture-VN", "", cfg['ORIG_ROOT'] )
     src = cfg['ORIG_ROOT'] / 'Lecture-VN' / 'Resources' / 'templateProject' / 'game'
@@ -313,11 +315,11 @@ def fetchRenpyData( cfg ):
     copy_tree( str( src / "gui" ), str( cfg['RENPY_GAME_DIR'] / "gui" ) )
     copy_tree( str( src / "images" / "Characters" ), str( cfg['RENPY_IMAGES_DIR'] / "characters" ) )
 
-def fetchMGData( cfg ):
+def fetchMGData( ):
     updateGit( cfg, "https://github.com/cvroberto21/Monogatari", "Monogatari", "develop", cfg['ORIG_ROOT'] )
     copy_tree( str( cfg['ORIG_ROOT'] / "Monogatari" / "dist" ), str( cfg['MG_GAME_DIR'] ) ) 
             
-def load_ipython_extension(ipython):
+def load_ipython_extension(ipython, cfg):
     """
     Any module file that define a function named `load_ipython_extension`
     can be loaded via `%load_ext module.path` or be configured to be
@@ -327,7 +329,7 @@ def load_ipython_extension(ipython):
     # since its constructor has different arguments from the default:
 
     global cfg
-    cfg = createEnvironment( {} )
+    cfg = createEnvironment( )
     magics = jbmagics.JBMagics( ipython, cfg['doc'] )
     logger.debug( f"setting cfg['user_ns']" )
     cfg['user_ns'] = magics.shell.user_ns
@@ -487,7 +489,6 @@ def createBase64ImageFromFigure( fig ):
     # figdata_png = base64.b64encode(figfile.read())
     image = base64.b64encode(figfile.getvalue()).decode('utf-8')
     return image
-
 
 def createSVGImageFromFigure( fig ):
     from io import BytesIO

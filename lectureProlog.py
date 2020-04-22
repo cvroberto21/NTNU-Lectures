@@ -64,7 +64,6 @@ jblecture = reload(jblecture)
 node = platform.node()
 
 # %reload_ext jblecture
-import jblecture
 jblecture.load_ipython_extension( get_ipython() )
 
 from jblecture import addJBImage, addJBVideo, addJBData, addJBFigure, addJBGraph, addJBAnimation
@@ -72,7 +71,6 @@ from jblecture import addJBCharacter
 from jblecture import createTable
 from jblecture import instTemplate
 from jblecture import _a
-from jblecture import cfg
 from jblecture import downloadDir, zipDirectory
 from IPython.core.display import display, HTML, Math
 
