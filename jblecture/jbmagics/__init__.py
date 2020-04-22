@@ -19,6 +19,9 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.WARNING )
 
+cfg = {}
+defaults = {}
+
 @magics_class
 class JBMagics(Magics):
     def __init__(self, shell, doc):
@@ -382,5 +385,10 @@ class JBMagics(Magics):
 
 def createEnvironment( mycfg ):
     global cfg
+    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
+    #print('jbdocument', hex(id(cfg)))
     return cfg

@@ -4,6 +4,13 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
+cfg = {}
+defaults = {}
+
+defaults = {
+    'GDRIVE': None
+}
+
 def gDriveLogin( ):
     from pydrive.auth import GoogleAuth
     from pydrive.drive import GoogleDrive
@@ -46,15 +53,12 @@ def loadModules():
     #from oauth2client.client import GoogleCredentials
     pass
 
-cfg = {}
-def createEnvironment( mycfg = {} ):
+def createEnvironment( mycfg ):
     global cfg
-    print('jbgoogle', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
-    cfg['GDRIVE'] = None
-    #print('jbgoogle', hex(id(cfg)))
-
-    installModules()
-    loadModules()
-
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
+    #print('jbdocument', hex(id(cfg)))
     return cfg

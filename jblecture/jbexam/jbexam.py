@@ -15,6 +15,9 @@ from .jbquestion import JBQuestion
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
+cfg = {}
+defaults = {}
+
 class JBExam:
     def __init__( self ):
         self.prolog = None
@@ -68,9 +71,6 @@ class JBExam:
     #     self.createSlideImages( rdir )
     #     self.createBackgroundsFile( rdir )
     #     self.createScriptFiles( rdir, startId )
-
-cfg = {}
-
 
 def createEnvironment( mycfg ):
     global cfg

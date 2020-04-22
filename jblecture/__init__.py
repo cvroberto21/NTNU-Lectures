@@ -22,6 +22,8 @@ from .jbcd import JBcd
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
+cfg = {}
+
 defaults = {}
 defaults['TITLE'] = '{title}'
 defaults['HOME_DIR'] = pathlib.Path.home().resolve()
@@ -59,8 +61,6 @@ defaults['GOOGLE_COLAB'] = False
 defaults['HTTP_PORT'] = None
 
 defaults['CHARACTERS'] = dict()
-
-cfg = {}
 
 try:
     from google.colab import files
@@ -136,7 +136,9 @@ defaults['RenpyTransition'] = "fade"
 defaults['RenpyInitLabel'] =  ".init"
 defaults['PAGE_SIZE'] = [ int(1280), int (720) ]
 
-def updateGit( cfg, url, dirname, branch,  root ):
+defaults['DOC_TYPE'] = 'Lecture'
+
+def updateGit( url, dirname, branch,  root ):
     from .jbcd import JBcd
     with JBcd( root ):
         p = pathlib.Path( dirname )
@@ -172,37 +174,39 @@ def loadModules( ):
     from .jbcd import JBcd
 
     from .jbdata import createEnvironment, JBImage, JBVideo
-    cfg = jbdata.createEnvironment( cfg )
+    jbdata.createEnvironment( cfg )
 
     from .jbslide import createEnvironment, JBSlide
-    cfg = jbslide.createEnvironment( cfg )
+    jbslide.createEnvironment( cfg )
 
     from .jbmagics import createEnvironment, JBMagics
-    cfg = jbmagics.createEnvironment( cfg )
+    jbmagics.createEnvironment( cfg )
 
     from .jbdocument import createEnvironment, JBDocument
-    cfg = jbdocument.createEnvironment( cfg )
+    jbdocument.createEnvironment( cfg )
 
     from .jbgithub import createEnvironment, login, getRepositories
-    cfg = jbgithub.createEnvironment( cfg )
+    jbgithub.createEnvironment( cfg )
 
     from .jbgoogle import createEnvironment
-    cfg = jbgoogle.createEnvironment( cfg )
+    jbgoogle.createEnvironment( cfg )
     
     from .jbrenpy import createEnvironment
-    cfg = jbrenpy.createEnvironment( cfg )
+    jbrenpy.createEnvironment( cfg )
 
     logger.info('Loading of modules finished')
 
-cfg = {}
-
-def createEnvironment( params ):
+def createEnvironment( mycfg ):
     global cfg
-    cfg = { **defaults, **params }
+    cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
     logger.debug('Title ' + cfg['TITLE'] )
+    
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
 
-    node = platform.node()
+    cfg['NODE'] = platform.node()
 
     for p in [ "pygments", "youtube-dl", "jinja2", "papermill", "pytexturepacker", "patch", "requests_oauthlib", "PyGithub", "gitpython" ]:
         try:
@@ -268,8 +272,15 @@ def createEnvironment( params ):
     cfg['doc'] = doc
     return cfg
 
-def createDocument( ):
-    doc = jbdocument.JBDocument()
+def createDocument( type = None ):
+    if type is None and 'DOC_TYPE' in cfg:
+        type = cfg['DOC_TYPE']
+    if type == "Lecture":
+        doc = jbdocument.JBDocument()
+    elif type == "Exam":
+        doc = jbexam.JBExam()
+    else:
+        raise( f"Unknown documents type {type}" )
     return doc
 
 def zipDirectory( archive, dir, root = '.' ):
@@ -301,7 +312,7 @@ def downloadDir( zFile, dir, root = None  ):
 
 def fetchRenpyData( ):
 #    os.system("sudo apt install renpy") 
-    updateGit( cfg, "https://github.com/guichristmann/Lecture-VN.git", "Lecture-VN", "", cfg['ORIG_ROOT'] )
+    updateGit( "https://github.com/guichristmann/Lecture-VN.git", "Lecture-VN", "", cfg['ORIG_ROOT'] )
     src = cfg['ORIG_ROOT'] / 'Lecture-VN' / 'Resources' / 'templateProject' / 'game'
     cfg['RENPY_GAME_DIR'].mkdir(parents = True, exist_ok = True )
     with JBcd( cfg['RENPY_GAME_DIR'] ):
@@ -316,10 +327,11 @@ def fetchRenpyData( ):
     copy_tree( str( src / "images" / "Characters" ), str( cfg['RENPY_IMAGES_DIR'] / "characters" ) )
 
 def fetchMGData( ):
-    updateGit( cfg, "https://github.com/cvroberto21/Monogatari", "Monogatari", "develop", cfg['ORIG_ROOT'] )
+    updateGit( "https://github.com/cvroberto21/Monogatari", "Monogatari", "develop", cfg['ORIG_ROOT'] )
     copy_tree( str( cfg['ORIG_ROOT'] / "Monogatari" / "dist" ), str( cfg['MG_GAME_DIR'] ) ) 
             
-def load_ipython_extension(ipython, cfg):
+def load_ipython_extension(ipython, mycfg):
+    global cfg
     """
     Any module file that define a function named `load_ipython_extension`
     can be loaded via `%load_ext module.path` or be configured to be
@@ -328,8 +340,7 @@ def load_ipython_extension(ipython, cfg):
     # This class must then be registered with a manually created instance,
     # since its constructor has different arguments from the default:
 
-    global cfg
-    cfg = createEnvironment( )
+    createEnvironment( mycfg )
     magics = jbmagics.JBMagics( ipython, cfg['doc'] )
     logger.debug( f"setting cfg['user_ns']" )
     cfg['user_ns'] = magics.shell.user_ns

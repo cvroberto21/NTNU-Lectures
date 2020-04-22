@@ -9,15 +9,9 @@ import git
 import re
 
 cfg = {}
-
-def createEnvironment( mycfg ):
-    global cfg
-    #print('jbgithub', hex(id(cfg)), hex(id(mycfg)))
-    cfg = mycfg
-    cfg['GITHUB'] = None
-    #print('jbgithub', hex(id(cfg)))
-    return cfg
-
+defaults = {
+    'GITHUB' : None
+}
 
 def readGithubToken():
     passwd = getpass.getpass("Github Token:")    
@@ -214,3 +208,13 @@ def createGitHub( title, root = None):
             #         pass
             #     if ( o ):
             #         print( 'git pull:' + o.decode('utf-8') )
+
+def createEnvironment( mycfg ):
+    global cfg
+    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
+    cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
+    #print('jbdocument', hex(id(cfg)))
+    return cfg
