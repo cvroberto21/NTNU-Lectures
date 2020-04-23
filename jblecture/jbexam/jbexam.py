@@ -97,22 +97,18 @@ class JBExam:
             <span id="marks">Marks</span><br>
             <span id="marks_holder">_______</span><br>
             <span>out of</span><br>
-            <span id="total_marks_holder">{{ cfg['EXAM_TOTAL_MARKS'] }}</span>
+            <span id="total_marks_holder"> __exam_total_marks__ </span>
         </div>
     </div>
             """
 
         vars = {}
         repl = False
-        if 'EXAM_TOTAL_MARKS' not in cfg:
-            repl = True
-            vars[ 'EXAM_TOTAL_MARKS' ] = "__exam_total_marks__"
-            
+
         html = ""
         html = html + self.instTemplate( cfg['EXAM_PROLOG'], vars ) + "\n"
         html = html + self.instTemplate( cfg['EXAM_MARKS_BOX'], vars ) + "\n"
-        if repl:
-            html = html.replace( "__exxam_total_marks__", "{{ cfg['EXAM_TOTAL_MARKS'] }}" )
+
         return html
 
     def addHTML( self, id, html ):
