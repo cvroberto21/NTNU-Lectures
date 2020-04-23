@@ -97,7 +97,7 @@ class JBExam:
             <span id="marks">Marks</span><br>
             <span id="marks_holder">_______</span><br>
             <span>out of</span><br>
-            <span id="total_marks_holder"> __exam_total_marks__ </span>
+            <span id="total_marks_holder"> %%exam_total_marks%% </span>
         </div>
     </div>
             """
