@@ -411,8 +411,8 @@ def addCharacter( name, width, height, ):
     pass
 
 def peval(s):
-  print(s, '=>', eval(s) )
-  
+    o = s + ' => ' + str( eval(s) )
+    return o
   
 tableT = """
 <table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"

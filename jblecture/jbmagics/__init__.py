@@ -497,6 +497,7 @@ class JBMagics(Magics):
         html = html + '<style>\n' + cfg['EXAM_CSS'] + '\n' + '</style>'
 
         html = html + htmlNoStyle
+        cfg['doc'].addHTML( html )
 
         display ( HTML( html ) )
 

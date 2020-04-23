@@ -20,6 +20,9 @@ defaults = {
 }
 
 class JBExam:
+    class ComponentType:
+        PROLOG, HTML, QUESTION_TEXT, QUESTION_BOX, ANSWERBOX = range(5)
+
     def __init__( self ):
         self.questions = []    
         self.components = []
@@ -62,7 +65,7 @@ class JBExam:
     #     self.createBackgroundsFile( rdir )
     #     self.createScriptFiles( rdir, startId )
 
-    def render( self, vars ):
+    def renderProlog( self, vars ):
         if 'EXAM_CSS' not in cfg:
             with open( cfg['MODULE_ROOT'] / 'html' / 'exam.css') as f:
                 cfg['EXAM_CSS_TEMPLATE'] = f.read()
@@ -97,7 +100,7 @@ class JBExam:
             <span id="marks">Marks</span><br>
             <span id="marks_holder">_______</span><br>
             <span>out of</span><br>
-            <span id="total_marks_holder"> %%exam_total_marks%% </span>
+            <span id="total_marks_holder"> %# cfg['EXAM_TOTAL_MARKS'] #% </span>
         </div>
     </div>
             """
@@ -108,13 +111,22 @@ class JBExam:
         html = ""
         html = html + self.instTemplate( cfg['EXAM_PROLOG'], vars ) + "\n"
         html = html + self.instTemplate( cfg['EXAM_MARKS_BOX'], vars ) + "\n"
-
         return html
 
-    def addHTML( self, id, html ):
-        self.components.append( (id, html ) )
+    def addHTML( self, html, type = None ):
+        self.components.append( (ComponentType.HTML, html ) )
         return html
 
+    def render( self ):
+        prolog = self.renderProlog( {} )
+        prolog = prolog.replace("%#", "{{" ).replace("#%", "}}")
+
+        html = ""
+        html = html + prolog
+        for c in self.components:
+            typ = c[0]
+            if typ = ComponentType.PROLOG or typ = ComponentType.HTML:
+                html = html + f"<!-- Start of Component Type {typ}-->\n" + c[1] + f"\n<!-- End of Component Type {typ} -->\n"
 cfg = {}
 
 def createEnvironment( mycfg ):
