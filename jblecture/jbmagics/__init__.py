@@ -24,9 +24,8 @@ defaults = {}
 
 @magics_class
 class JBMagics(Magics):
-    def __init__(self, shell, doc):
+    def __init__(self, shell ):
         super(JBMagics, self).__init__(shell)
-        self.doc = doc
 
     def instTemplate(self, text, vars):
         d = { **self.shell.user_ns, **vars }
@@ -160,7 +159,7 @@ class JBMagics(Magics):
         #print("cell_magic reveal_html called")
 
         it = ""
-        it = it + self.embedCellHTML(cell, line, 'jb-output', self.doc.createLocalTheme())
+        it = it + self.embedCellHTML(cell, line, 'jb-output', cfg['doc'].createLocalTheme())
 
       #display(HTML("<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=default'></script>"))
 
@@ -172,7 +171,7 @@ class JBMagics(Magics):
 
         md = self.html_body(input_string=cell)
         it = ""
-        it = it + self.embedCellHTML(md, line, 'jb-output', self.doc.createLocalTheme())
+        it = it + self.embedCellHTML(md, line, 'jb-output', cfg['doc'].createLocalTheme())
         display(HTML(self.instTemplate(it, {})))
 
     @cell_magic
@@ -269,7 +268,7 @@ class JBMagics(Magics):
             html = html + self.embedCellHTML( highlight(cell, PythonLexer(),
                                                         HtmlFormatter(cssstyles="color:#101010;display=inline-block;",
                                                                       noclasses=True)), mystyle, 'jb-input-code',
-                                              self.doc.createLocalTheme()) + '\n'
+                                              cfg['doc'].createLocalTheme()) + '\n'
             html = html + "</div>" + "\n"
         # print("html", html)
 
@@ -306,7 +305,7 @@ class JBMagics(Magics):
         if args.output:
             self.shell.user_ns[args.output] = html
 
-        slide = self.doc.addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
+        slide = cfg['doc'].addSlide(args.id, htmlNoStyle, args.background, args.header, args.footer)
         #print('**HTML***', slide.html )
 
         html = ""
@@ -315,7 +314,7 @@ class JBMagics(Magics):
             <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full"></script>
             """
 
-        html = html + '<style>\n' + self.doc.createLocalTheme() + '\n' + '</style>'
+        html = html + '<style>\n' + cfg['doc'].createLocalTheme() + '\n' + '</style>'
         html = html + """
             <div class="reveal">
                 <div class="slides">
@@ -360,7 +359,7 @@ class JBMagics(Magics):
         # print(s)
         rp = self.instTemplate(it, {})
         display(Pretty(rp))
-        cs = self.doc.getCurrentSlide()
+        cs = cfg['doc'].getCurrentSlide()
         if (cs):
             logger.debug( f"*** Adding renpy to slide {cs.id}" )
             # print(rp)
@@ -383,12 +382,130 @@ class JBMagics(Magics):
         # print(s)
         rp = self.instTemplate(it, {})
 
+    @magic_arguments.magic_arguments()
+    @magic_arguments.argument('--no-stderr', action="store_true",
+                              help="""Don't capture stderr."""
+                              )
+    @magic_arguments.argument('--no-stdout', action="store_true",
+                              help="""Don't capture stdout."""
+                              )
+    @magic_arguments.argument('--no-display', action="store_true",
+                              help="""Don't capture IPython's rich display."""
+                              )
+    @magic_arguments.argument('--echo', action="store_true",
+                              help="""Prepend cell content."""
+                              )
+    @magic_arguments.argument('--id', type=str, default='',
+                              help="""Select fragment id"""
+                              )
+    @magic_arguments.argument('--output', type=str, default='output', nargs=1,
+                              help="""A variable that will be pushed into the user namespace with the 
+        utils.io.CapturedIO object.
+        """
+                              )
+    @magic_arguments.argument('--style', type=str, default='',
+                              help="""
+        HTML inline style to be applied to the cell.
+        """
+                              )
+
+    @cell_magic
+    def exam(self, line, cell):
+        args = magic_arguments.parse_argstring(self.slide, line)
+        out = not args.no_stdout
+        err = not args.no_stderr
+        disp = not args.no_display
+        
+        #print("cell_magic slide called")
+        # print('args', args )
+
+        if args.id:
+            if args.id[0] == '"' or args.id[0] == "'":
+                args.id = args.id[1:]
+            if args.id[-1] == '"' or args.id[-1] == "'":
+                args.id = args.id[0:-1]
+
+        if (args.style):
+            if args.style[0] == '"' or args.style[0] == "'":
+                args.style = args.style[1:]
+            if args.style[-1] == '"' or args.style[-1] == "'":
+                args.style = args.style[0:-1]
+
+            mystyle = 'style="{s}"'.format(s=args.style)
+        else:
+            mystyle = ""
+
+        # print("MYSTYLE", mystyle)
+
+        s = self.instTemplate(cell, {})
+        with capture_output(out, err, disp) as io:
+            self.shell.run_cell(s)
+
+        html = '<div class="{cls}">\n'.format(cls="jb-exam-fragment")
+
+        # print(args.echo)
+        if (args.echo):
+            html = html + '<div class="jb-input jb-render jb-code" style="text-align:center">' + '\n'
+            html = html + self.embedCellHTML( highlight(cell, PythonLexer(),
+                                                        HtmlFormatter(cssstyles="color:#101010;display=inline-block;",
+                                                                      noclasses=True)), mystyle, 'jb-input-code',
+                                              cfg['EXAM_CSS'] + '\n' )
+            html = html + "</div>" + "\n"
+        # print("html", html)
+
+        logger.debug( f"out: {out}" )
+        if (out):
+            logger.debug( f"io.stdout {io.stdout}" )
+            if io.stdout != "":
+                # print("Adding output", io.stdout)
+                #display( Pretty( io.stdout ) )
+                h = '<div class="jb-output jb-render code" style="text-align:center">' + '\n'
+                h = h + '<div class="jb-stdout code" style="display:inline-block; width:90%">' + '\n'
+                h = h + '<pre {s}>\n'.format(s=mystyle)
+                h = h + io.stdout
+                h = h + '</pre>\n'
+                h = h + '</div>\n'
+                h = h + '</div>\n'
+                html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
+
+        for o in io.outputs:
+            logger.debug('Output ' + str(o) )
+            h = self.createHTMLRepr(o)
+            logger.debug('EXAM fragment: h' + str(h) )
+            if (h is not None):
+                html = html + "\n" + self.embedCellHTML(h, mystyle, 'jb-output-code', '') + "\n"
+
+        html = html + "\n" + "</div>"
+
+        # html = re.sub("<style>.*", "", html, flags=re.MULTILINE )
+        htmlNoStyle=html
+        if ( html.find("<style>") >= 0 ) and  ( html.find("</style>") >= 0 ):
+            htmlNoStyle = html[:html.find("<style>")] + html[html.find("</style>") + len("</style>"):]
+        #print('*** HTML ***', htmlNoStyle)
+
+        if args.output:
+            self.shell.user_ns[args.output] = html
+
+        frag = cfg['doc'].addHTML(args.id, htmlNoStyle)
+        #print('**HTML***', slide.html )
+        html = ""
+
+        html = html + """
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full"></script>
+            """
+
+        html = html + '<style>\n' + cfg['EXAM_CSS'] + '\n' + '</style>'
+
+        html = html + htmlNoStyle
+
+        display ( HTML( html ) )
+
 def createEnvironment( mycfg ):
     global cfg
-    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbmagics', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     for k in defaults:
         if k not in cfg:
             cfg[k] = defaults[k]
-    #print('jbdocument', hex(id(cfg)))
+    #print('jbmagics', hex(id(cfg)))
     return cfg

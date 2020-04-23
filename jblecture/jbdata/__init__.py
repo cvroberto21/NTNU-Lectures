@@ -547,3 +547,4 @@ def createEnvironment( mycfg ):
         if k not in cfg:
             cfg[k] = defaults[k]
     #print('jbdata', hex(id(cfg)))
+    return cfg

@@ -11,17 +11,18 @@ from ..jbslide import JBSlide
 from ..jbdata import JBData, JBImage, JBVideo
 from ..jbcd import JBcd
 from .jbquestion import JBQuestion 
+from ..jbdocument import JBDocument
 
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
-cfg = {}
-defaults = {}
+defaults = {
+}
 
 class JBExam:
     def __init__( self ):
-        self.prolog = None
-        self.questions = []
+        self.questions = []    
+        self.components = []
 
     @staticmethod
     def sInstTemplate( text, vars ):
@@ -34,7 +35,7 @@ class JBExam:
         return current 
       
     def instTemplate( self, text, vars ):
-        #print('jbdocument CFG', hex(id(cfg)))
+        #print('jbexam CFG', hex(id(cfg)))
         #print('jbl: instTemplate: ', cfg)
         d = { ** cfg['user_ns'], **vars }
         return JBDocument.sInstTemplate( text, d )
@@ -47,17 +48,6 @@ class JBExam:
         self.questions.append( question )
         return question
 
-    def npmInstall( self, dir ):
-        with JBcd( dir ):
-            logging.debug("Executing npm install")
-            o = None
-            try:
-                o = subprocess.check_output("npm install", stderr=subprocess.STDOUT, shell = True)
-            except subprocess.CalledProcessError:
-                pass
-            if ( o ):    
-                logging.debug( 'npm install:' + o.decode('utf-8') )
-    
     # def createSlideImages(self, rdir ):
     #     for s in self.slides:
     #         img = s.createJBImage( self.cssSlides )
@@ -72,12 +62,71 @@ class JBExam:
     #     self.createBackgroundsFile( rdir )
     #     self.createScriptFiles( rdir, startId )
 
+    def render( self, vars ):
+        if 'EXAM_CSS' not in cfg:
+            with open( cfg['MODULE_ROOT'] / 'html' / 'exam.css') as f:
+                cfg['EXAM_CSS_TEMPLATE'] = f.read()
+                cfg['EXAM_CSS'] = self.instTemplate( cfg['EXAM_CSS_TEMPLATE'], {} )
+
+        if 'EXAM_NOTES' not in cfg:
+            cfg['EXAM_NOTES'] = """
+            <ul>
+                <li>Attempt all questions.</li>    
+                <li>This is an <em>open</em> book and <em>open</em> Internet examination. 
+                Use of books, notes, laptops, and computers <b>with Internet connectivity</b>
+                is <em>permitted</em>.</li> 
+                <li> This exam must be <b>your own</b> work. Communication with others via
+                messenger apps, email, phone is strictly <b>forbidden</b>.</li>
+                <li>Show your work to receive full marks. You must show your reasoning,
+                intermediate steps/calculations to reach the answer.</li>
+                <li>Some of the questions may not be solvable, that is it may be 
+                impossible to calculate the requested information. In this case, 
+                say so in your answer and explain why.</li>
+            </ul>   
+            """
+
+        if 'EXAM_PROLOG' not in cfg:
+            with open( cfg['MODULE_ROOT'] / 'html' / 'exam_header.html') as f:
+                cfg['EXAM_PROLOG_TEMPLATE'] = f.read()
+                cfg['EXAM_PROLOG'] = self.instTemplate( cfg['EXAM_PROLOG_TEMPLATE'], {} )
+
+        if 'EXAM_MARKS_BOX' not in cfg:
+            cfg['EXAM_MARKS_BOX'] = """
+    <div>
+        <div class="marks_box">
+            <span id="marks">Marks</span><br>
+            <span id="marks_holder">_______</span><br>
+            <span>out of</span><br>
+            <span id="total_marks_holder">{{ cfg['EXAM_TOTAL_MARKS'] }}</span>
+        </div>
+    </div>
+            """
+
+        vars = {}
+        repl = False
+        if 'EXAM_TOTAL_MARKS' not in cfg:
+            repl = True
+            vars[ 'EXAM_TOTAL_MARKS' ] = "__exam_total_marks__"
+            
+        html = ""
+        html = html + self.instTemplate( cfg['EXAM_PROLOG'], vars ) + "\n"
+        html = html + self.instTemplate( cfg['EXAM_MARKS_BOX'], vars ) + "\n"
+        if repl:
+            html = html.replace( "__exxam_total_marks__", "{{ cfg['EXAM_TOTAL_MARKS'] }}" )
+        return html
+
+    def addHTML( self, id, html ):
+        self.components.append( (id, html ) )
+        return html
+
+cfg = {}
+
 def createEnvironment( mycfg ):
     global cfg
-    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbexam', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     for k in defaults:
         if k not in cfg:
             cfg[k] = defaults[k]
-    #print('jbdocument', hex(id(cfg)))
+    #print('jbexam', hex(id(cfg)))
     return cfg

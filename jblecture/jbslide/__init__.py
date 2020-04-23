@@ -51,9 +51,10 @@ class JBSlide:
 
 def createEnvironment( mycfg ):
     global cfg
-    #print('jbdata', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbslide', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     for k in defaults:
         if k not in cfg:
             cfg[k] = defaults[k]
-    #print('jbdata', hex(id(cfg)))
+    #print('jbslide', hex(id(cfg)))
+    return cfg

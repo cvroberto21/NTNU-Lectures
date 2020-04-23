@@ -316,9 +316,10 @@ class JBDocument:
 
 def createEnvironment( mycfg ):
     global cfg
-    #print('jbdata', hex(id(cfg)), hex(id(mycfg)))
+    #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
     for k in defaults:
         if k not in cfg:
             cfg[k] = defaults[k]
-    #print('jbdata', hex(id(cfg)))
+    #print('jbdocument', hex(id(cfg)))
+    return cfg

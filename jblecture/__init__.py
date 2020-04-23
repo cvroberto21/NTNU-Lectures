@@ -19,10 +19,10 @@ import base64
 
 from .jbcd import JBcd
 
+cfg = {}
+
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
-
-cfg = {}
 
 defaults = {}
 defaults['TITLE'] = '{title}'
@@ -136,7 +136,7 @@ defaults['RenpyTransition'] = "fade"
 defaults['RenpyInitLabel'] =  ".init"
 defaults['PAGE_SIZE'] = [ int(1280), int (720) ]
 
-defaults['DOC_TYPE'] = 'Lecture'
+defaults['DOC_TYPE'] = "Lecture"
 
 def updateGit( url, dirname, branch,  root ):
     from .jbcd import JBcd
@@ -166,6 +166,8 @@ def updateGit( url, dirname, branch,  root ):
                 logger.debug( 'git pull:' + o.decode('utf-8') )
 
 def loadModules( ):
+    global cfg 
+    
     logger.info('Loading Modules' + str( cfg['MODULE_ROOT'] ) )
     if cfg['MODULE_ROOT'] not in sys.path:
         sys.path.append( str( cfg['MODULE_ROOT']  ) )
@@ -174,25 +176,29 @@ def loadModules( ):
     from .jbcd import JBcd
 
     from .jbdata import createEnvironment, JBImage, JBVideo
-    jbdata.createEnvironment( cfg )
+    cfg = jbdata.createEnvironment( cfg )
 
     from .jbslide import createEnvironment, JBSlide
-    jbslide.createEnvironment( cfg )
+    cfg = jbslide.createEnvironment( cfg )
 
     from .jbmagics import createEnvironment, JBMagics
-    jbmagics.createEnvironment( cfg )
+    cfg = jbmagics.createEnvironment( cfg )
 
     from .jbdocument import createEnvironment, JBDocument
-    jbdocument.createEnvironment( cfg )
+    cfg = jbdocument.createEnvironment( cfg )
+    
+    from .jbexam import createEnvironment, JBExam
+    cfg = jbexam.createEnvironment( cfg )
 
     from .jbgithub import createEnvironment, login, getRepositories
-    jbgithub.createEnvironment( cfg )
+    logger.debug( f"before github {cfg}" )
+    cfg = jbgithub.createEnvironment( cfg )
 
     from .jbgoogle import createEnvironment
-    jbgoogle.createEnvironment( cfg )
+    cfg = jbgoogle.createEnvironment( cfg )
     
     from .jbrenpy import createEnvironment
-    jbrenpy.createEnvironment( cfg )
+    cfg = jbrenpy.createEnvironment( cfg )
 
     logger.info('Loading of modules finished')
 
@@ -202,11 +208,11 @@ def createEnvironment( mycfg ):
     for k in defaults:
         if k not in cfg:
             cfg[k] = defaults[k]
+    # print("cfg", hex(id(cfg)))
     logger.debug('Title ' + cfg['TITLE'] )
-    
     cfg['ROOT_DIR'].mkdir(parents = True, exist_ok = True )
 
-    cfg['NODE'] = platform.node()
+    node = platform.node()
 
     for p in [ "pygments", "youtube-dl", "jinja2", "papermill", "pytexturepacker", "patch", "requests_oauthlib", "PyGithub", "gitpython" ]:
         try:
@@ -214,7 +220,6 @@ def createEnvironment( mycfg ):
         except ModuleNotFoundError:
             logger.debug('Using pip to install missing dependency ' +  p )
             os.system("python -m pip" + " install " + p )
-
     loadModules( )
 
     updateGit( "https://github.com/hakimel/reveal.js.git", "reveal.js", "", cfg['ROOT_DIR'] )
@@ -268,19 +273,15 @@ def createEnvironment( mycfg ):
             size: {width}px {height}px;
             margin: 0px;
         }}""".format(width=cfg['PAGE_SIZE'][0], height=cfg['PAGE_SIZE'][1])
-    doc = createDocument( )
-    cfg['doc'] = doc
     return cfg
 
-def createDocument( type = None ):
-    if type is None and 'DOC_TYPE' in cfg:
-        type = cfg['DOC_TYPE']
+def createDocument( type ):
     if type == "Lecture":
         doc = jbdocument.JBDocument()
     elif type == "Examination":
         doc = jbexam.JBExam()
     else:
-        raise( f"Unknown documents type {type}" )
+        raise Exception("Unknown Doc type")
     return doc
 
 def zipDirectory( archive, dir, root = '.' ):
@@ -331,7 +332,6 @@ def fetchMGData( ):
     copy_tree( str( cfg['ORIG_ROOT'] / "Monogatari" / "dist" ), str( cfg['MG_GAME_DIR'] ) ) 
             
 def load_ipython_extension(ipython, mycfg):
-    global cfg
     """
     Any module file that define a function named `load_ipython_extension`
     can be loaded via `%load_ext module.path` or be configured to be
@@ -340,11 +340,15 @@ def load_ipython_extension(ipython, mycfg):
     # This class must then be registered with a manually created instance,
     # since its constructor has different arguments from the default:
 
-    createEnvironment( mycfg )
-    magics = jbmagics.JBMagics( ipython, cfg['doc'] )
+    global cfg
+    cfg = createEnvironment( mycfg )
+    magics = jbmagics.JBMagics( ipython )
     logger.debug( f"setting cfg['user_ns']" )
     cfg['user_ns'] = magics.shell.user_ns
     ipython.register_magics(magics)
+    doc = createDocument( cfg['DOC_TYPE'] )
+    cfg['doc'] = doc
+    # print("cfg", hex(id(cfg)))
 
 # Functions that should be exported
 def addJBImage( name, width, height, url=None, data=None, localFileStem=None, suffix=None ):
