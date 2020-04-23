@@ -98,7 +98,7 @@ class JBExam:
     <div>
         <div class="marks_box">
             <span id="marks">Marks</span><br>
-            <span id="marks_holder">_______</span><br>
+            <span id="marks_holder">_________</span><br>
             <span>out of</span><br>
             <span id="total_marks_holder"> %# cfg['EXAM_TOTAL_MARKS'] #% </span>
         </div>
@@ -114,7 +114,7 @@ class JBExam:
         return html
 
     def addHTML( self, html, type = None ):
-        self.components.append( (ComponentType.HTML, html ) )
+        self.components.append( (JBExam.ComponentType.HTML, html ) )
         return html
 
     def render( self ):
@@ -125,8 +125,10 @@ class JBExam:
         html = html + prolog
         for c in self.components:
             typ = c[0]
-            if typ = ComponentType.PROLOG or typ = ComponentType.HTML:
+            if typ == JBExam.ComponentType.PROLOG or typ == JBExam.ComponentType.HTML:
                 html = html + f"<!-- Start of Component Type {typ}-->\n" + c[1] + f"\n<!-- End of Component Type {typ} -->\n"
+        return html
+
 cfg = {}
 
 def createEnvironment( mycfg ):
