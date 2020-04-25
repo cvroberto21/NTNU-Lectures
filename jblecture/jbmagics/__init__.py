@@ -117,7 +117,7 @@ class JBMagics(Magics):
         if line:
             it = it + f"</div><!-- end of {line} -->\n"
 
-        it = it + '</div><!-- end of jb-render -->\n'
+        it = it + f'</div><!-- end of {cls} jb-render -->\n'
 
         #it = it + '</div>'
 

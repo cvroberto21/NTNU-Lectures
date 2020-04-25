@@ -43,8 +43,8 @@ def QuestionAnswer( marks, answer, height = None ):
 
 def QuestionSolution( sol ):
     qsol = f"""
-<div class="question_solution">
-""" + sol + "\n</div>\n"
+<div class="question_solution"><!-- start of question_solution -->
+""" + sol + "\n</div><!-- end of question_solutiion -->\n"
     display(HTML(qsol))
     return qsol
     

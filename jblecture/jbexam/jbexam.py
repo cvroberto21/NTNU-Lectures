@@ -80,7 +80,7 @@ class JBExam:
     def loadConfig( self, vars ):
         self.loadCSS( vars )
         self.loadJS( vars )
-        
+
         if 'EXAM_NOTES' not in cfg:
             cfg['EXAM_NOTES'] = """
             <ul>
@@ -111,6 +111,13 @@ class JBExam:
             <span id="marks_holder">   _________   </span><br>
             <span>out of</span><br>
             <span id="total_marks_holder"> %# cfg['EXAM_TOTAL_MARKS'] #% </span>
+        </div>
+        <div>
+        <p>
+        <span ondblclick="showHideAnswers()" id="showhideanswersbox">
+            solutions???
+        </span>
+        </p>
         </div>
     </div>
             """
