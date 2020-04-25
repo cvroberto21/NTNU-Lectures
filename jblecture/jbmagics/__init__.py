@@ -104,12 +104,9 @@ class JBMagics(Magics):
 
         if line:
             # print("Adding style", line)
-            it = it + "<div {0}>\n".format(line)
+            it = it + "<div {0}><!-- start of {0} -->\n".format(line)
 
         it = it + html + "\n"
-
-        it = it + '</div>\n'
-
 
         # it = it + """
         #          <script src="reveal.js/js/reveal.js"></script>
@@ -118,7 +115,9 @@ class JBMagics(Magics):
         #          </script>
         # """
         if line:
-            it = it + "</div>\n"
+            it = it + f"</div><!-- end of {line} -->\n"
+
+        it = it + '</div><!-- end of jb-render -->\n'
 
         #it = it + '</div>'
 
@@ -440,11 +439,13 @@ class JBMagics(Magics):
 
         # print("MYSTYLE", mystyle)
 
+        html = ""
+
         s = self.instTemplate(cell, {})
         with capture_output(out, err, disp) as io:
             self.shell.run_cell(s)
 
-        html = '<div class="{cls}"><!-- start of jb_exam_fragment -->\n'.format(cls="jb_exam_fragment")
+        html = html + '<div class="{cls}"><!-- start of jb_exam_fragment -->\n'.format(cls="jb_exam_fragment")
 
         # print(args.echo)
         if (args.echo):
@@ -467,8 +468,8 @@ class JBMagics(Magics):
                 h = h + '<pre {s}>\n'.format(s=mystyle)
                 h = h + io.stdout
                 h = h + '</pre>\n'
-                h = h + '</div>\n'
-                h = h + '</div>\n'
+                h = h + '</div><!-- end of jb-stdout code -->\n'
+                h = h + '</div><!-- end of jb-output jb-render code -->\n'
                 html = html + self.embedCellHTML(h, mystyle, 'jb-print', '')
 
         for o in io.outputs:
