@@ -107,16 +107,14 @@ class JBExam:
             cfg['EXAM_MARKS_BOX'] = """
     <div>
         <div class="marks_box">
+        <p>
             <span id="marks">Marks</span><br>
             <span id="marks_holder">   _________   </span><br>
             <span>out of</span><br>
-            <span id="total_marks_holder"> %# cfg['EXAM_TOTAL_MARKS'] #% </span>
-        </div>
-        <span ondblclick="showHideAnswers()" id="showhideanswersbox">
-            solutions???
-        </span>
-        <div>
-        <p>
+            <span id="total_marks_holder"> %# cfg['EXAM_TOTAL_MARKS'] #% </span><br>
+            <span ondblclick="showHideAnswers()" id="showhideanswersbox">
+                solutions???
+            </span>
         </p>
         </div>
     </div>

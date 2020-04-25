@@ -4,13 +4,12 @@ def QuestionProlog( ):
 
 def QuestionBody( title, text ):
     if title:
-        head = f"<h3>{title}</h3>"
+        head = f'<h3>[<span class="question_number">1</span>] {title}</h3>'
     else:
         head = ""
     qtext = f"""
         {head}
         <div class="question_body">
-            [<span class="question_number">1</span>]
             {text}
         </div><!-- end of question_body -->
     """
