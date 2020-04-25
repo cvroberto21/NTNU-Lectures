@@ -69,10 +69,18 @@ class JBExam:
         if 'EXAM_CSS' not in cfg:
             with open( cfg['MODULE_ROOT'] / 'html' / 'exam.css') as f:
                 cfg['EXAM_CSS_TEMPLATE'] = f.read()
-                cfg['EXAM_CSS'] = self.instTemplate( cfg['EXAM_CSS_TEMPLATE'], {} )
+                cfg['EXAM_CSS'] = self.instTemplate( cfg['EXAM_CSS_TEMPLATE'], vars )
+
+    def loadJS( self, vars ):
+        if 'EXAM_JS' not in cfg:
+            with open( cfg['MODULE_ROOT'] / 'html' / 'exam.js') as f:
+                cfg['EXAM_JS_TEMPLATE'] = f.read()
+                cfg['EXAM_JS'] = self.instTemplate( cfg['EXAM_JS_TEMPLATE'], vars )
 
     def loadConfig( self, vars ):
         self.loadCSS( vars )
+        self.loadJS( vars )
+        
         if 'EXAM_NOTES' not in cfg:
             cfg['EXAM_NOTES'] = """
             <ul>

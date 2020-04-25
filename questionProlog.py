@@ -1,5 +1,5 @@
 def QuestionProlog( ):
-    qprolog='<div class="question_frame"><!-- Start of Question Frame -->\n'
+    qprolog='<!-- <div class="question_frame"> --><!-- start of question_frame -->\n'
     display(HTML(qprolog))
 
 def QuestionBody( title, text ):
@@ -12,13 +12,13 @@ def QuestionBody( title, text ):
         <div class="question_body">
             [<span class="question_number">1</span>]
             {text}
-        </div>
+        </div><!-- end of question_body -->
     """
 
     display(HTML( qtext ))
     return qtext
 
-def QuestionAnswer( marks, answer, height = None ):?PJ
+def QuestionAnswer( marks, answer, height = None ):
     if marks == 1:
         marksStr = '<span class="mark_num">'+ str(marks) + '</span>' + " mark"
     else:
@@ -27,7 +27,7 @@ def QuestionAnswer( marks, answer, height = None ):?PJ
     qmarks = f"""
 <div class="question_marks">
     {marksStr}
-</div>
+</div><!-- end of question_marks -->
 """
     if height:
         hs = f'style="height:{height};"'
@@ -36,7 +36,7 @@ def QuestionAnswer( marks, answer, height = None ):?PJ
         
     qhint = f"""
 <div class="question_answer_box" {hs}>
-""" + answer + "\n</div>\n"
+""" + answer + "\n</div><!-- end of question_answer_box -->\n"
     q = qmarks + qhint
     display(HTML(q))
     return q
@@ -49,7 +49,7 @@ def QuestionSolution( sol ):
     return qsol
     
 def QuestionEpilog( ):
-    qepilog='</div><!-- End of Question Frame -->\n'
+    qepilog='<!-- </div> --><!-- end of question_frame -->\n'
     display(HTML(qepilog))
     
 def peval(s):
@@ -67,3 +67,23 @@ def generateHint( code ):
         if l == "#endhide":
             show = True
     return hint
+
+def fixupSVG( svg ):
+    show = False
+    out = []
+    for l in svg.splitlines():
+        if l[0:4] == "<svg":
+            show = True
+        if show:
+            out.append(l)
+        if l[0:6] == "</svg>":
+            show = False
+    return "\n".join( out )
+        
+def createSVGImageFromFigure( fig ):
+    from io import BytesIO
+    figfile = BytesIO()
+    fig.savefig(figfile, dpi=300, bbox_inches='tight', format="svg" )
+    figfile.seek(0)  # rewind to beginning of file
+    image = figfile.getvalue().decode('utf-8')
+    return fixupSVG( image )

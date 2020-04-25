@@ -444,7 +444,7 @@ class JBMagics(Magics):
         with capture_output(out, err, disp) as io:
             self.shell.run_cell(s)
 
-        html = '<div class="{cls}">\n'.format(cls="jb-exam-fragment")
+        html = '<div class="{cls}"><!-- start of jb_exam_fragment -->\n'.format(cls="jb_exam_fragment")
 
         # print(args.echo)
         if (args.echo):
@@ -453,7 +453,7 @@ class JBMagics(Magics):
                                                         HtmlFormatter(cssstyles="color:#101010;display=inline-block;",
                                                                       noclasses=True)), mystyle, 'jb-input-code',
                                               cfg['EXAM_CSS'] + '\n' )
-            html = html + "</div>" + "\n"
+            html = html + "</div><!-- end of echo -->" + "\n"
         # print("html", html)
 
         logger.debug( f"out: {out}" )
@@ -478,7 +478,7 @@ class JBMagics(Magics):
             if (h is not None):
                 html = html + "\n" + self.embedCellHTML(h, mystyle, 'jb-output-code', '') + "\n"
 
-        html = html + "\n" + "</div>"
+        html = html + "\n" + "</div><!-- end of jb_exam_fragment -->"
 
         # html = re.sub("<style>.*", "", html, flags=re.MULTILINE )
         htmlNoStyle=html
