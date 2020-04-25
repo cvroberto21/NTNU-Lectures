@@ -112,11 +112,11 @@ class JBExam:
             <span>out of</span><br>
             <span id="total_marks_holder"> %# cfg['EXAM_TOTAL_MARKS'] #% </span>
         </div>
-        <div>
-        <p>
         <span ondblclick="showHideAnswers()" id="showhideanswersbox">
             solutions???
         </span>
+        <div>
+        <p>
         </p>
         </div>
     </div>
