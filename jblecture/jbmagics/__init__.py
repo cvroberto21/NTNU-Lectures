@@ -90,11 +90,14 @@ class JBMagics(Magics):
             fragment = fragment.encode(output_encoding)
         return fragment
 
+    def embedCSS( self, css ):
+        return "\n" + "<!-- start embedded style -->\n" + "<style>\n" + css + "\n" + "</style>\n" + "<!-- end embedded style -->\n"
+
     def embedCellHTML(self, html, line, cls, css):
         it = ""
 
         if css:
-            it = it + "<style>\n" + css + "\n" + "</style>" + "\n"
+            it = it + self.embedCSS( css )
 
         # it = it + '<div class="section">'
         it = it + '<div class="{cls} jb-render">\n'.format(cls=cls)
@@ -491,10 +494,14 @@ class JBMagics(Magics):
         html = ""
 
         html = html + """
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full"></script>
-            """
+<!-- embeddings start -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML-full"></script>
+"""
 
-        html = html + '<style>\n' + cfg['EXAM_CSS'] + '\n' + '</style>'
+        html = html + self.embedCSS( cfg['EXAM_CSS'] + '\n' )
+        html = html + """
+<!-- embeddings end -->
+"""
 
         html = html + htmlNoStyle
         cfg['doc'].addHTML( html )
