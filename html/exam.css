@@ -144,3 +144,39 @@ table.center {
     text-align: center;
     background: #eee
   }
+
+  table.pixmap_table {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+
+  table.pixmap_table th {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+  
+  table.pixmap_table td {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+
+  table.convolution_table {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+
+  table.convolution_table th {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+  
+  table.convolution_table td {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }

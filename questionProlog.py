@@ -86,3 +86,67 @@ def createSVGImageFromFigure( fig ):
     figfile.seek(0)  # rewind to beginning of file
     image = figfile.getvalue().decode('utf-8')
     return fixupSVG( image )
+
+defTableT = """
+<table {clsStmt}" {idStmt}> 
+{cdata}
+<tbody>
+{bdata}
+</tbody>
+</table>
+"""
+
+defTrT = """
+<tr>
+{0}
+</tr>
+"""
+
+defTdT = """
+<td>
+{0}
+</td>
+"""
+
+defThT = """
+<th>
+{0}
+</th>
+"""
+
+def createTable( data, index = None, columns = None, id=None, cls=None, tableT = defTableT, thT = defThT, 
+                tdT = defTdT, trT = defTrT ):
+    if columns:
+        cdata = """
+        <thead>
+          <tr>
+        """
+        for c in columns:
+            cdata = cdata + thT.format(c)
+        cdata = cdata + """
+          </tr>
+        </thead>
+        """
+    else:
+        cdata = ""
+
+    bdata = ""
+    for i,r in enumerate( data ):
+        rdata = ""
+        for j,d in enumerate( r ):
+            rdata = rdata + tdT.format( d )
+        row = trT.format( rdata )
+        #print(row)
+        bdata = bdata + row
+    #/print(bdata)
+    if cls:
+        clsStmt = f' class="{cls}" '
+    else:
+        clsStmt = ""
+        
+    if id:
+        idStmt = f' id="{id}" '
+    else:
+        idStmt= ""
+    table = tableT.format( clsStmt=clsStmt, idStmt=idStmt, cdata=cdata, bdata=bdata )
+    return table
