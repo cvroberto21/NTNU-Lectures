@@ -219,7 +219,7 @@ class JBExam:
         return html
 
         
-    def writeExam( fname = None, includeSolutions=False )
+    def writeExam( fname = None, includeSolutions=False ):
         if not fname:
             fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{SEED}"
             if includeSolutions:
