@@ -41,7 +41,7 @@ class JBExam:
         #print('jbexam CFG', hex(id(cfg)))
         #print('jbl: instTemplate: ', cfg)
         d = { ** cfg['user_ns'], **vars }
-        return JBDocument.sInstTemplate( text, d )
+        return JBExam.sInstTemplate( text, d )
         
     def addQuestion( self, question ):
         #html = wp.HTML( string = slideHTML )
@@ -181,10 +181,12 @@ class JBExam:
         out = re.sub( patTotal, r'<span id="total_marks_holder">'+str(marks)+'</span>', html )
         return out
 
-    def removeSolutions( self, html ):
-        solStart = re.compile( r'\<div class="question_solution"\>\<!-- start of question solution --\>' )
+
+    @staticmethod
+    def removeSolutions( html ):
+        solStart = re.compile( r'\<div class="question_solution"\>\<!-- start of question_solution --\>' )
         solEnd = re.compile( r'\</div\>\<!-- end of question_solution' )
-        out = ""
+        out = []
         show = True
         for l in html.splitlines():
             if re.match(solStart, l ):
@@ -213,7 +215,7 @@ class JBExam:
         html = self.fixupQuestionNumbers( html )
         html = self.fixupTotalMarks(html)
         if not includeSolutions:
-            html = self.removeSolutions( html )
+            html = JBExam.removeSolutions( html )
         return html
 
 cfg = {}
