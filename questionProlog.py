@@ -44,7 +44,7 @@ def QuestionSolution( sol ):
     qsol = f"""
 <div class="question_solution"><!-- start of question_solution -->
 <p>Solution:</p>
-""" + sol + "\n</div><!-- end of question_solutiion -->\n"
+""" + sol + "\n</div><!-- end of question_solution -->\n"
     display(HTML(qsol))
     return qsol
     
@@ -151,3 +151,16 @@ def createTable( data, index = None, columns = None, id=None, cls=None, tableT =
         idStmt= ""
     table = tableT.format( clsStmt=clsStmt, idStmt=idStmt, cdata=cdata, bdata=bdata )
     return table
+
+def writeExam( fname = None, includeSolutions=False )
+    if not fname:
+        fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{SEED}"
+        if includeSolutions:
+            fname = fname + "-solutions"
+    fname = fname + ".html"
+
+    html = cfg['doc'].render( includeSolutions )
+
+    with open(fname, "w") as f:
+        f.write(html)
+    return html

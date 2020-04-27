@@ -218,6 +218,20 @@ class JBExam:
             html = JBExam.removeSolutions( html )
         return html
 
+        
+    def writeExam( fname = None, includeSolutions=False )
+        if not fname:
+            fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{SEED}"
+            if includeSolutions:
+                fname = fname + "-solutions"
+        fname = fname + ".html"
+
+        html = cfg['doc'].render( includeSolutions )
+
+        with open(fname, "w") as f:
+            f.write(html)
+        return html
+
 cfg = {}
 
 def createEnvironment( mycfg ):
