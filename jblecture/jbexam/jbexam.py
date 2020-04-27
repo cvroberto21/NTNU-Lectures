@@ -181,6 +181,21 @@ class JBExam:
         out = re.sub( patTotal, r'<span id="total_marks_holder">'+str(marks)+'</span>', html )
         return out
 
+    def removeSolutions( self, html ):
+        solStart = re.compile( r'\<div class="question_solution"\>\<!-- start of question solution --\>' )
+        solEnd = re.compile( r'\</div\>\<!-- end of question_solution' )
+        out = ""
+        show = True
+        for l in html.splitlines():
+            if re.match(solStart, l ):
+                show = False
+            if show:
+                out.append(l)
+            if re.match(solEnd, l ):
+                show = True
+        return "\n".join( out )
+
+
     def render( self, includeSolutions = True ):
         prolog = cfg['EXAM_PROLOG']
         prolog = prolog.replace("%#", "{{" ).replace("#%", "}}")
@@ -197,6 +212,8 @@ class JBExam:
         html = html + epilog
         html = self.fixupQuestionNumbers( html )
         html = self.fixupTotalMarks(html)
+        if not includeSolutions:
+            html = self.removeSolutions( html )
         return html
 
 cfg = {}
