@@ -86,3 +86,58 @@ def createSVGImageFromFigure( fig ):
     figfile.seek(0)  # rewind to beginning of file
     image = figfile.getvalue().decode('utf-8')
     return fixupSVG( image )
+
+tableT = """
+<table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
+cellspacing="2"; border-color: #aaaaaa>
+{0}
+<tbody>
+{1}
+</tbody>
+</table>
+"""
+
+trT = """
+<tr>
+{0}
+</tr>
+"""
+
+tdT = """
+<td style="vertical-align: top;">
+{0}
+</td>
+"""
+
+thT = """
+<th>
+{0}
+</th>
+"""
+
+def createTable( data, index = None, columns = None, tableT = tableT, thT = thT, tdT = tdT, trT = trT ):
+    if columns:
+        cdata = """
+        <thead>
+          <tr>
+        """
+        for c in columns:
+            cdata = cdata + thT.format(c)
+        cdata = cdata + """
+          </tr>
+        </thead>
+        """
+    else:
+        cdata = ""
+
+    bdata = ""
+    for i,r in enumerate( data ):
+        rdata = ""
+        for j,d in enumerate( r ):
+            rdata = rdata + tdT.format( d )
+        row = trT.format( rdata )
+        #print(row)
+        bdata = bdata + row
+    #/print(bdata)
+    table = tableT.format( cdata, bdata )
+    return table

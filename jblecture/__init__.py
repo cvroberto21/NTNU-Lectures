@@ -18,8 +18,6 @@ import tempfile
 import base64
 import io 
 
-from .jbcd import JBcd
-
 cfg = {}
 
 logger = logging.getLogger(__name__)
