@@ -1,0 +1,182 @@
+
+:root {
+    --font-normal: 12pt;
+    --font-large: 14pt;
+    --font-small: 10pt;
+    --font-very-small: 8pt;
+}
+
+h1.exam_header {
+    font-size: var(--font-normal);
+    text-align: center;
+}
+
+.note {
+    font-size: var(--font-normal);
+    font-style: italic;
+}
+
+table.student_info,
+table.table_exam {
+    font-size: var(--font-large);
+    background: white !important;
+}
+
+.marks_box {
+    position: absolute;
+    top: 0.5cm;
+    right: 0.5cm;
+    font-size: 1.var(--font-large);
+    background: #ffc000;
+    text-align: center;
+}
+
+.sectionheader {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 18pt;
+    font-weight: bold;
+    text-align: center;
+    list-style-type: decimal;
+}
+
+.question_frame {
+    font-family: "Times New Roman", Times, serif; 
+}
+
+.question-body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: var(--font-normal);
+    text-align: left;
+}
+
+.question_solution {
+    font-family: "Times New Roman", Times, serif;
+    font-size: var(--font-normal);
+    text-align: left;
+    background: #e1e1e175;
+    border-style: solid;
+    border-color: rgb(51, 22, 177);
+}
+
+.question_marks {
+    font-size: var(--font-large);
+    text-align: right;
+}
+
+.question_number {
+    font-size: var(--font-large);
+}
+
+.question_answer_box {
+    font-family: "Times New Roman", Times, serif;
+    border-style: solid;
+    border-color: red;
+}
+
+.programbox {
+    font-family: "Courier New", Courier, sans-serif;
+    border-style: solid;
+}
+.qbox_cell {
+    text-align: center;
+    height: 50px;
+    width: 30px;
+}
+
+.break {
+    page-break-before:always;
+}
+
+img {
+}
+
+.centeredimage {
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+
+table.center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.exam_note_header {
+    font-size: var(--font-large);
+    font-weight: bold;
+}
+
+/************************************************
+ Added by Jacky Baltes
+ ************************************************/
+  .jb-center {
+    text-align:center;
+  }
+ 
+  .jb-small {
+      font-size: var(--font-small);
+  }
+
+  .jb-input-code {
+      color: #101010;
+      width: 90%;
+      display: inline-block;
+      text-align: left;
+  }
+  
+  .jb-stdout {
+      color: #101010;
+      background: #e0e0e0;
+      width: 90%;
+      display: inline-block;
+  }
+  
+  .jb-highlight {
+      color: #ffc000
+  }
+  
+  .jb-text {
+    text-align: left;
+  }
+  
+  .jb-math {
+    text-align: center;
+    background: #eee
+  }
+
+  table.pixmap_table {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+
+  table.pixmap_table th {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+  
+  table.pixmap_table td {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+
+  table.convolution_table {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+
+  table.convolution_table th {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }
+  
+  table.convolution_table td {
+    padding: 10px;
+    border: 1px solid black; 
+    border-collapse: collapse;
+  }

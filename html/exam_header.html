@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{ cfg['COURSE_TITLE'] }}</title>
+
+    <meta name="Template for Examinations" content="">
+    <meta name="author" content="{{cfg['EXAMINERS'][0]}}">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <style>
+      {{ cfg['EXAM_CSS'] }}
+    </style>
+
+    <!--<link rel="stylesheet" href="Documents/exam_template.css" type="text/css">-->
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame Remove this if you use the .htaccess -->
+    <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+    <script type="text/javascript" async
+       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <script>
+        {{ cfg['EXAM_JS'] }}
+    </script>
+
+</head>
+
+<body onload="setupExam()">
+    <h1 class="exam_header exam_type">
+        <span class="exam_header exam_type">{{ cfg['EXAM_TYPE'] }}</span>
+    </h1>
+    <h1 class="exam_header university">
+        <span class="exam_header university">{{ cfg['UNIVERSITY'] }}</span>
+    </h1>
+    <h1 class="exam_header course_title">
+        <span class="exam_header course_title">{{ cfg['COURSE_TITLE'] }}</span>
+    </h1>
+
+    <table class="table_exam center">
+        <tr class="exam_header_2_tr examiners">
+            <td class="exam_header_2_td examiners">
+                Examiners:
+            </td>
+            <td class="exam_header_2_td examiners">
+                {{ ",".join( cfg['EXAMINERS'] ) }}
+            </td>
+        </tr>
+        <tr class="exam_header_2_tr exam_date">
+            <td class="exam_header_2_td exam_date">
+                Date:
+            </td>
+            <td class="exam_header_2_td exam_date">
+                {{ cfg['EXAM_DATE']}}
+            </td>
+        </tr>
+        <tr class="exam_header_2_tr exam_time">
+            <td class="exam_header_2_td exam_time">
+                Time:
+            </td>
+            <td class="exam_header_2_td exam_time">
+                {{ cfg['EXAM_TIME']}}
+            </td>
+        </tr>
+        <tr class="exam_header_2_tr exam_room">
+            <td class="exam_header_2_td exam_room">
+                Time:
+            </td>
+            <td class="exam_header_2_td exam_room">
+                {{ cfg['EXAM_ROOM']}}
+            </td>
+        </tr>
+    </table>
+    
+    <div id="id_exam_note_header" class="exam_note">
+        <p><span class="exam_note_header">Notes:</span></p>
+        <div class="exam_notes">
+            {{ cfg['EXAM_NOTES'] }}
+        </div>
+    </div>
+
+    <table id="id_student_info" class="student_info center">
+        <tr>
+            <td>Name:</td><td>____________________________</td>
+        </tr>
+        <tr>
+            <td>Student ID:</td><td>____________________________</td>
+        </tr>
+    </table>

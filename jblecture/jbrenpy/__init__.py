@@ -16,18 +16,10 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def createEnvironment( mycfg ):
-    global cfg
-    defaults = {}
-    defaults['ROOT_DIR'] = pathlib.Path( "/data/test" )
-    defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
-    defaults['GIT_CMD'] = "git"
-
-    cfg = mycfg
-    for k in defaults:
-        if k not in cfg:
-            cfg[k] = defaults[k]
-    return cfg
+defaults = {}
+defaults['CHARACTER_ROOT_DIR'] = pathlib.Path( "/data/test" )
+defaults['CHARACTER_DIR'] = pathlib.Path( defaults['CHARACTER_ROOT_DIR'] ) / "Characters"
+defaults['GIT_CMD'] = 'git'
 
 class JBcd:
     """Context manager for changing the current working directory"""
@@ -41,8 +33,7 @@ class JBcd:
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
 
-
-def updateGit( cfg, url, dirname, branch,  root ):
+def updateGit( url, dirname, branch,  root ):
     with JBcd( root ):
         logger.debug( f"Switching to directory {root}")
         p = pathlib.Path( dirname )
@@ -72,7 +63,7 @@ class JBCharacter:
         cdir = pathlib.Path( cfg['CHARACTER_DIR'] )
         cdir.mkdir( parents=True, exist_ok=True )
 
-        updateGit( cfg, url, name, None, cfg['CHARACTER_DIR']  )
+        updateGit( url, name, None, cfg['CHARACTER_DIR']  )
         self.characterDir = cdir
         self.name = name
         self.width = width
@@ -127,11 +118,20 @@ class JBCharacter:
             else:
                 logger.warning( f"Skipping empty image {img}")
 
+def createEnvironment( mycfg ):
+    global cfg
+
+    cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
+    return cfg
+
 if __name__ == "__main__":
-    defaults = {}
-    defaults['ROOT_DIR'] = pathlib.Path( "/data/test" )
-    defaults['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
-    defaults['GIT_CMD'] = "git"
-    createEnvironment( defaults )
+    tempCfg = {}
+    tempCfg['ROOT_DIR'] = pathlib.Path( "/data/test" )
+    tempCfg['CHARACTER_DIR']  = pathlib.Path( defaults['ROOT_DIR'] ) / "Characters"
+    tempCfg['GIT_CMD'] = "git"
+    createEnvironment( tempCfg )
     jb = JBCharacter( "profjb", 320, 240, url="https://github.com/cvroberto21/profjb.git" )
     jb.prepareImages( "/tmp/profJB")
