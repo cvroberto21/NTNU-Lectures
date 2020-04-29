@@ -22,7 +22,8 @@ RUN  \
 RUN \ 
     /opt/conda/bin/conda upgrade --yes conda; \
     /opt/conda/bin/conda upgrade --yes anaconda; \ 
-    /opt/conda/bin/conda install python-graphviz --quiet --yes;
+    /opt/conda/bin/conda install python-graphviz --quiet --yes; \
+    /opt/conda/bin/conda install -c conda-forge opencv
 
 RUN \
     python -m pip install pygments \
