@@ -16,7 +16,8 @@ RUN  \
     apt-get install -y ffmpeg; \
     apt-get install -y vim; \
     apt-get install -y graphviz; \
-    apt-get install dos2unix
+    apt-get install dos2unix; \
+    apt-get install libopencv python3-opencv;
  
 RUN \ 
     /opt/conda/bin/conda upgrade --yes conda; \
