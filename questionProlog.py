@@ -43,7 +43,8 @@ def QuestionAnswer( marks, answer, height = None ):
 def QuestionSolution( sol ):
     qsol = f"""
 <div class="question_solution"><!-- start of question_solution -->
-""" + sol + "\n</div><!-- end of question_solutiion -->\n"
+<p>Solution:</p>
+""" + sol + "\n</div><!-- end of question_solution -->\n"
     display(HTML(qsol))
     return qsol
     
@@ -87,35 +88,35 @@ def createSVGImageFromFigure( fig ):
     image = figfile.getvalue().decode('utf-8')
     return fixupSVG( image )
 
-tableT = """
-<table style="text-align: left; width: 100%; font-size:0.4em" border="1" cellpadding="2"
-cellspacing="2"; border-color: #aaaaaa>
-{0}
+defTableT = """
+<table {clsStmt}" {idStmt}> 
+{cdata}
 <tbody>
-{1}
+{bdata}
 </tbody>
 </table>
 """
 
-trT = """
+defTrT = """
 <tr>
 {0}
 </tr>
 """
 
-tdT = """
-<td style="vertical-align: top;">
+defTdT = """
+<td>
 {0}
 </td>
 """
 
-thT = """
+defThT = """
 <th>
 {0}
 </th>
 """
 
-def createTable( data, index = None, columns = None, tableT = tableT, thT = thT, tdT = tdT, trT = trT ):
+def createTable( data, index = None, columns = None, id=None, cls=None, tableT = defTableT, thT = defThT, 
+                tdT = defTdT, trT = defTrT ):
     if columns:
         cdata = """
         <thead>
@@ -139,5 +140,27 @@ def createTable( data, index = None, columns = None, tableT = tableT, thT = thT,
         #print(row)
         bdata = bdata + row
     #/print(bdata)
-    table = tableT.format( cdata, bdata )
+    if cls:
+        clsStmt = f' class="{cls}" '
+    else:
+        clsStmt = ""
+        
+    if id:
+        idStmt = f' id="{id}" '
+    else:
+        idStmt= ""
+    table = tableT.format( clsStmt=clsStmt, idStmt=idStmt, cdata=cdata, bdata=bdata )
     return table
+
+def writeExam( fname = None, includeSolutions=False )
+    if not fname:
+        fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{SEED}"
+        if includeSolutions:
+            fname = fname + "-solutions"
+    fname = fname + ".html"
+
+    html = cfg['doc'].render( includeSolutions )
+
+    with open(fname, "w") as f:
+        f.write(html)
+    return html
