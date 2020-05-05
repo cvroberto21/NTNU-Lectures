@@ -43,14 +43,6 @@ class JBExam:
         d = { ** cfg['user_ns'], **vars }
         return JBExam.sInstTemplate( text, d )
         
-    def addQuestion( self, question ):
-        #html = wp.HTML( string = slideHTML )
-        #doc = html.render( stylesheets = [ self.cssSlides ] )
-        #png, width, height = doc.write_png( target=None )
-        
-        self.questions.append( question )
-        return question
-
     # def createSlideImages(self, rdir ):
     #     for s in self.slides:
     #         img = s.createJBImage( self.cssSlides )
@@ -59,17 +51,16 @@ class JBExam:
     def setTitle( self, title ):
         cfg['TITLE'] = title
 
-    # def createRenpySlideShow(self, startId = None ):
-    #     rdir = cfg['RENPY_GAME_DIR']
-    #     self.createSlideImages( rdir )
-    #     self.createBackgroundsFile( rdir )
-    #     self.createScriptFiles( rdir, startId )
-
     def loadCSS( self, vars ):
         if 'EXAM_CSS' not in cfg:
             with open( cfg['MODULE_ROOT'] / 'html' / 'exam.css') as f:
                 cfg['EXAM_CSS_TEMPLATE'] = f.read()
                 cfg['EXAM_CSS'] = self.instTemplate( cfg['EXAM_CSS_TEMPLATE'], vars )
+        try:
+            with open( "local.css","r") as f:
+                cfg['EXAM_CSS'] = cfg['EXAM_CSS'] + "\n" + f.read()
+        except FileNotFoundError:
+            pass
 
     def loadJS( self, vars ):
         if 'EXAM_JS' not in cfg:
@@ -219,9 +210,9 @@ class JBExam:
         return html
 
         
-    def writeExam( fname = None, includeSolutions=False ):
+    def writeExam( self, fname = None, includeSolutions=False ):
         if not fname:
-            fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{SEED}"
+            fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{cfg['SEED']}"
             if includeSolutions:
                 fname = fname + "-solutions"
         fname = fname + ".html"
