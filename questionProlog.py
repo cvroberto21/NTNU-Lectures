@@ -152,9 +152,9 @@ def createTable( data, index = None, columns = None, id=None, cls=None, tableT =
     table = tableT.format( clsStmt=clsStmt, idStmt=idStmt, cdata=cdata, bdata=bdata )
     return table
 
-def writeExam( fname = None, includeSolutions=False )
+def writeExam( fname = None, includeSolutions=False ):
     if not fname:
-        fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{SEED}"
+        fname = f"{cfg['COURSE_TITLE']}-{cfg['EXAM_TYPE']}-{cfg['UNI_SHORT']}-{cfg['YEAR']}-{cfg['SEED']}"
         if includeSolutions:
             fname = fname + "-solutions"
     fname = fname + ".html"
