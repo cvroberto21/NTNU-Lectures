@@ -134,6 +134,8 @@ def createTable( data, index = None, columns = None, id=None, cls=None, tableT =
     bdata = ""
     for i,r in enumerate( data ):
         rdata = ""
+        if index:
+            rdata = rdata + f"<td>{index[i]}</td>" + "\n"
         for j,d in enumerate( r ):
             rdata = rdata + tdT.format( d )
         row = trT.format( rdata )

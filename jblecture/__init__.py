@@ -311,10 +311,13 @@ def downloadDir( zFile, dir, root = None  ):
         files.download( zFile )
 
 def fetchRenpyData( ):
+    from .jbcd import JBcd
+    
 #    os.system("sudo apt install renpy") 
     updateGit( "https://github.com/guichristmann/Lecture-VN.git", "Lecture-VN", "", cfg['ORIG_ROOT'] )
     src = cfg['ORIG_ROOT'] / 'Lecture-VN' / 'Resources' / 'templateProject' / 'game'
     cfg['RENPY_GAME_DIR'].mkdir(parents = True, exist_ok = True )
+    
     with JBcd( cfg['RENPY_GAME_DIR'] ):
         logger.info("Creating renpy directory in " + str( cfg['RENPY_GAME_DIR'] ) )
         for d in [ cfg['RENPY_IMAGES_DIR'], cfg['RENPY_IMAGES_DIR'] / "slides", cfg['RENPY_SOUNDS_DIR'], cfg['RENPY_VIDEOS_DIR'], "renpy/game/tl" ]:

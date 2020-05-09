@@ -62,16 +62,6 @@ def runCommand( cmd, secure = False ):
     if not secure:
         print( "Running command " + cmd )
     o = None
-<<<<<<< HEAD
-    if not secure:
-        myStdOut = subprocess.STDOUT
-    else:
-        myStdOut = subprocess.DEVNULL
-        myStdErr = subprocess.DEVNULL
-    
-    try:
-        o = subprocess.check_output( cmd, stderr= myStdOut, shell=True)
-=======
     
     if not secure:
         myStdOut = None
@@ -82,7 +72,6 @@ def runCommand( cmd, secure = False ):
         
     try:
         o = subprocess.call( cmd, stdout=myStdOut, stderr=myStdErr, shell=True)
->>>>>>> mg
     except subprocess.CalledProcessError as error:
         print("Command returned error CalledProcessError", error, error.stderr )
     if o and not secure:
@@ -193,14 +182,9 @@ def createGitHub( title, root = None):
 
     with JBcd(p):
         runCommand( cfg['GIT_CMD'] + " push", True )
-<<<<<<< HEAD
-
-        #runCommand( cfg['GIT_CMD'] + " push origin gh-pages", True )
-=======
         runCommand( cfg['GIT_CMD'] + " push --set-upstream origin gh-pages", True )
     
         runCommand( cfg['GIT_CMD'] + " push origin gh-pages", True )
->>>>>>> mg
     
     return True
             # if not p.is_dir():
