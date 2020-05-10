@@ -40,7 +40,6 @@ function setupExam() {
 	setupAnswerBoxes();
 }
 
-
 var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);
 
 /**
