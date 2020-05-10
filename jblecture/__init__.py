@@ -311,6 +311,7 @@ def downloadDir( zFile, dir, root = None  ):
         files.download( zFile )
 
 def fetchRenpyData( ):
+    from .jbcd import JBcd
 #    os.system("sudo apt install renpy") 
     updateGit( "https://github.com/guichristmann/Lecture-VN.git", "Lecture-VN", "", cfg['ORIG_ROOT'] )
     src = cfg['ORIG_ROOT'] / 'Lecture-VN' / 'Resources' / 'templateProject' / 'game'
