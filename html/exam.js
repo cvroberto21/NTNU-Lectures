@@ -35,9 +35,49 @@ function setupAnswerBoxes(cls = "question_answer_box") {
 	}
 }
 
+function setupAnswerEditors(cls = "answer_editor") {
+	var aboxes = document.getElementsByClassName(cls);
+	var length = aboxes.length;
+
+	for (var i = 0; i < length; i++) {
+		var box = aboxes[i];
+		hint = box.innerHTML
+		var options = {
+			debug: 'info',
+			modules: {
+			  toolbar: '#editor_toolbar_' + i
+			},
+			placeholder: "Enter your answer here ...",
+			readOnly: false,
+			//theme: 'snow'
+		  };
+		var container = document.createElement('div');
+		container.setAttribute("id", "container_editor_" + i );
+		container.setAttribute("class", "container_editor" );
+		
+		var toolbar = document.createElement('div');
+		toolbar.setAttribute("id", "editor_toolbar" + i );
+		toolbar.setAttribute("class", "editor_toolbar" );
+		
+		var editor = new Quill(box, options);
+		editor.setAttribute("id", "editor_" + i);
+		editor.setAttribute("class", "editor" + i);
+		
+		container.appendChild(toolbar);
+		container.appendChild(editor);
+		
+		// var inpBox = document.createElement('textarea');
+		// inpBox.innerHTML = hint;
+		console.log("created quill editor and container for question " + i);
+		box.parentNode.replaceChild(box, container);
+	}
+}
+
+
+
 function setupExam() {
 	showHideAnswers();
-	setupAnswerBoxes();
+	setupAnswerEditors();
 }
 
 var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);

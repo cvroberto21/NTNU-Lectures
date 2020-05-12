@@ -43,7 +43,7 @@ table.table_exam {
     font-family: "Times New Roman", Times, serif; 
 }
 
-.question-body {
+.question_body {
     font-family: "Times New Roman", Times, serif;
     font-size: var(--font-normal);
     text-align: left;
@@ -61,6 +61,7 @@ table.table_exam {
 .question_marks {
     font-size: var(--font-large);
     text-align: right;
+    border: 2;
 }
 
 .question_number {
@@ -71,6 +72,10 @@ table.table_exam {
     font-family: "Times New Roman", Times, serif;
     border-style: solid;
     border-color: red;
+}
+
+.question_answer_editor {
+
 }
 
 .programbox {
