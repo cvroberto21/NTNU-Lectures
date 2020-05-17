@@ -28,10 +28,27 @@ function setupAnswerBoxes(cls = "question_answer_box") {
 
 	for (var i = 0; i < length; i++) {
 		var box = aboxes[i];
-		hint = box.innerHTML
-		var inpBox = document.createElement('textarea');
-		inpBox.innerHTML = hint;
-		box.parentNode.replaceChild(box, inpBox);
+
+        var container = document.createElement("div");
+        container.setAttribute("class", "question_answer_box_container");
+        container.setAttribute("id", ( i + 1 ) + "_question_answer_box_container" );
+
+        var nBox = box.cloneNode( true );
+
+		var submitButton = document.createElement("button");
+        submitButton.setAttribute("class", "question_answer_box_submit");
+        submitButton.setAttribute("id", (i + 1) + "_question_answer_box_submit" );
+        submitButton.innerHTML = "Submit";
+        
+        if (submitButton.addEventListener)
+            submitButton.addEventListener("click", 
+                function() { submitFunction( ) }, 
+                false );
+
+        container.appendChild( nBox );
+        container.appendChild( submitButton );
+
+		box.parentNode.replaceChild( container, box );
 	}
 }
 
@@ -41,99 +58,50 @@ function setupAnswerEditors(cls = "answer_editor") {
 
 	for (var i = 0; i < length; i++) {
 		var box = aboxes[i];
-		hint = box.innerHTML
+        hint = box.innerHTML
+        var toolbarOptions = ['bold', 'italic', 'underline', 'strike', 'image', 'link'];
 		var options = {
-			debug: 'info',
+			debug: 'log',
 			modules: {
-			  toolbar: '#editor_toolbar_' + i
+			  toolbar: toolbarOptions
 			},
 			placeholder: "Enter your answer here ...",
 			readOnly: false,
-			//theme: 'snow'
-		  };
-		var container = document.createElement('div');
-		container.setAttribute("id", "container_editor_" + i );
-		container.setAttribute("class", "container_editor" );
+			theme: 'snow'
+        };
+
+        // var toolbar = document.createElement('div');
+        // toolbar.setAttribute("id", "editor_toolbar_" + i );
+        // toolbar.setAttribute("class", "editor_toolbar" );
+        // box.append(toolbar);
+
+		//var container = document.createElement('div');
+		//container.setAttribute("id", "container_editor_" + i );
+		//container.setAttribute("class", "container_editor" );
+		//box.appendChild(container);
 		
-		var toolbar = document.createElement('div');
-		toolbar.setAttribute("id", "editor_toolbar" + i );
-		toolbar.setAttribute("class", "editor_toolbar" );
-		
-		var editor = new Quill(box, options);
-		editor.setAttribute("id", "editor_" + i);
-		editor.setAttribute("class", "editor" + i);
-		
-		container.appendChild(toolbar);
-		container.appendChild(editor);
+        var editor = new Quill(box, options );
+		//box.appendChild(toolbar);
 		
 		// var inpBox = document.createElement('textarea');
 		// inpBox.innerHTML = hint;
 		console.log("created quill editor and container for question " + i);
-		box.parentNode.replaceChild(box, container);
+		//box.parentNode.replaceChild(box, container);
 	}
 }
 
-
-
 function setupExam() {
 	showHideAnswers();
+    setupAnswerBoxes();
 	setupAnswerEditors();
 }
 
-var CLIPBOARD = new CLIPBOARD_CLASS("my_canvas", true);
+function submitFunction( event ) {
+    event = event || window.event; // IE
+    var target = event.target || event.srcElement; // IE
+    var tid = target.id;
 
-/**
- * image pasting into canvas
- * 
- * @param {string} canvas_id - canvas id
- * @param {boolean} autoresize - if canvas will be resized
- */
-function CLIPBOARD_CLASS(canvas_id, autoresize) {
-	var _self = this;
-	var canvas = document.getElementById(canvas_id);
-	var ctx = document.getElementById(canvas_id).getContext("2d");
+    q = target.parentNode;
 
-	//handlers
-	document.addEventListener('paste', function (e) { _self.paste_auto(e); }, false);
-
-	//on paste
-	this.paste_auto = function (e) {
-		if (e.clipboardData) {
-			var items = e.clipboardData.items;
-			if (!items) return;
-
-			//access data directly
-			var is_image = false;
-			for (var i = 0; i < items.length; i++) {
-				if (items[i].type.indexOf("image") !== -1) {
-					//image
-					var blob = items[i].getAsFile();
-					var URLObj = window.URL || window.webkitURL;
-					var source = URLObj.createObjectURL(blob);
-					this.paste_createImage(source);
-					is_image = true;
-				}
-			}
-			if (is_image == true) {
-				e.preventDefault();
-			}
-		}
-	};
-	//draw pasted image to canvas
-	this.paste_createImage = function (source) {
-		var pastedImage = new Image();
-		pastedImage.onload = function () {
-			if (autoresize == true) {
-				//resize
-				canvas.width = pastedImage.width;
-				canvas.height = pastedImage.height;
-			}
-			else {
-				//clear canvas
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-			}
-			ctx.drawImage(pastedImage, 0, 0);
-		};
-		pastedImage.src = source;
-	};
+    alert("Submitted" + q.id + q.innerText );
 }
