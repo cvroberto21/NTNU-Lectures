@@ -166,12 +166,31 @@ def createGitHub( title, root = None):
     with JBcd(p):
         shutil.copyfile( cfg['REVEAL_DIR'] / 'index.html', 'index.html' )
         runCommand( cfg['GIT_CMD'] + " add index.html", True )
-        shutil.copyfile( cfg['REVEAL_DIR'] / 'package.json', 'packages.json' )
-        runCommand( cfg['GIT_CMD'] + " add packages.json", True )
+
+        
+        #shutil.copyfile( cfg['REVEAL_DIR'] / 'package.json', 'packages.json' )
+        #runCommand( cfg['GIT_CMD'] + " add packages.json", True )
+        
         for d in ["css", "js", "plugin" ]:
+            pathlib.Path(d).mkdir( parents = True, exist_ok = True )
+            distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
+            #runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
+
+        for d in [ "theme" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
             distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / "dist" / d, d)
             runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
+
+        with JBcd( p / "css" ):
+            for f in [ "reveal.css", "reset.css" ]:
+                shutil.copyfile( cfg['REVEAL_DIR'] / "dist" / f, str(f) )
+                runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
+
+        with JBcd( p / "js" ):
+            for f in [ "reveal.js" ]:
+                shutil.copyfile( cfg['REVEAL_DIR'] / "dist" / f, str(f) )
+                runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
+
         for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
 
