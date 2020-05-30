@@ -131,7 +131,7 @@ def createGitHub( title, root = None):
     try:
         contents = repo.get_contents("")
     except GithubException:
-        repo.create_file("README.md", "Initial commit", "Update readme file here.", "master")
+        repo.create_file("README.md", "Initial commit", "You can access the presentation at " + cfg['GITHUB_PAGES_URL'], "master")
         contents = repo.get_contents("")
     
     print('repo.name', repo.name, repo.clone_url )
