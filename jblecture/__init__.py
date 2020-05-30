@@ -225,7 +225,8 @@ def createEnvironment( params ):
             if ( o ):    
                 logger.info( f'npm install {pkg}:' + o.decode('utf-8') )
 
-    for d in [ cfg['REVEAL_IMAGES_DIR'], cfg['REVEAL_VIDEOS_DIR'], cfg['REVEAL_SOUNDS_DIR'] ]:
+    for d in [ cfg['REVEAL_IMAGES_DIR'], cfg['REVEAL_VIDEOS_DIR'], 
+               cfg['REVEAL_SOUNDS_DIR'] ]:
         d.mkdir( parents = True, exist_ok=True )
     
     fetchRenpyData( cfg )

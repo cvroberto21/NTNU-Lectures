@@ -170,7 +170,7 @@ def createGitHub( title, root = None):
         runCommand( cfg['GIT_CMD'] + " add packages.json", True )
         for d in ["css", "js", "plugin" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
-            distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
+            distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / "dist" / d, d)
             runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
         for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
