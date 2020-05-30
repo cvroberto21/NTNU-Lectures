@@ -168,8 +168,8 @@ def createGitHub( title, root = None):
         runCommand( cfg['GIT_CMD'] + " add index.html", True )
 
         
-        #shutil.copyfile( cfg['REVEAL_DIR'] / 'package.json', 'packages.json' )
-        #runCommand( cfg['GIT_CMD'] + " add packages.json", True )
+        shutil.copyfile( cfg['REVEAL_DIR'] / 'package.json', 'packages.json' )
+        runCommand( cfg['GIT_CMD'] + " add packages.json", True )
         
         for d in ["css", "js", "plugin" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
