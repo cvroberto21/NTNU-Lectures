@@ -202,6 +202,8 @@ def loadModules( ):
     logger.info('Loading of modules finished')
 
 def createEnvironment( mycfg ):
+    from .jbcd import JBcd
+
     global cfg
     cfg = mycfg
     for k in defaults:
