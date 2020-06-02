@@ -16,12 +16,14 @@ RUN  \
     apt-get install -y ffmpeg; \
     apt-get install -y vim; \
     apt-get install -y graphviz; \
-    apt-get install dos2unix
+    apt-get install -y dos2unix; \
+    apt-get install -y libopencv-dev python3-opencv;
  
 RUN \ 
     /opt/conda/bin/conda upgrade --yes conda; \
     /opt/conda/bin/conda upgrade --yes anaconda; \ 
-    /opt/conda/bin/conda install python-graphviz --quiet --yes;
+    /opt/conda/bin/conda install python-graphviz --quiet --yes; \
+    /opt/conda/bin/conda install -c conda-forge opencv
 
 RUN \
     python -m pip install pygments \

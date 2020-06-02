@@ -14,6 +14,9 @@ from ..jbcd import JBcd
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
+cfg = {}
+defaults = {}
+
 class JBDocument:
     def __init__( self ):
         self.slides = []
@@ -311,11 +314,12 @@ class JBDocument:
     #     self.createBackgroundsFile( rdir )
     #     self.createScriptFiles( rdir, startId )
 
-cfg = {}
-
 def createEnvironment( mycfg ):
     global cfg
     #print('jbdocument', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
     #print('jbdocument', hex(id(cfg)))
     return cfg

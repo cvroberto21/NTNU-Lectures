@@ -9,7 +9,10 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
-cfg = {}
+cfg={}
+defaults = {}
+
+
 
 def genId( func ):
     @functools.wraps( func )
@@ -540,5 +543,8 @@ def createEnvironment( mycfg ):
     global cfg
     #print('jbdata', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
     #print('jbdata', hex(id(cfg)))
     return cfg

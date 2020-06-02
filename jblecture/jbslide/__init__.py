@@ -3,6 +3,9 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel( logging.DEBUG )
 
+cfg = {}
+defaults = {}
+
 class JBSlide:
     def __init__(self, id, html, renpyStyle, renpy, left = '', right = '', up = '', down = '', parent = '' ):
         self.id = id
@@ -46,11 +49,12 @@ class JBSlide:
         self.renpy = self.renpy + '\n' + txt
         self.renpyStyle = style
 
-cfg = {}
-
 def createEnvironment( mycfg ):
     global cfg
     #print('jbslide', hex(id(cfg)), hex(id(mycfg)))
     cfg = mycfg
+    for k in defaults:
+        if k not in cfg:
+            cfg[k] = defaults[k]
     #print('jbslide', hex(id(cfg)))
     return cfg
