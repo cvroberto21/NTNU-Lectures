@@ -122,6 +122,7 @@ def createGitHub( title, root = None):
         if not repo:
             return None
 
+    modUrl( repo.clone_url, cfg['GITHUB_TOKEN'] )
     try:
         contents = repo.get_contents("")
     except GithubException:
