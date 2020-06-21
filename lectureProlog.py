@@ -85,6 +85,10 @@ GDrive = None
 import IPython
 import uuid
 
+def setSeed( seed ):
+    random.seed( str(seed) )
+    np.random.seed( random.randint() )  
+    
 def createRevealJSAndDownload():
     logger.info('Create reveal.js and download it')
     doc.createRevealDownload( cfg['REVEAL_DIR'] )
