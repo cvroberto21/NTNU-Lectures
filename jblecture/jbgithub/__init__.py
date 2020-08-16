@@ -173,17 +173,17 @@ def createGitHub( title, root = None):
 
         for d in [ "theme" ]:
             pathlib.Path(d).mkdir( parents = True, exist_ok = True )
-            distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / "dist" / d, d)
+            distutils.dir_util.copy_tree( cfg['REVEAL_THEME_DIR'], d)
             runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
 
         with JBcd( p / "css" ):
             for f in [ "reveal.css", "reset.css" ]:
-                shutil.copyfile( cfg['REVEAL_DIR'] / "dist" / f, str(f) )
+                shutil.copyfile( cfg['REVEAL_CSS_DIR'] / f, str(f) )
                 runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
 
         with JBcd( p / "js" ):
             for f in [ "reveal.js" ]:
-                shutil.copyfile( cfg['REVEAL_DIR'] / "dist" / f, str(f) )
+                shutil.copyfile( cfg['REVEAL_JS_DIR'] / f, str(f) )
                 runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
 
         for d in [ "assets/images", "assets/videos", "assets/sounds" ]:
