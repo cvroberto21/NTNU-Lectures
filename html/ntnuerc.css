@@ -339,7 +339,6 @@ body {
 
 .jb-footer-right img {
   border: none;
-  background: none;
   box-shadow: none;
   width: auto;
   height: var(--footer-height);
@@ -356,7 +355,6 @@ body {
 
 .jb-footer-left img {
   border: none;
-  background: none;
   box-shadow: none;
   width: auto;
   height: var(--footer-height);
