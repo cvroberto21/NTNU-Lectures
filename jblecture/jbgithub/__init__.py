@@ -7,14 +7,16 @@ import distutils
 import shutil
 import git
 import re
+import logging
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 cfg = {}
 defaults = {
     'GITHUB' : None
 }
-
-logger = logging.getLogger(__name__)
-logger.setLevel( logging.DEBUG )
 
 def readGithubToken():
     passwd = getpass.getpass("Github Token:")    
