@@ -13,6 +13,9 @@ defaults = {
     'GITHUB' : None
 }
 
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
+
 def readGithubToken():
     passwd = getpass.getpass("Github Token:")    
     return passwd
@@ -41,7 +44,7 @@ def findRepoByName( title ):
         repos = getRepositories()
         if repos:
             for r in repos:
-                # print("Github repo", r.name )
+                logger.info( f"Github repo {r.name}" )
                 if r.name == title:
                     repo = r
                     break
