@@ -176,12 +176,13 @@ def createGitHub( title, root = None):
             distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
             #runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
 
-        for d in [ "theme" ]:
-            pathlib.Path(d).mkdir( parents = True, exist_ok = True )
-            distutils.dir_util.copy_tree( cfg['REVEAL_THEME_DIR'], d)
-            runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
-
+        
         with JBcd( p / "css" ):
+            for d in [ "theme" ]:
+                pathlib.Path(d).mkdir( parents = True, exist_ok = True )
+                distutils.dir_util.copy_tree( cfg['REVEAL_THEME_DIR'], d)
+                runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
+
             for f in [ "reveal.css", "reset.css" ]:
                 shutil.copyfile( cfg['REVEAL_CSS_DIR'] / f, str(f) )
                 runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
