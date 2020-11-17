@@ -72,8 +72,8 @@ function setupAnswerEditors(cls = "question_answer_box") {
 		};
 
 		let edBox = document.createElement('div');
-		edBox.setAttribute("id", "editor_box" + i );
-		edBox.setAttribute("class", "editor_box" );
+		edBox.setAttribute("id", "question_editor_box" + i );
+		edBox.setAttribute("class", "question_editor_box" );
 		box.appendChild(edBox);
 
 		//let container = document.createElement('div');
