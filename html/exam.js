@@ -146,19 +146,19 @@ function submitFunction(event) {
 
 			for (let i = 0; i < length; i++) {
 				let box = edBoxes[i];
-				submission = submission + "\n" + "Question " + (i+1) + "\n";
+				submission = submission + "\n" + "<h1>" + "<p>" + "Question " + (i+1) + "</h1>" + "\n";
 				let qab = box.parentNode;
-				submission = submission + "*** Inputs" + "\n";
+				submission = submission + "<h2>" + "*** Inputs" + "</h2>" + "\n";
 				let qinputs = qab.getElementsByTagName( "input ");
 				for( let j = 0; j < qinputs.length; j++ ) {
 					let inText = qinputs[j].innerHTML;
 					submission = submission + `Input ${j}=${inText}` + "\n";
 				}
-				submission = submission + "*** End of Inputs" + "\n";
-				submission = submission + "*** Editor" + "\n";
+				submission = submission + "<h2>" + "*** End of Inputs" + "</h2>"+ "\n";
+				submission = submission + "<h2>" + "*** Editor" + "</h2>" + "\n";
 				submission = submission + box.innerHTML;
-				submission = submission + "*** End of Editor" + "\n";
-				submission = submission + "\n" + "End of Question" + (i+1) + "\n";
+				submission = submission + "<h2>" + "*** End of Editor" + "</h2>" + "\n";
+				submission = submission + "\n" + "<h1>" + "End of Question" + (i+1) + "</h1>" + "\n";
 			}
 
 			let blob = new Blob([ submission ], { type: "text/html" });
