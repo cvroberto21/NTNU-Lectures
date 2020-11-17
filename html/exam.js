@@ -141,13 +141,23 @@ function submitFunction(event) {
 				Question: ${q.id}
 			`
 
-			let edBoxes = document.getElementsByClassName( "question_answer_box" );
+			let edBoxes = document.getElementsByClassName( "question_editor_box" );
 			let length = edBoxes.length;
 
 			for (let i = 0; i < length; i++) {
 				let box = edBoxes[i];
 				submission = submission + "\n" + "Question " + (i+1) + "\n";
+				let qab = box.parentNode;
+				submission = submission + "*** Inputs" + "\n";
+				let qinputs = qab.getElementsByTagName( "input ");
+				for( let j = 0; j < qinputs.length; j++ ) {
+					let inText = qinputs[j].innerHTML;
+					submission = submission + `Input ${j}=${inText}" + "\n";
+				}
+				submission = submission + "*** End of Inputs" + "\n";
+				submission = submission + "*** Editor" + "\n";
 				submission = submission + box.innerHTML;
+				submission = submission + "*** End of Editor" + "\n";
 				submission = submission + "\n" + "End of Question" + (i+1) + "\n";
 			}
 
