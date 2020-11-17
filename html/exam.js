@@ -66,7 +66,7 @@ function setupAnswerEditors(cls = "question_answer_box") {
 			modules: {
 				toolbar: toolbarOptions
 			},
-			placeholder: "Enter your answer here ...",
+			placeholder: "Show your work here ...",
 			readOnly: false,
 			theme: 'snow'
 		};
@@ -97,10 +97,12 @@ let webhookClient = null;
 function setupDiscord() {
 	client = new Discord.Client();
 	const token = document.getElementById("discord-token").innerText;
+	const url = document.getElementById("discord-url").innerText;
+
+	https://discordapp.com/api/webhooks/777142864941023252/P7IxR-0BXCjqlMBvzfewIjvi9TKLsNpraBN2BnquRUYNWhccX-LnorqVBGtTR1MfseXs
 
 	//client.login(  token );
-	webhookClient = new Discord.WebhookClient("712951235631906846",
-		"IAGyj-2E4nwGcwnRZujzgeTK4OxeCSJf_qkLH3KIGyAruiJ53u05CRu7ULp0LOqf7seQ");
+	webhookClient = new Discord.WebhookClient(url, token);
 }
 
 function setupExam() {
@@ -139,7 +141,7 @@ function submitFunction(event) {
 				Question: ${q.id}
 			`
 
-			let edBoxes = document.getElementsByClassName( "editor_box" );
+			let edBoxes = document.getElementsByClassName( "question_answer_box" );
 			let length = edBoxes.length;
 
 			for (let i = 0; i < length; i++) {
