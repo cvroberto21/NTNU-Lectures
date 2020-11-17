@@ -149,7 +149,7 @@ function submitFunction(event) {
 				submission = submission + "\n" + "<h1>" + "<p>" + "Question " + (i+1) + "</h1>" + "\n";
 				let qab = box.parentNode;
 				submission = submission + "<h2>" + "*** Inputs" + "</h2>" + "\n";
-				let qinputs = qab.getElementsByTagName( "input ");
+				let qinputs = qab.getElementsByTagName( "input");
 				for( let j = 0; j < qinputs.length; j++ ) {
 					let inText = qinputs[j].innerHTML;
 					submission = submission + `Input ${j}=${inText}` + "\n";
