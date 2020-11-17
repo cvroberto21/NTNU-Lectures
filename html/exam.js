@@ -152,7 +152,7 @@ function submitFunction(event) {
 				let qinputs = qab.getElementsByTagName( "input ");
 				for( let j = 0; j < qinputs.length; j++ ) {
 					let inText = qinputs[j].innerHTML;
-					submission = submission + `Input ${j}=${inText}" + "\n";
+					submission = submission + `Input ${j}=${inText}` + "\n";
 				}
 				submission = submission + "*** End of Inputs" + "\n";
 				submission = submission + "*** Editor" + "\n";
