@@ -192,7 +192,7 @@ function submitFunction(event) {
 
 			// let url = URL.createObjectURL(file);
 			// console.log("url " + url);
-			let content = new Discord.MessageAttachment( blob, "Q_" + q.id + ".html", { "data": q.innerHTML} );
+			let content = new Discord.MessageAttachment( blob, studentId + "_submit" +  + ".html", { "data": q.innerHTML} );
 			//let content = new Discord.MessageAttachment( blob.stream(), "Q_" + q.id + ".html" );
 			//let content = new Discord.MessageAttachment( blob.stream() , "Q_" + q.id + ".html");
 			//console.log("content", content);
