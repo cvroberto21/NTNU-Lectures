@@ -150,8 +150,9 @@ function submitFunction(event) {
 				let qab = box.parentNode;
 				submission = submission + "<h2>" + "*** Inputs" + "</h2>" + "\n";
 				let qinputs = qab.getElementsByTagName( "input");
-				for( let j = 0; j < qinputs.length; j++ ) {
-					let inText = qinputs[j].innerHTML;
+				// The last element is the quill editor input field
+				for( let j = 0; j < qinputs.length - 1; j++ ) {
+					let inText = "\n" + qinputs[j].value + "\n";
 					submission = submission + `Input ${j}=${inText}` + "\n";
 				}
 				submission = submission + "<h2>" + "*** End of Inputs" + "</h2>"+ "\n";
