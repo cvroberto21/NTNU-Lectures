@@ -132,7 +132,12 @@ table.center {
 
  .important {
     font-weight: bold !important;
-    font-color: darkred !important;
+    color: darkred !important;
+ }
+
+ .emph1 {
+    font-weight: bold !important;
+    color: darkred !important;
  }
 
   .jb-center {
