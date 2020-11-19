@@ -66,14 +66,14 @@ function setupAnswerEditors(cls = "question_answer_box") {
 			modules: {
 				toolbar: toolbarOptions
 			},
-			placeholder: "Enter your answer here ...",
+			placeholder: "Show your work here ...",
 			readOnly: false,
 			theme: 'snow'
 		};
 
 		let edBox = document.createElement('div');
-		edBox.setAttribute("id", "editor_box" + i );
-		edBox.setAttribute("class", "editor_box" );
+		edBox.setAttribute("id", "question_editor_box" + i );
+		edBox.setAttribute("class", "question_editor_box" );
 		box.appendChild(edBox);
 
 		//let container = document.createElement('div');
@@ -97,10 +97,12 @@ let webhookClient = null;
 function setupDiscord() {
 	client = new Discord.Client();
 	const token = document.getElementById("discord-token").innerText;
+	const url = document.getElementById("discord-url").innerText;
+
+	https://discordapp.com/api/webhooks/777142864941023252/P7IxR-0BXCjqlMBvzfewIjvi9TKLsNpraBN2BnquRUYNWhccX-LnorqVBGtTR1MfseXs
 
 	//client.login(  token );
-	webhookClient = new Discord.WebhookClient("712951235631906846",
-		"IAGyj-2E4nwGcwnRZujzgeTK4OxeCSJf_qkLH3KIGyAruiJ53u05CRu7ULp0LOqf7seQ");
+	webhookClient = new Discord.WebhookClient(url, token);
 }
 
 function setupExam() {
@@ -139,14 +141,25 @@ function submitFunction(event) {
 				Question: ${q.id}
 			`
 
-			let edBoxes = document.getElementsByClassName( "editor_box" );
+			let edBoxes = document.getElementsByClassName( "question_editor_box" );
 			let length = edBoxes.length;
 
 			for (let i = 0; i < length; i++) {
 				let box = edBoxes[i];
-				submission = submission + "\n" + "Question " + (i+1) + "\n";
+				submission = submission + "\n" + "<h1>" + "<p>" + "Question " + (i+1) + "</h1>" + "\n";
+				let qab = box.parentNode;
+				submission = submission + "<h2>" + "*** Inputs" + "</h2>" + "\n";
+				let qinputs = qab.getElementsByTagName( "input");
+				// The last element is the quill editor input field
+				for( let j = 0; j < qinputs.length - 1; j++ ) {
+					let inText = "\n" + qinputs[j].value + "\n";
+					submission = submission + `Input ${j}=${inText}` + "\n";
+				}
+				submission = submission + "<h2>" + "*** End of Inputs" + "</h2>"+ "\n";
+				submission = submission + "<h2>" + "*** Editor" + "</h2>" + "\n";
 				submission = submission + box.innerHTML;
-				submission = submission + "\n" + "End of Question" + (i+1) + "\n";
+				submission = submission + "<h2>" + "*** End of Editor" + "</h2>" + "\n";
+				submission = submission + "\n" + "<h1>" + "End of Question" + (i+1) + "</h1>" + "\n";
 			}
 
 			let blob = new Blob([ submission ], { type: "text/html" });
@@ -179,7 +192,7 @@ function submitFunction(event) {
 
 			// let url = URL.createObjectURL(file);
 			// console.log("url " + url);
-			let content = new Discord.MessageAttachment( blob, "Q_" + q.id + ".html", { "data": q.innerHTML} );
+			let content = new Discord.MessageAttachment( blob, studentId + "_submit" +  + ".html", { "data": q.innerHTML} );
 			//let content = new Discord.MessageAttachment( blob.stream(), "Q_" + q.id + ".html" );
 			//let content = new Discord.MessageAttachment( blob.stream() , "Q_" + q.id + ".html");
 			//console.log("content", content);

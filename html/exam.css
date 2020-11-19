@@ -129,6 +129,17 @@ table.center {
 /************************************************
  Added by Jacky Baltes
  ************************************************/
+
+ .important {
+    font-weight: bold !important;
+    color: darkred !important;
+ }
+
+ .emph1 {
+    font-weight: bold !important;
+    color: darkred !important;
+ }
+
   .jb-center {
     text-align:center;
   }
