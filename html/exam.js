@@ -96,12 +96,9 @@ let webhookClient = null;
 
 function setupDiscord() {
 	client = new Discord.Client();
-	const token = document.getElementById("discord-token").innerText;
-	const url = document.getElementById("discord-url").innerText;
+	const token = document.getElementById("discord-token").innerText.trim();
+	const url = document.getElementById("discord-url").innerText.trim();
 
-	https://discordapp.com/api/webhooks/777142864941023252/P7IxR-0BXCjqlMBvzfewIjvi9TKLsNpraBN2BnquRUYNWhccX-LnorqVBGtTR1MfseXs
-
-	//client.login(  token );
 	webhookClient = new Discord.WebhookClient(url, token);
 }
 
@@ -163,36 +160,13 @@ function submitFunction(event) {
 			}
 
 			let blob = new Blob([ submission ], { type: "text/html" });
-			// // const stream = new ReadableStream({
-			//     start(controller) {
-			//         // The following function handles each data chunk
-			//         function push() {
-			//             // "done" is a Boolean and value a "Uint8Array"
-			//             reader.read().then(({ done, value }) => {
-			//                 // Is there no more data to read?
-			//                 if (done) {
-			//                     // Tell the browser that we have finished sending data
-			//                     controller.close();
-			//                     return;
-			//                 }
-
-			//                 // Get the data and send it to the browser via the controller
-			//                 controller.enqueue(value);
-			//                 push();
-			//             });
-			//         };
-
-			//         push();
-			//     }
-			// });
-			//console.log("blob ", blob, stream.Readable( blob.stream() ), blob.type);
 
 			// let file = new File([blob], "Q_" + q.id + ".html", { type: "text/html" });
 			// console.log("file " + file);W
 
 			// let url = URL.createObjectURL(file);
 			// console.log("url " + url);
-			let content = new Discord.MessageAttachment( blob, studentId + "_submit" +  + ".html", { "data": q.innerHTML} );
+			let content = new Discord.MessageAttachment( blob, studentId + "_submit" + q.id + ".html", { "data": q.innerHTML} );
 			//let content = new Discord.MessageAttachment( blob.stream(), "Q_" + q.id + ".html" );
 			//let content = new Discord.MessageAttachment( blob.stream() , "Q_" + q.id + ".html");
 			//console.log("content", content);
