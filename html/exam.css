@@ -215,7 +215,7 @@ table.center {
       font-size: "2em";
   }
 
-  .enter {
-      color: "e6b89c";
+  .questionanswerbox > input {
+      background: #e6b89cx;
   }
 
