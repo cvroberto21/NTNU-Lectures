@@ -23,6 +23,17 @@ function showHideAnswers() {
 }
 
 function setupAnswerBoxes(cls = "question_answer_box") {
+	let submitButton = document.getElementById("submitButton");
+	submitButton.setAttribute("class", "question_answer_box_submit");
+	submitButton.setAttribute("id", "submitButton");
+	submitButton.innerHTML = "Submit";
+	
+	if (submitButton.addEventListener) {
+		submitButton.addEventListener("click",
+			function () { submitFunction() },
+			false);
+	}
+	
 	let aboxes = document.getElementsByClassName(cls);
 	let length = aboxes.length;
 
@@ -35,18 +46,7 @@ function setupAnswerBoxes(cls = "question_answer_box") {
 
 		let nBox = box.cloneNode(true);
 
-		let submitButton = document.createElement("button");
-		submitButton.setAttribute("class", "question_answer_box_submit");
-		submitButton.setAttribute("id", (i + 1) + "_question_answer_box_submit");
-		submitButton.innerHTML = "Submit";
-
-		if (submitButton.addEventListener)
-			submitButton.addEventListener("click",
-				function () { submitFunction() },
-				false);
-
 		container.appendChild(nBox);
-		container.appendChild(submitButton);
 
 		box.parentNode.replaceChild(container, box);
 	}
