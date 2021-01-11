@@ -212,5 +212,10 @@ table.center {
   }
 
   .student_info {
-      font-size: "2em";
+      font-size: 2em;
+  }
+
+  div.question_answer_box input {
+      background-color: #bad833;
+      font-size: 2em;
   }
