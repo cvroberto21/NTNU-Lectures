@@ -7,6 +7,11 @@ import distutils
 import shutil
 import git
 import re
+import logging
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel( logging.DEBUG )
 
 cfg = {}
 defaults = {
@@ -41,7 +46,7 @@ def findRepoByName( title ):
         repos = getRepositories()
         if repos:
             for r in repos:
-                # print("Github repo", r.name )
+                logger.info( f"Github repo {r.name}" )
                 if r.name == title:
                     repo = r
                     break
@@ -171,19 +176,20 @@ def createGitHub( title, root = None):
             distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / d, d)
             #runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
 
-        for d in [ "theme" ]:
-            pathlib.Path(d).mkdir( parents = True, exist_ok = True )
-            distutils.dir_util.copy_tree( cfg['REVEAL_DIR'] / "dist" / d, d)
-            runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
-
+        
         with JBcd( p / "css" ):
+            for d in [ "theme" ]:
+                pathlib.Path(d).mkdir( parents = True, exist_ok = True )
+                distutils.dir_util.copy_tree( cfg['REVEAL_THEME_DIR'], d)
+                runCommand( cfg['GIT_CMD'] + " add " + str(d), True )
+
             for f in [ "reveal.css", "reset.css" ]:
-                shutil.copyfile( cfg['REVEAL_DIR'] / "dist" / f, str(f) )
+                shutil.copyfile( cfg['REVEAL_CSS_DIR'] / f, str(f) )
                 runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
 
         with JBcd( p / "js" ):
             for f in [ "reveal.js" ]:
-                shutil.copyfile( cfg['REVEAL_DIR'] / "dist" / f, str(f) )
+                shutil.copyfile( cfg['REVEAL_JS_DIR'] / f, str(f) )
                 runCommand( cfg['GIT_CMD'] + " add " + str(f), True )
 
         for d in [ "assets/images", "assets/videos", "assets/sounds" ]:

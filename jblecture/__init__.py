@@ -33,8 +33,9 @@ defaults['MODULE_ROOT'] = defaults['ORIG_ROOT'] / 'NTNU-Lectures'
 
 defaults['REVEAL_DIR'] = defaults['ROOT_DIR'] / "reveal.js" 
 
-defaults['REVEAL_CSS_DIR'] = defaults['REVEAL_DIR'] / "css"
-defaults['REVEAL_JS_DIR'] = defaults['REVEAL_DIR'] / "js"
+defaults['REVEAL_DIST_DIR'] = defaults['REVEAL_DIR'] / "dist" 
+defaults['REVEAL_CSS_DIR'] = defaults['REVEAL_DIST_DIR'] 
+defaults['REVEAL_JS_DIR'] = defaults['REVEAL_DIST_DIR'] 
 defaults['REVEAL_THEME_DIR'] = defaults['REVEAL_CSS_DIR'] / "theme"
 defaults['REVEAL_ASSETS_DIR'] = defaults['REVEAL_DIR'] / "assets"
 defaults['REVEAL_IMAGES_DIR'] = defaults['REVEAL_ASSETS_DIR'] / "images"
