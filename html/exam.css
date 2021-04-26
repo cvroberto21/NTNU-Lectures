@@ -212,15 +212,6 @@ table.center {
   }
 
   .student_info {
-<<<<<<< HEAD
-      font-size: "2em";
-  }
-
-  .questionanswerbox > input {
-      background: #e6b89cx;
-  }
-
-=======
       font-size: 2em;
   }
 
@@ -228,4 +219,3 @@ table.center {
       background-color: #bad833;
       font-size: 2em;
   }
->>>>>>> master
