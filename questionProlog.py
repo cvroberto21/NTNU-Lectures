@@ -166,3 +166,51 @@ def writeExam( fname = None, includeSolutions=False ):
     with open(fname, "w") as f:
         f.write(html)
     return html
+
+def createB64PNGImageFromFigure( fig, title, dl=True ):
+    import io
+    import base64
+
+    figfile = io.BytesIO()
+    fig.savefig(figfile, dpi=300, bbox_inches='tight', format="png" )
+    figfile.seek(0)  # rewind to beginning of file
+    image = base64.b64encode( figfile.getvalue() )
+    img = ""
+    if dl:
+        img = img + "\n" + f"""
+           <a download="{title}" src="data:image/png;base64,{image.decode('utf-8')}">\n
+           """
+    img = img + f"""
+    <img src="data:image/png;base64,{image.decode('utf-8')}" alt="{title}"/>
+    """
+    
+    if dl:
+        img = img + "\n</a>\n"
+    return img
+
+def createB64PNGImageFromRGB( rgb, title, dl=True ):
+    import io
+    import base64
+
+    from PIL import Image
+    im = Image.fromarray(rgb)
+    figfile = io.BytesIO()
+    im.save(figfile, format="png")
+    figfile.seek(0)
+    image = base64.b64encode( figfile.getvalue() )
+    if title is None or title == "":
+        title = "image.png"
+    img = ""
+    if dl:
+        img = img + "\n" + f"""
+           <a download="{title}" src="data:image/png;base64,{image.decode('utf-8')}">\n
+           """
+    img = img + f"""
+    <img src="data:image/png;base64,{image.decode('utf-8')}" alt="{title}"/>
+    """
+    
+    if dl:
+        img = img + "\n</a>\n"
+    return img
+
+
