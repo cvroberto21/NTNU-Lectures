@@ -143,7 +143,7 @@ function submitFunction(event) {
 
 			for (let i = 0; i < length; i++) {
 				let box = edBoxes[i];
-				submission = submission + "\n" + "<h1>" + "<p>" + "Question " + (i+1) + "</h1>" + "\n";
+				submission = submission + "\n" + "<h1>" + "Question " + (i+1) + "</h1>" + "\n";
 				let qab = box.parentNode;
 				submission = submission + "<h2>" + "*** Inputs" + "</h2>" + "\n";
 				let qinputs = qab.getElementsByTagName( "input");
