@@ -86,6 +86,8 @@ class JBExam:
                 <li>Some of the questions may not be solvable, that is it may be 
                 impossible to calculate the requested information. In this case, 
                 say so in your answer and explain why.</li>
+                <li>Submit your exam by printing it to a pdf file (File -> Print or Ctrl-P in most browsers) and 
+                then sending the pdf file to the instructor in a private chat message.</li>  
             </ul>   
             """
 
