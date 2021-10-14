@@ -94,19 +94,10 @@ function setupAnswerEditors(cls = "question_answer_box") {
 let client = null;
 let webhookClient = null;
 
-function setupDiscord() {
-	client = new Discord.Client();
-	const token = document.getElementById("discord-token").innerText.trim();
-	const url = document.getElementById("discord-url").innerText.trim();
-
-	webhookClient = new Discord.WebhookClient(url, token);
-}
-
 function setupExam() {
 	showHideAnswers();
 	setupAnswerBoxes();
 	setupAnswerEditors();
-	setupDiscord();
 }
 
 function submitFunction(event) {
@@ -159,21 +150,14 @@ function submitFunction(event) {
 				submission = submission + "\n" + "<h1>" + "End of Question" + (i+1) + "</h1>" + "\n";
 			}
 
-			let blob = new Blob([ submission ], { type: "text/html" });
-
 			// let file = new File([blob], "Q_" + q.id + ".html", { type: "text/html" });
 			// console.log("file " + file);W
 
 			// let url = URL.createObjectURL(file);
 			// console.log("url " + url);
-			let content = new Discord.MessageAttachment( blob, studentId + "_submit" + q.id + ".html", { "data": q.innerHTML} );
 			//let content = new Discord.MessageAttachment( blob.stream(), "Q_" + q.id + ".html" );
 			//let content = new Discord.MessageAttachment( blob.stream() , "Q_" + q.id + ".html");
 			//console.log("content", content);
-
-			webhookClient.send( name + ":" + studentId + ":" + "question_" + q.id, content)
-				.then(message => alert(`Question ${q.id} submitted`) )
-				.catch(console.error);
 
 			// let fr = new FileReader();
 			// fr.onload = function(evt){
@@ -194,7 +178,7 @@ function submitFunction(event) {
 			//     .attachFiles( [ content ] )
 			//     .setColor('#0099ff');
 			//     // .addField("answer", q.innerHTML ); # must be 1024 or less in length
-
+			window.print();
 
 		} else {
 			alert("Missing Name and/or Student ID");
