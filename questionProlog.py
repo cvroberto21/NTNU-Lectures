@@ -1,10 +1,8 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import math
 import random
-import sys
+import math
 from IPython.core.display import display, HTML
-import html
+import html 
 
 def QuestionProlog( ):
     qprolog='<!-- <div class="question_frame"> --><!-- start of question_frame -->\n'
@@ -142,8 +140,6 @@ def createTable( data, index = None, columns = None, id=None, cls=None, tableT =
     bdata = ""
     for i,r in enumerate( data ):
         rdata = ""
-        if index:
-            rdata = rdata + f"<td>{index[i]}</td>" + "\n"
         for j,d in enumerate( r ):
             rdata = rdata + tdT.format( d )
         row = trT.format( rdata )
@@ -220,4 +216,3 @@ def createB64PNGImageFromRGB( rgb, title, dl=True ):
     if dl:
         img = img + "\n</a>\n"
     return img
-
