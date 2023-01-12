@@ -1,3 +1,11 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+import random
+import sys
+from IPython.core.display import display, HTML
+import html
+
 def QuestionProlog( ):
     qprolog='<!-- <div class="question_frame"> --><!-- start of question_frame -->\n'
     display(HTML(qprolog))
@@ -178,7 +186,7 @@ def createB64PNGImageFromFigure( fig, title, dl=True ):
     img = ""
     if dl:
         img = img + "\n" + f"""
-           <a download="{title}" src="data:image/png;base64,{image.decode('utf-8')}">\n
+           <a download="{title}" href="data:image/png;base64,{image.decode('utf-8')}">\n
            """
     img = img + f"""
     <img src="data:image/png;base64,{image.decode('utf-8')}" alt="{title}"/>
@@ -203,7 +211,7 @@ def createB64PNGImageFromRGB( rgb, title, dl=True ):
     img = ""
     if dl:
         img = img + "\n" + f"""
-           <a download="{title}" src="data:image/png;base64,{image.decode('utf-8')}">\n
+           <a download="{title}" href="data:image/png;base64,{image.decode('utf-8')}">\n
            """
     img = img + f"""
     <img src="data:image/png;base64,{image.decode('utf-8')}" alt="{title}"/>
@@ -212,5 +220,4 @@ def createB64PNGImageFromRGB( rgb, title, dl=True ):
     if dl:
         img = img + "\n</a>\n"
     return img
-
 
