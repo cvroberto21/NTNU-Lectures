@@ -77,7 +77,7 @@ from jblecture import createTable
 from jblecture import instTemplate
 from jblecture import _a
 from jblecture import downloadDir, zipDirectory
-from IPython.core.display import display, HTML, Math
+from IPython.display import display, HTML, Math
 
 doc = cfg['doc']
 GDrive = None
