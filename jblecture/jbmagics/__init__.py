@@ -2,7 +2,7 @@ import base64
 
 from IPython.core import magic_arguments
 from IPython.core.magic import line_magic, cell_magic, line_cell_magic, Magics, magics_class
-from IPython.core.display import HTML, Image, Pretty, Javascript, display
+from IPython.display import HTML, Image, Pretty, Javascript, display
 from IPython.utils.capture import capture_output
 
 from pygments import highlight
@@ -137,7 +137,7 @@ class JBMagics(Magics):
                     png = output._repr_png_()
 
                     if (png is not None):
-                        enc = base64.b64encode(png).decode('utf-8')
+                        enc = base64.b64encode(png.encode('utf-8')).decode('utf-8')
 
                         return '<img src="data:image/png;base64,{0}"/>'.format(enc)
         return None
